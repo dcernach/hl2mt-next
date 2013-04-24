@@ -435,6 +435,14 @@ class Token:
         xml += self.roll_macro_xml('CMB', self.cmb, 'Basic CMB', 'Basic', '25', 'teal', 'black', '2')
         xml += self.init_macro_xml()
 
+        if int(self.options['basic dice']):
+            xml += self.basic_die_macro_xml('d4')
+            xml += self.basic_die_macro_xml('d6')
+            xml += self.basic_die_macro_xml('d8')
+            xml += self.basic_die_macro_xml('d10')
+            xml += self.basic_die_macro_xml('d12')
+            xml += self.basic_die_macro_xml('d20')
+
         if int(self.options['skills']):
             for k, v in self.skills.items():
                 xml += self.roll_macro_xml(k, v, k, 'Skills', '75', 'silver', 'black', '1')
@@ -617,6 +625,60 @@ class Token:
         xml += '           <maxWidth>' + width + '</maxWidth>\n'
         xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
         xml += '           <toolTip>' + str(bonus) + '</toolTip>\n'
+        xml += '           <commonMacro>false</commonMacro>\n'
+        xml += '           <compareGroup>true</compareGroup>\n'
+        xml += '           <compareIncludeLabel>true</compareIncludeLabel>\n'
+        xml += '           <compareAutoExecute>true</compareAutoExecute>\n'
+        xml += '           <compareApplyToSelectedTokens>true</compareApplyToSelectedTokens>\n'
+        xml += '         </net.rptools.maptool.model.MacroButtonProperties>\n'
+        xml += '       </entry>\n'
+
+        return xml
+
+    def basic_die_macro_xml(self, die):
+
+        label = die
+        name = die
+        width = '30'
+        group = 'Basic Dice'
+        background = 'black'
+        font = 'white'
+        sortby = '1'
+
+        self.num_macros += 1
+
+        xml = '        <entry>\n'
+        xml += '         <int>' + str(self.num_macros) + '</int>\n'
+        xml += '         <net.rptools.maptool.model.MacroButtonProperties>\n'
+        xml += '           <saveLocation></saveLocation>\n'
+        xml += '           <index>' + str(self.num_macros) + '</index>\n'
+        xml += '           <colorKey>' + background + '</colorKey>\n'
+        xml += '           <hotKey>None</hotKey>\n'
+        xml += '           <command>'
+        tmp = "<table border='0' cellpadding='0' cellspacing='0' style='width:200px'>\n"
+        tmp += "<tr bgcolor='" + background + "'>\n"
+        tmp += "<td><span style='color:" + font + "'><b>" + name + "</b></span></td>\n"
+        tmp += "</tr>\n"
+        tmp += "<tr>\n"
+        tmp += "<td>[e:" + die + "]</td>\n"
+        tmp += "</tr>\n"
+        tmp += "</table>\n"
+
+        xml += cgi.escape(tmp)
+
+        xml += '</command>\n'
+        xml += '           <label>' + label + '</label>\n'
+        xml += '           <group>' + group + '</group>\n'
+        xml += '           <sortby>' + sortby + '</sortby>\n'
+        xml += '           <autoExecute>true</autoExecute>\n'
+        xml += '           <includeLabel>false</includeLabel>\n'
+        xml += '           <applyToTokens>true</applyToTokens>\n'
+        xml += '           <fontColorKey>' + font + '</fontColorKey>\n'
+        xml += '           <fontSize>1.00em</fontSize>\n'
+        xml += '           <minWidth>' + width + '</minWidth>\n'
+        xml += '           <maxWidth>' + width + '</maxWidth>\n'
+        xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
+        xml += '           <toolTip></toolTip>\n'
         xml += '           <commonMacro>false</commonMacro>\n'
         xml += '           <compareGroup>true</compareGroup>\n'
         xml += '           <compareIncludeLabel>true</compareIncludeLabel>\n'
@@ -1154,7 +1216,19 @@ class Token:
         tmp += '<b>Alignment:</b> ' + self.alignment + '<br>\n'
         if self.xml.find('deity').get('name'):
             tmp += '<b>Deity:</b> ' + self.xml.find('deity').get('name') + '<br>\n'
-        tmp += '<b>Size:</b> ' + self.size + '<br>\n'
+        tmp += '<b>Size:</b> ' + self.size.title() + '<br>\n'
+        money = ''
+        if int(self.xml.find('money').get('pp')):
+            money += self.xml.find('money').get('pp') + ' pp '
+        if int(self.xml.find('money').get('gp')):
+            money += self.xml.find('money').get('gp') + ' gp '
+        if int(self.xml.find('money').get('sp')):
+            money += self.xml.find('money').get('sp') + ' sp '
+        if int(self.xml.find('money').get('cp')):
+            money += self.xml.find('money').get('cp') + ' cp '
+        if money:
+            tmp += '<b>Coin:</b> ' + money + '<br>'
+
         tmp += '<hr>\n'
         tmp += '<b>AC:</b> ' + self.ac + ', touch ' + self.ac_touch + ', flat-footed ' + self.ac_flat + '<br>\n'
         tmp += '<b>CMD:</b> ' + self.cmd + ', flat-footed ' + self.cmd_flat + '<br>\n'
@@ -1184,6 +1258,11 @@ class Token:
         if classes:
             tmp += '<h3>Classes (Lvl ' + self.xml.find('classes').get('level') + ') </h3>\n'
             tmp += classes
+
+        if self.skills:
+            tmp += '<h3>Skills</h3>\n'
+            for k, v in sorted(self.skills.items()):
+                tmp += k + ': ' + v + '<br>'
 
         if self.languages:
             tmp += '<h3>Languages</h3>\n'

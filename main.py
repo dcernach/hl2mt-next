@@ -225,8 +225,15 @@ class App:
         self.optionsFrame.items.var = v
         self.optionsFrame.items.var.set(self.options['items'])
 
+        v = tk.IntVar()
+        self.optionsFrame.basic = ttk.Checkbutton(self.optionsFrame, text='Create Basic Dice Macros',
+                                                  variable=v, onvalue=1, offvalue=0)
+        self.optionsFrame.basic.grid(row=8, column=0, sticky=tk.W)
+        self.optionsFrame.basic.var = v
+        self.optionsFrame.basic.var.set(self.options['basic dice'])
+
         self.optionsFrame.button_save = ttk.Button(self.optionsFrame, text="Save", command=self.options_frame_save)
-        self.optionsFrame.button_save.grid(row=8, column=0, padx=5, pady=5, columnspan=2)
+        self.optionsFrame.button_save.grid(row=9, column=0, padx=5, pady=5, columnspan=2)
 
     def options_frame_save(self):
 
@@ -237,6 +244,7 @@ class App:
         self.options['weapons'] = self.optionsFrame.weapons.var.get()
         self.options['skills'] = self.optionsFrame.skills.var.get()
         self.options['hp'] = self.optionsFrame.hp.var.get()
+        self.options['basic dice'] = self.optionsFrame.basic.var.get()
         self.options['items'] = self.optionsFrame.items.var.get()
 
         tk.Toplevel.destroy(self.optionsFrame)
