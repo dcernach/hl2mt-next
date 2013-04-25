@@ -40,6 +40,7 @@ class Token:
                               '  </entry>\n</map>'
         self.properties = {}
         self.options = {}
+        self.colors = {}
         self.size_map = {'fine': 'fwABAc1lFSoBAAAAKgABAQ==', 'diminutive': 'fwABAc1lFSoCAAAAKgABAQ==',
                          'tiny': 'fwABAc5lFSoDAAAAKgABAA==', 'small': 'fwABAc5lFSoEAAAAKgABAA==',
                          'medium': 'fwABAc9lFSoFAAAAKgABAQ==', 'large': 'fwABAdBlFSoGAAAAKgABAA==',
@@ -427,12 +428,18 @@ class Token:
         if int(self.options['hp']):
             xml += self.hp_macro_xml()
 
-        xml += self.roll_macro_xml('Ref', self.saves['Ref'], 'Reflex Save', 'Basic', '25', 'green', 'white', '3')
-        xml += self.roll_macro_xml('Will', self.saves['Will'], 'Willpower Save', 'Basic', '25', 'green', 'white', '3')
-        xml += self.roll_macro_xml('Fort', self.saves['Fort'], 'Fortitude Save', 'Basic', '25', 'green', 'white', '3')
-        xml += self.roll_macro_xml('Melee', self.atk_melee, 'Basic Melee', 'Basic', '35', 'red', 'white', '2')
-        xml += self.roll_macro_xml('Ranged', self.atk_ranged, 'Basic Ranged', 'Basic', '45', 'red', 'white', '2')
-        xml += self.roll_macro_xml('CMB', self.cmb, 'Basic CMB', 'Basic', '25', 'teal', 'black', '2')
+        xml += self.roll_macro_xml('Ref', self.saves['Ref'], 'Reflex Save', 'Basic', '25',
+                                   self.colors['saves background'], self.colors['saves font'], '3')
+        xml += self.roll_macro_xml('Will', self.saves['Will'], 'Willpower Save', 'Basic', '25',
+                                   self.colors['saves background'], self.colors['saves font'], '3')
+        xml += self.roll_macro_xml('Fort', self.saves['Fort'], 'Fortitude Save', 'Basic', '25',
+                                   self.colors['saves background'], self.colors['saves font'], '3')
+        xml += self.roll_macro_xml('Melee', self.atk_melee, 'Basic Melee', 'Basic', '35',
+                                   self.colors['attacks background'], self.colors['attacks font'], '2')
+        xml += self.roll_macro_xml('Ranged', self.atk_ranged, 'Basic Ranged', 'Basic', '45',
+                                   self.colors['attacks background'], self.colors['attacks font'], '2')
+        xml += self.roll_macro_xml('CMB', self.cmb, 'Basic CMB', 'Basic', '25',
+                                   self.colors['cmb background'], self.colors['cmb font'], '2')
         xml += self.init_macro_xml()
 
         if int(self.options['basic dice']):
@@ -445,7 +452,8 @@ class Token:
 
         if int(self.options['skills']):
             for k, v in self.skills.items():
-                xml += self.roll_macro_xml(k, v, k, 'Skills', '75', 'silver', 'black', '1')
+                xml += self.roll_macro_xml(k, v, k, 'Skills', '75', self.colors['skills background'],
+                                           self.colors['skills font'], '1')
 
         if int(self.options['weapons']):
             for weapon in self.weapons:
@@ -453,7 +461,8 @@ class Token:
 
         if int(self.options['maneuvers']):
             for k, v in self.maneuvers.items():
-                xml += self.roll_macro_xml(k, v, k, 'Maneuvers', '75', 'teal', 'black', '1')
+                xml += self.roll_macro_xml(k, v, k, 'Maneuvers', '75', self.colors['maneuvers background'],
+                                           self.colors['maneuvers font'], '1')
 
         if self.feats:
             xml += self.list_macro_xml('Feats', self.feats, '35')
@@ -513,7 +522,7 @@ class Token:
         xml += '         <net.rptools.maptool.model.MacroButtonProperties>\n'
         xml += '           <saveLocation></saveLocation>\n'
         xml += '           <index>' + str(self.num_macros) + '</index>\n'
-        xml += '           <colorKey>cyan</colorKey>\n'
+        xml += '           <colorKey>' + self.colors['hp background'] + '</colorKey>\n'
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
@@ -560,7 +569,7 @@ class Token:
         xml += '           <autoExecute>true</autoExecute>\n'
         xml += '           <includeLabel>false</includeLabel>\n'
         xml += '           <applyToTokens>true</applyToTokens>\n'
-        xml += '           <fontColorKey>black</fontColorKey>\n'
+        xml += '           <fontColorKey>' + self.colors['hp font'] + '</fontColorKey>\n'
         xml += '           <fontSize>1.00em</fontSize>\n'
         xml += '           <minWidth>30</minWidth>\n'
         xml += '           <maxWidth>30</maxWidth>\n'
@@ -641,8 +650,8 @@ class Token:
         name = die
         width = '30'
         group = 'Basic Dice'
-        background = 'black'
-        font = 'white'
+        background = self.colors['basic die background']
+        font = self.colors['basic die font']
         sortby = '1'
 
         self.num_macros += 1
@@ -691,8 +700,8 @@ class Token:
 
     def spell_list_macro_xml(self, name, spells, width):
 
-        background = 'navy'
-        font = 'white'
+        background = self.colors['specials background']
+        font = self.colors['specials font']
         group = 'Special'
         label = name
 
@@ -827,8 +836,8 @@ class Token:
 
     def list_macro_xml(self, name, items, width):
 
-        background = 'navy'
-        font = 'white'
+        background = self.colors['specials background']
+        font = self.colors['specials font']
         group = 'Special'
         label = name
 
@@ -902,11 +911,10 @@ class Token:
 
         return xml
 
-
     def items_macro_xml(self):
 
-        background = 'navy'
-        font = 'white'
+        background = self.colors['specials background']
+        font = self.colors['specials font']
         group = 'Special'
         label = 'Items'
         width = '40'
@@ -978,8 +986,8 @@ class Token:
 
     def list_show_macro_xml(self):
 
-        background = 'grey'
-        font = 'white'
+        background = self.colors['submacros background']
+        font = self.colors['submacros font']
         group = 'Submacros'
         width = '35'
         label = 'lshow'
@@ -1047,8 +1055,8 @@ class Token:
 
     def init_macro_xml(self):
 
-        background = 'blue'
-        font = 'white'
+        background = self.colors['init background']
+        font = self.colors['init font']
         group = 'Basic'
         width = '25'
         name = 'Initiative'
@@ -1104,8 +1112,8 @@ class Token:
 
     def weapon_macro_xml(self, name, attack, damage, crit):
 
-        background = 'red'
-        font = 'white'
+        background = self.colors['attacks background']
+        font = self.colors['attacks font']
         group = 'Attacks'
         width = '100'
 
@@ -1177,8 +1185,8 @@ class Token:
     def charsheet_macro_xml(self):
 
         name = 'Character Sheet'
-        background = 'gray'
-        font = 'black'
+        background = self.colors['sheet background']
+        font = self.colors['sheet font']
         group = 'Basic'
         label = 'Sheet'
         width = '40'

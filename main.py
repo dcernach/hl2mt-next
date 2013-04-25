@@ -14,11 +14,25 @@ class App:
     def __init__(self, master, config_file):
 
         config = ConfigParser.ConfigParser()
-        config.read(config_file)
-        self.config_file = config_file
-        self.options = config._sections['app']
-        self.properties = config._sections['properties']
+        if os.path.isfile(config_file):
+            config.read(config_file)
+            if 'app' in config._sections:
+                self.options = config._sections['app']
+            else:
+                self.options = {}
+            if 'properties' in config._sections:
+                self.properties = config._sections['properties']
+            else:
+                self.properties = {}
+            if 'colors' in config._sections:
+                self.colors = config._sections['colors']
+            else:
+                self.colors = {}
+
+        self.check_defaults()
+
         self.master_index = []
+        self.config_file = config_file
 
         frame = tk.Frame(master)
         master.title('Hero Lab Converter')
@@ -68,11 +82,52 @@ class App:
         self.button_option_frame = ttk.Button(frame, text='Token Options', command=self.options_frame)
         self.button_option_frame.grid(row=6, column=0, columnspan=2)
 
+        self.button_color_frame = ttk.Button(frame, text='Macro Colors', command=self.color_frame)
+        self.button_color_frame.grid(row=7, column=0, columnspan=2)
+
         self.button_process = ttk.Button(frame, text="Create Tokens", command=self.process_xml)
-        self.button_process.grid(row=9, column=0, padx=5, pady=5)
+        self.button_process.grid(row=8, column=0, padx=5, pady=5)
 
         self.button_quit = ttk.Button(frame, text="Quit", command=frame.quit)
-        self.button_quit.grid(row=9, column=1, padx=5, pady=5, sticky=tk.E)
+        self.button_quit.grid(row=8, column=1, padx=5, pady=5, sticky=tk.E)
+
+    def check_defaults(self):
+
+        for opt in ['xml_dir', 'pog_dir', 'token_dir', 'portrait_dir']:
+            if opt not in self.options:
+                self.options[opt] = os.getcwd()
+
+        for opt in ['vision', 'index', 'maneuvers', 'weapons', 'skills', 'hp', 'basic dice', 'items']:
+            if opt not in self.options:
+                self.options[opt] = 0
+
+        if 'index_name' not in self.options:
+            self.options['index_name'] = 'HeroLabIndex'
+
+        if 'property_name' not in self.properties:
+            self.properties['property name'] = 'Basic'
+        if 'character_name' not in self.properties:
+            self.properties['character name'] = 'Name'
+        if 'hp max' not in self.properties:
+            self.properties['hp max'] = 'HP'
+        if 'speed' not in self.properties:
+            self.properties['speed'] = 'Movement'
+
+        for opt in ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'race', 'alignment']:
+            if opt not in self.properties:
+                self.properties[opt] = opt.title()
+
+        for opt in ['player', 'hp current', 'initiative', 'reach', 'ac normal', 'ac flatfooted', 'ac touch', 'cmd',
+                    'cmd flatfooted', 'cmb', 'melee attack', 'ranged attack', 'bab']:
+            if opt not in self.properties:
+                self.properties[opt] = ''
+
+        for opt in ['sheet', 'skills', 'attacks', 'hp', 'init', 'cmb', 'saves', 'specials', 'basic die', 'maneuvers',
+                    'submacros']:
+            if opt + ' background' not in self.colors:
+                self.colors[opt + ' background'] = 'white'
+            if opt + ' font' not in self.colors:
+                self.colors[opt + ' font'] = 'black'
 
     def config_change(self, index, value, op):
 
@@ -80,8 +135,20 @@ class App:
         config = ConfigParser.ConfigParser()
         config.read(config_file)
         self.config_file = config_file
-        self.options = config._sections['app']
-        self.properties = config._sections['properties']
+        if 'app' in config._sections:
+            self.options = config._sections['app']
+        else:
+            self.options = {}
+        if 'properties' in config._sections:
+            self.properties = config._sections['properties']
+        else:
+            self.properties = {}
+        if 'colors' in config._sections:
+            self.colors = config._sections['colors']
+        else:
+            self.colors = {}
+
+        self.check_defaults()
         self.entry_xml.delete(0, tk.END)
         self.entry_xml.insert(0, self.options['xml_dir'])
         self.entry_pog.delete(0, tk.END)
@@ -156,13 +223,89 @@ class App:
         self.properties['cmd'] = self.propFrame.cmd.get()
         self.properties['cmd flatfooted'] = self.propFrame.cmd_flat.get()
         self.properties['cmb'] = self.propFrame.cmb.get()
-        self.properties['Melee Attack'] = self.propFrame.attk_melee.get()
-        self.properties['Ranged Attack'] = self.propFrame.attk_range.get()
-        self.properties['BAB'] = self.propFrame.attk_bab.get()
+        self.properties['melee attack'] = self.propFrame.attk_melee.get()
+        self.properties['ranged attack'] = self.propFrame.attk_range.get()
+        self.properties['bab'] = self.propFrame.attk_bab.get()
 
         tk.Toplevel.destroy(self.propFrame)
 
         self.button_prop_frame['state'] = tk.NORMAL
+
+    def color_frame(self):
+
+        self.button_color_frame['state'] = tk.DISABLED
+
+        self.colorFrame = tk.Toplevel()
+        self.colorFrame.title('Macro Colors')
+
+        self.colorFrame.sheet_f, self.colorFrame.sheet_b = self.color_frame_entry(0, 'Sheet')
+        self.colorFrame.skills_f, self.colorFrame.skills_b = self.color_frame_entry(1, 'Skills')
+        self.colorFrame.attacks_f, self.colorFrame.attacks_b = self.color_frame_entry(2, 'Attacks')
+        self.colorFrame.hp_f, self.colorFrame.hp_b = self.color_frame_entry(3, 'HP')
+        self.colorFrame.init_f, self.colorFrame.init_b = self.color_frame_entry(4, 'Init')
+        self.colorFrame.cmb_f, self.colorFrame.cmb_b = self.color_frame_entry(5, 'CMB')
+        self.colorFrame.saves_f, self.colorFrame.saves_b = self.color_frame_entry(6, 'Saves')
+        self.colorFrame.specials_f, self.colorFrame.specials_b = self.color_frame_entry(7, 'Specials')
+        self.colorFrame.basic_f, self.colorFrame.basic_b = self.color_frame_entry(8, 'Basic Die')
+        self.colorFrame.maneuv_f, self.colorFrame.maneuv_b = self.color_frame_entry(9, 'Maneuvers')
+        self.colorFrame.sub_f, self.colorFrame.sub_b = self.color_frame_entry(10, 'Submacros')
+
+        self.colorFrame.button_save = ttk.Button(self.colorFrame, text="Save", command=self.color_frame_save)
+        self.colorFrame.button_save.grid(row=11, column=0, padx=5, pady=5, columnspan=5)
+
+    def color_frame_entry(self, row, text):
+
+        colors = sorted(['white', 'black', 'cyan', 'aqua', 'blue', 'darkgray', 'fuchsia', 'gray', 'green', 'lightgray',
+                         'lime', 'magenta', 'maroon', 'navy', 'olive', 'orange', 'pink', 'purple', 'red', 'silver',
+                         'teal', 'yellow', 'gray25', 'gray50', 'gray75'])
+
+        ttk.Label(self.colorFrame, text=text).grid(row=row, column=0, sticky=tk.W)
+
+        ttk.Label(self.colorFrame, text='  Font:').grid(row=row, column=1)
+        v = tk.StringVar()
+        entry1 = ttk.Combobox(self.colorFrame, textvariable=v, state='readonly', width=10)
+        entry1.var = v
+        entry1.var.set(self.colors[text.lower() + ' font'])
+        entry1['values'] = colors
+        entry1.grid(row=row, column=2, sticky=tk.W)
+
+        ttk.Label(self.colorFrame, text='  Background:').grid(row=row, column=3)
+        v = tk.StringVar()
+        entry2 = ttk.Combobox(self.colorFrame, textvariable=v, state='readonly', width=10)
+        entry2.var = v
+        entry2.var.set(self.colors[text.lower() + ' background'])
+        entry2['values'] = colors
+        entry2.grid(row=row, column=4, sticky=tk.W)
+
+        return entry1, entry2
+
+    def color_frame_save(self):
+        self.colors['sheet font'] = self.colorFrame.sheet_f.get()
+        self.colors['sheet background'] = self.colorFrame.sheet_b.get()
+        self.colors['skills font'] = self.colorFrame.skills_f.get()
+        self.colors['skills background'] = self.colorFrame.skills_b.get()
+        self.colors['attacks font'] = self.colorFrame.attacks_f.get()
+        self.colors['attacks background'] = self.colorFrame.attacks_b.get()
+        self.colors['hp font'] = self.colorFrame.hp_f.get()
+        self.colors['hp background'] = self.colorFrame.hp_b.get()
+        self.colors['init font'] = self.colorFrame.init_f.get()
+        self.colors['init background'] = self.colorFrame.init_b.get()
+        self.colors['cmb font'] = self.colorFrame.cmb_f.get()
+        self.colors['cmb background'] = self.colorFrame.cmb_b.get()
+        self.colors['saves font'] = self.colorFrame.saves_f.get()
+        self.colors['saves background'] = self.colorFrame.saves_b.get()
+        self.colors['specials font'] = self.colorFrame.specials_f.get()
+        self.colors['specials background'] = self.colorFrame.specials_b.get()
+        self.colors['basic die font'] = self.colorFrame.basic_f.get()
+        self.colors['basic die background'] = self.colorFrame.basic_b.get()
+        self.colors['maneuvers font'] = self.colorFrame.maneuv_f.get()
+        self.colors['maneuvers background'] = self.colorFrame.maneuv_b.get()
+        self.colors['submacros font'] = self.colorFrame.sub_f.get()
+        self.colors['submacros background'] = self.colorFrame.sub_b.get()
+
+        tk.Toplevel.destroy(self.colorFrame)
+
+        self.button_color_frame['state'] = tk.NORMAL
 
     def options_frame(self):
 
@@ -251,6 +394,10 @@ class App:
 
         self.button_option_frame['state'] = tk.NORMAL
 
+    def options_close(self):
+        tk.Toplevel.destroy(self.optionsFrame)
+        self.button_option_frame['state'] = tk.NORMAL
+
     def ask_xml(self):
         result = tkFileDialog.askdirectory(initialdir=self.options['xml_dir'])
         if result:
@@ -284,6 +431,7 @@ class App:
         config = ConfigParser.ConfigParser()
         config._sections['app'] = self.options
         config._sections['properties'] = self.properties
+        config._sections['colors'] = self.colors
 
         with open(self.config_file, 'wb') as cf:
             config.write(cf)
@@ -335,6 +483,7 @@ class App:
         token = Token(char, self.master_index, index_name)
         token.properties = self.properties
         token.options = self.options
+        token.colors = self.colors
         token.save(subdir)
         if subdir:
             self.progressFrame.text.insert(tk.INSERT, '   Creating ' + token.name + ' within folder ' + subdir[1:] + '\n')
