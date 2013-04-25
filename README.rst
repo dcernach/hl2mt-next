@@ -206,7 +206,7 @@ and want to go from Hero Lab exporting into Maptool without going through the hl
 line options:
 
 - --batch: Run in batch mode(don't use a GUI)
-- --config-file <filename>: Use <filename> instead of default.conf as the config file.
+- --config <filename>: Use <filename> instead of default.conf as the config file.
 
 Note: to create a new config file you should copy an existing file with a new .conf extension and then run the GUI to
 set it up how you want to.
