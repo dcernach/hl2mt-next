@@ -1218,12 +1218,19 @@ class Token:
             tmp += '<br>\n'
 
         tmp += '<br>\n'
+        if self.xml.get('playername'):
+            tmp += '<b>Player:</b> ' + self.xml.get('playername') + '<br>\n'
+        if self.xml.find('pathfindersociety') is not None:
+            tmp += '<b>PFS:</b> ' + self.xml.find('pathfindersociety').get('playernum')\
+                   + '-'+ self.xml.find('pathfindersociety').get('characternum') + '<br>\n'
         tmp += '<b>Race:</b> ' + self.race + '<br>\n'
         if self.gender:
                 tmp += '<b>Gender:</b> ' + self.gender + '<br>\n'
         tmp += '<b>Alignment:</b> ' + self.alignment + '<br>\n'
         if self.xml.find('deity').get('name'):
             tmp += '<b>Deity:</b> ' + self.xml.find('deity').get('name') + '<br>\n'
+        if self.xml.find('factions').find('faction') is not None:
+            tmp += '<b>Faction:</b> ' + self.xml.find('factions').find('faction').get('name') + '<br>\n'
         tmp += '<b>Size:</b> ' + self.size.title() + '<br>\n'
         money = ''
         if int(self.xml.find('money').get('pp')):
