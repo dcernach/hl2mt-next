@@ -1,5 +1,5 @@
 =========
-hl2mt
+hl2mt: Hero Lab to Maptool
 =========
 
 About
@@ -21,6 +21,7 @@ installing the 32bit versions of Python_ and PIL_. The 64bit version of PIL_ doe
 On Linux systems you'll need the following libraries:
 
     python-tk
+
     python-imaging
 
 Once you have Python_ installed you can download_ the zip file for hl2mt, unzip it and double click on the main.py
@@ -33,10 +34,10 @@ The basic usage concept behind hl2mt is you do up your encounters, PCs and monst
 into XML. hl2mt then parses the XML, pulls out the creatures and associates a portrait and token image to them. It then
 saves the creature into a Maptool token. To do this hl2mt needs 4 directories:
 
- - XML Dir: Where the Hero Lab XML is saved to
- - POG Dir: Where hl2mt will search for token images for each creature
- - Portrait Dir: Where hl2mt will search for portrait images for each creature
- - Token Dir: Where hl2mt will save the tokens
+- XML Dir: Where the Hero Lab XML is saved to
+- POG Dir: Where hl2mt will search for token images for each creature
+- Portrait Dir: Where hl2mt will search for portrait images for each creature
+- Token Dir: Where hl2mt will save the tokens
 
 The filename on the Hero Lab XML doesn't matter. It's the creature names that hl2mt works with. If you have an orcs.xml
 file with an Orc, Orc Champion and Chief Orc hl2mt will individually create "Orc", "Orc Champion" and "Chief Orc" tokens
@@ -51,15 +52,15 @@ creature it attempts to intelligently associate token/portrait images to each cr
 
 Assuming your creature is named Kobold Champion, hl2mt will try to find images named the following way:
 
- - Kobold?Champion.*
- - kobold?champion.*
- - Kobold.*
- - kobold.*
- - Champion.*
- - champion.*
- - Kobo*
- - kobo*
- - *
+- Kobold?Champion.*
+- kobold?champion.*
+- Kobold.*
+- kobold.*
+- Champion.*
+- champion.*
+- Kobo*
+- kobo*
+- Any file in the directory
 
 What this means is you can create tokens and portraits for basic types(skeleton, human, orc, elf) and create
 Hero Lab encounters that reference Orc Champion, Elf Archer, Human Wizard and it'll find the basic type. Later
@@ -67,8 +68,8 @@ you could go back and add a POG/Portrait for Orc Champion and re-run hl2mt and i
 token with the new images.
 
 To keep the token sizes down hl2mt will process any image you have in these directories. For portraits the
-image is downsized to be within 200x200 and converted to PNG. For POGs the image is downsized to be within
-128x128 and converted to PNG.
+image is downsized to be within 200x200 pixels and converted to PNG. For POGs the image is downsized to be within
+128x128 pixels and converted to PNG.
 
 
 Token Properties
@@ -82,19 +83,19 @@ values to a token that the framework manipulates via macros.
 hl2mt allows you to customize how the Hero Lab data gets converted into token properties. Below are the properties
 hl2mt works with:
 
- - Property Name: The campaign property name(Basic, Pathfinder, etc)
- - Character Name: What property the character name in Hero Lab should be assigned to
- - Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma: The numerical stat
- - Race, Alignment, Player: Basic character information
- - HP Current: The current hit points of the creature(after damage is applied)
- - HP Max: The max hit points of the creature
- - Initiative, Speed, Reach: More basic stats
- - AC Normal, AC flatfooted, AC touch: Basic defenses
- - CMD, CMD Flatfooted: Maneuver defenses
- - CMB: The creature's basic CMB
- - Melee Attack, Ranged Attack, BAB: Basic attack values
+- Property Name: The campaign property name(Basic, Pathfinder, etc)
+- Character Name: What property the character name in Hero Lab should be assigned to
+- Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma: The numerical stat
+- Race, Alignment, Player: Basic character information
+- HP Current: The current hit points of the creature(after damage is applied)
+- HP Max: The max hit points of the creature
+- Initiative, Speed, Reach: More basic stats
+- AC Normal, AC flatfooted, AC touch: Basic defenses
+- CMD, CMD Flatfooted: Maneuver defenses
+- CMB: The creature's basic CMB
+- Melee Attack, Ranged Attack, BAB: Basic attack values
 
-Each field can take multiple inputs. For example if you wanted a creatures Max HP to show up under HP and HP_MAX
+Each field can take multiple inputs. For example if you wanted a creature's Max HP to show up under HP and HP_MAX
 token properties, you'd use
 
     HP Max: HP,HP_MAX
@@ -142,7 +143,7 @@ They can be useful if you have newer players who aren't using to typing die roll
 
 **Items Macro**
 
-This is a simple list of every item carried by the creature. Unfortunately it's not editable as they requires forms
+This is a simple list of every item carried by the creature. Unfortunately it's not editable as that requires forms
 which would necessitate the use of library tokens.
 
 **HP Change Macro**
@@ -157,7 +158,7 @@ Hero Lab outputs extremely detailed data on feats, traits, special abilities, sp
 generates for your creatures. This is too much data to store on each token. If your library has 100 spellcasters
 all with magic missile it's wasteful to have 100 copies of magic missile described in your campaign. Also some
 creatures might have hundreds of feats, special abilities and spells and trying to include very detailed descriptions
-for each in a single token would make the token very unwieldy to work with in place.
+for each in a single token would make the token very unwieldy to work with in.
 
 So by default when hl2mt creates tokens it doesn't include this detailed data. Instead it creates simple lists
 on the token of feats, spells and so on, unless you turn on master indexing.
@@ -178,17 +179,19 @@ For example, let's say I have a skeleton on the map and my index table looks lik
 This is the skeleton's improved initiative feat. When I click on his feats macro and click on improved initiative
 it points to the 1st row in my master index table.
 
-If I leave a skeleton token on the map and run hl2mt with an orc and skeleton in the XML dir, the orc feats/specials
-will come first and the first row in my index table will no longer be improved initiative. My skeleton, on the table,
-will be broken when I load in the new index table(which has the orc data). New skeletons in the token library will
-work fine, they've been built with the new index, it's old tokens on the map that'll be out of date.
+If I leave a skeleton token on the map, delete my on disk table file and run hl2mt with an orc and skeleton in the XML
+dir, the orc feats/specials will come first and the first row in my index table will no longer be improved initiative.
+My skeleton, on the table, will be broken when I load in the new index table(which has the orc data). New skeletons
+in the token library will work fine, they've been built with the new index, it's old tokens on the map that'll be
+out of date.
 
 For this reason it can be a good idea to work with multiple indexes. For example when creating a Crypt of the
 Everflame campaign file I use a CryptEverFlame index with XML/Token dirs that are only for crypt creatures. I can
-build my module using that, save it, and in play I can use a HeroLabIndex index and not have to worry about
-breaking any of my old crypt module creatures that I've placed.
-
-This allows you to create multiple token sets that use multiple indexes in a single Maptool campaign.
+build my module using that, save it, and in play I can use a different index and not have to worry about
+breaking any of my old crypt module creatures that I've placed. In fact once this module is done the tokens I've
+created in it should never go stale, since they're referencing the static CryptEverFlame table in the saved campaign
+file. So you can keep a module around for years, or mail to other people, and the tokens saved within it should
+always work.
 
 Another example of use, let's say I'm a player and my DM is running a Maptool game but doesn't use hl2mt. If my
 PC name is Buddy Jesus I can create a BuddyJ index, use BuddyJ campaign properties and create my token against those.
@@ -202,8 +205,8 @@ hl2mt can be ran in command line mode which will bypass the GUI. This can be use
 and want to go from Hero Lab exporting into Maptool without going through the hl2mt GUI. There are two command
 line options:
 
- - --batch: Run in batch mode(don't use a GUI)
- - --config-file <filename>: Use <filename> instead of default.conf as the config file.
+- --batch: Run in batch mode(don't use a GUI)
+- --config-file <filename>: Use <filename> instead of default.conf as the config file.
 
 Note: to create a new config file you should copy an existing file with a new .conf extension and then run the GUI to
 set it up how you want to.
@@ -211,7 +214,7 @@ set it up how you want to.
 Plans
 -----
 
-Generally there are no plans to add in advanced macro functions. The goal of hl2mt is to instead to try to be as
+Generally there are no plans to add in advanced macro functions. The goal of hl2mt is to instead try to be as
 compatible as possible for existing frameworks. If you have a framework and you want it to work with hl2mt please
 let me know and I'll try to work with you to export the data from Hero Lab into a format your framework can use.
 
