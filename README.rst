@@ -27,6 +27,17 @@ On Linux systems you'll need the following libraries:
 Once you have Python_ installed you can download_ the zip file for hl2mt, unzip it and double click on the main.py
 file. That should bring up the application.
 
+
+Running
+-------
+
+In Windows after installing Python_ and PIL_, double click on the main.py file.
+
+In Linux run it as per the below:
+
+    python main.py
+
+
 Usage
 -----
 
