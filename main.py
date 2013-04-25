@@ -104,9 +104,9 @@ class App:
         if 'index_name' not in self.options:
             self.options['index_name'] = 'HeroLabIndex'
 
-        if 'property_name' not in self.properties:
+        if 'property name' not in self.properties:
             self.properties['property name'] = 'Basic'
-        if 'character_name' not in self.properties:
+        if 'character name' not in self.properties:
             self.properties['character name'] = 'Name'
         if 'hp max' not in self.properties:
             self.properties['hp max'] = 'HP'
