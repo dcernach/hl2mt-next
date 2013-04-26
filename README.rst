@@ -41,16 +41,16 @@ In Linux run it as per the below:
 Usage
 -----
 
-The basic usage concept behind hl2mt is you do up your encounters, PCs and monsters in Hero Lab and then export them
-into XML. hl2mt then parses the XML, pulls out the creatures and associates a portrait and token image to them. It then
-saves the creature into a Maptool token. To do this hl2mt needs 4 directories:
+The basic usage concept behind hl2mt is you do up your encounters, PCs and monsters in Hero Lab and then save them
+into a directory. hl2mt then opens the files, parses the XML, pulls out the creatures and associates a portrait and
+token image to them. It then saves the creature into a Maptool token. To do this hl2mt needs 4 directories:
 
-- XML Dir: Where the Hero Lab XML is saved to
+- Input Dir: Where the Hero Lab XML, por or stock files are
 - POG Dir: Where hl2mt will search for token images for each creature
 - Portrait Dir: Where hl2mt will search for portrait images for each creature
 - Token Dir: Where hl2mt will save the tokens
 
-The filename on the Hero Lab XML doesn't matter. It's the creature names that hl2mt works with. If you have an orcs.xml
+The filename on the Hero Lab file doesn't matter. It's the creature names that hl2mt works with. If you have an orcs.por
 file with an Orc, Orc Champion and Chief Orc hl2mt will individually create "Orc", "Orc Champion" and "Chief Orc" tokens
 and expect to find image files with those names in the POG and Portrait directories.
 
@@ -64,19 +64,22 @@ creature it attempts to intelligently associate token/portrait images to each cr
 Assuming your creature is named Kobold Champion, hl2mt will try to find images named the following way:
 
 - Kobold?Champion.*
-- kobold?champion.*
 - Kobold.*
-- kobold.*
 - Champion.*
-- champion.*
-- Kobo*
-- kobo*
-- Any file in the directory
+- Kobold*
+- Champion*
+- Default.*
+
+Note that if your Hero Lab file is in a sub-directory, hl2mt will first search for images in the same sub-directory
+in the image folders. If hl2mt can't find a file, it'll use a random file in the parent image directory.
 
 What this means is you can create tokens and portraits for basic types(skeleton, human, orc, elf) and create
 Hero Lab encounters that reference Orc Champion, Elf Archer, Human Wizard and it'll find the basic type. Later
 you could go back and add a POG/Portrait for Orc Champion and re-run hl2mt and it'll update your Orc Champion
 token with the new images.
+
+Also you're able to use sub-directories to further setup good defaults. You can create a Dragons directory and put
+in a Default.png image for a generic dragon, and then later put in images for Gold, Red, Blue and so on.
 
 To keep the token sizes down hl2mt will process any image you have in these directories. For portraits the
 image is downsized to be within 200x200 pixels and converted to PNG. For POGs the image is downsized to be within
@@ -208,19 +211,6 @@ Another example of use, let's say I'm a player and my DM is running a Maptool ga
 PC name is Buddy Jesus I can create a BuddyJ index, use BuddyJ campaign properties and create my token against those.
 Then I can email to the DM my token, index and campaign properties file and he can import all three into any campaign
 and I can use my token the way I want to.
-
-Command Line
-------------
-
-hl2mt can be ran in command line mode which will bypass the GUI. This can be useful if your working on a module
-and want to go from Hero Lab exporting into Maptool without going through the hl2mt GUI. There are two command
-line options:
-
-- --batch: Run in batch mode(don't use a GUI)
-- --config <filename>: Use <filename> instead of default.conf as the config file.
-
-Note: to create a new config file you should copy an existing file with a new .conf extension and then run the GUI to
-set it up how you want to.
 
 Plans
 -----

@@ -17,6 +17,7 @@ class Token:
         self.xml = character
         self.master_index = master_index
         self.index_name = index_name
+        self.filenames = []
         self.languages = []
         self.attrib_scores = {}
         self.attrib_bonuses = {}
@@ -64,10 +65,9 @@ class Token:
         self.parse_spells()
 
     def parse_base(self):
-        self.name = self.xml.get('name')
+        self.name = string.replace(self.xml.get('name'), ',', '')
         self.role = self.xml.get('role')
         self.player = self.xml.get('playername')
-        self.filename = string.replace(self.name, ' ', '_')
         self.race = self.xml.find('race').get('racetext')
         self.alignment = self.xml.find('alignment').get('name')
         self.size = self.xml.find('size').get('name').lower()
@@ -251,48 +251,59 @@ class Token:
 
     def _search_file(self, search_dir):
 
-        path = search_dir + self.subdir + '/'
+        paths = [search_dir + self.subdir + '/', search_dir + '/']
 
-        if glob.glob(path + string.replace(self.name, ' ', '?') + '.*'):
-            return glob.glob(path + string.replace(self.name, ' ', '?') + '.*')[0]
-        if glob.glob(path + string.replace(self.name.lower(), ' ', '?') + '.*'):
-            return glob.glob(path + string.replace(self.name.lower(), ' ', '?') + '.*')[0]
+        for path in paths:
+           # Full name search: Orc Chief
+            filename = self._find_image_file(glob.glob(path + string.replace(self.name, ' ', '?') + '.*'))
+            if filename:
+                return filename
+            filename = self._find_image_file(glob.glob(path + string.replace(self.name.lower(), ' ', '?') + '.*'))
+            if filename:
+                return filename
 
-        for name in string.split(self.name, ' '):
-            if glob.glob(path + name + '.*'):
-                return glob.glob(path + name + '.*')[0]
-            if glob.glob(path + name.lower() + '.*'):
-                return glob.glob(path + name.lower() + '.*')[0]
+            # Search for partials: Orc, Chief
+                filename = self._find_image_file(glob.glob(path + name + '.*'))
+                if filename:
+                    return filename
+                filename = self._find_image_file(glob.glob(path + name.lower() + '.*'))
+                if filename:
+                    return filename
 
-        if glob.glob(path + self.name[0:4] + '*'):
-            return glob.glob(path + self.name[0:4] + '*')[0]
-        if glob.glob(path + self.name[0:4].lower() + '*'):
-            return glob.glob(path + self.name[0:4].lower() + '*')[0]
+            # Search for star partials: Orc*, Chief*
+            for name in string.split(self.name, ' '):
+                filename = self._find_image_file(glob.glob(path + name + '*'))
+                if filename:
+                    return filename
+                filename = self._find_image_file(glob.glob(path + name.lower() + '*'))
+                if filename:
+                    return filename
 
+            # Look for Default.* or default.*
+            filename = self._find_image_file(glob.glob(path + 'Default.*'))
+            if filename:
+                return filename
+            filename = self._find_image_file(glob.glob(path + 'default.*'))
+            if filename:
+                return filename
+
+        # Fall through, grab *
         path = search_dir + '/'
+        filename = self._find_image_file(glob.glob(path + '*'))
 
-        if glob.glob(path + string.replace(self.name, ' ', '?') + '.*'):
-            return glob.glob(path + string.replace(self.name, ' ', '?') + '.*')[0]
-        if glob.glob(path + string.replace(self.name.lower(), ' ', '?') + '.*'):
-            return glob.glob(path + string.replace(self.name.lower(), ' ', '?') + '.*')[0]
+        return filename
 
-        for name in string.split(self.name, ' '):
-            if glob.glob(path + name + '.*'):
-                return glob.glob(path + name + '.*')[0]
-            if glob.glob(path + name.lower() + '.*'):
-                return glob.glob(path + name.lower() + '.*')[0]
+    def _find_image_file(self, files):
 
-        if glob.glob(path + self.name[0:4] + '*'):
-            return glob.glob(path + self.name[0:4] + '*')[0]
-        if glob.glob(path + self.name[0:4].lower() + '*'):
-            return glob.glob(path + self.name[0:4].lower() + '*')[0]
+        for filename in files:
+            if os.path.isfile(filename):
+                return filename
 
-        return glob.glob(path + '*')[0]
+        return False
 
     def find_pog(self):
 
         image_name = self._search_file(self.options['pog_dir'])
-
         im = Image.open(image_name)
         size = (128, 128)
         im.thumbnail(size, Image.ANTIALIAS)
@@ -878,7 +889,6 @@ class Token:
                        str(self.get_index_row(v) + 1) + ';lname=' + k + '&quot;, currentToken())]'
             else:
                 xml += k
-                xml += '&lt;br&gt;&#xd;\n'
             xml += '&lt;br&gt;&#xd;\n'
 
         #</body>
@@ -1326,7 +1336,14 @@ class Token:
         if not os.path.exists(full_dir):
             os.makedirs(full_dir)
 
-        filename = full_dir + '/' + self.filename + '.rptok'
+        filename = full_dir + '/' + string.replace(self.name, ' ', '_') + '.rptok'
+        num = 1
+        while filename in self.filenames:
+            filename = full_dir + '/' + string.replace(self.name, ' ', '_') + str(num) + '.rptok'
+            num += 1
+
+        self.filename = filename
+
         rptok = zipfile.ZipFile(filename, 'w')
         rptok.writestr('properties.xml', self.properties_xml)
         rptok.writestr('content.xml', self.content_xml.encode('utf-8'))

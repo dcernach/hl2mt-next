@@ -7,6 +7,8 @@ import argparse
 import os
 import glob
 import string
+import re
+import zipfile
 from pathfinder import Token, Table
 
 
@@ -32,6 +34,7 @@ class App:
         self.check_defaults()
 
         self.master_index = []
+        self.filenames = []
         self.config_file = config_file
 
         frame = tk.Frame(master)
@@ -48,12 +51,12 @@ class App:
         self.option_file['values'] = tuple(option_files)
         self.option_file.grid(row=0, column=0, columnspan=2)
 
-        self.entry_xml = ttk.Entry(frame, width=50)
-        self.entry_xml.grid(row=1, column=1)
-        self.entry_xml.insert(0, self.options['xml_dir'])
+        self.entry_input = ttk.Entry(frame, width=50)
+        self.entry_input.grid(row=1, column=1)
+        self.entry_input.insert(0, self.options['input_dir'])
 
-        self.button_ask_xml = ttk.Button(frame, text='XML Dir', command=self.ask_xml)
-        self.button_ask_xml.grid(row=1, column=0)
+        self.button_ask_input = ttk.Button(frame, text='Input Dir', command=self.ask_input)
+        self.button_ask_input.grid(row=1, column=0)
 
         self.entry_pog = ttk.Entry(frame, width=50)
         self.entry_pog.grid(row=2, column=1)
@@ -93,7 +96,7 @@ class App:
 
     def check_defaults(self):
 
-        for opt in ['xml_dir', 'pog_dir', 'token_dir', 'portrait_dir']:
+        for opt in ['input_dir', 'pog_dir', 'token_dir', 'portrait_dir']:
             if opt not in self.options:
                 self.options[opt] = os.getcwd()
 
@@ -149,8 +152,8 @@ class App:
             self.colors = {}
 
         self.check_defaults()
-        self.entry_xml.delete(0, tk.END)
-        self.entry_xml.insert(0, self.options['xml_dir'])
+        self.entry_input.delete(0, tk.END)
+        self.entry_input.insert(0, self.options['input_dir'])
         self.entry_pog.delete(0, tk.END)
         self.entry_pog.insert(0, self.options['pog_dir'])
         self.entry_portrait.delete(0, tk.END)
@@ -398,12 +401,16 @@ class App:
         tk.Toplevel.destroy(self.optionsFrame)
         self.button_option_frame['state'] = tk.NORMAL
 
-    def ask_xml(self):
-        result = tkFileDialog.askdirectory(initialdir=self.options['xml_dir'])
+    def progress_close(self):
+        tk.Toplevel.destroy(self.progressFrame)
+        self.button_process['state'] = tk.NORMAL
+
+    def ask_input(self):
+        result = tkFileDialog.askdirectory(initialdir=self.options['input_dir'])
         if result:
-            self.options['xml_dir'] = result
-            self.entry_xml.delete(0, tk.END)
-            self.entry_xml.insert(0, result)
+            self.options['input_dir'] = result
+            self.entry_input.delete(0, tk.END)
+            self.entry_input.insert(0, result)
 
     def ask_token(self):
         result = tkFileDialog.askdirectory(initialdir=self.options['token_dir'])
@@ -428,6 +435,8 @@ class App:
 
     def process_xml(self):
 
+        self.button_process['state'] = tk.DISABLED
+
         config = ConfigParser.ConfigParser()
         config._sections['app'] = self.options
         config._sections['properties'] = self.properties
@@ -450,19 +459,26 @@ class App:
         self.progressFrame.text.insert(tk.INSERT, 'Processing files...\n')
 
         self.progressFrame.button_done = ttk.Button(self.progressFrame, text="Close",
-                                                    command=self.progressFrame.destroy)
+                                                    command=self.progress_close)
         self.progressFrame.button_done.grid(row=1, column=0, columnspan=2)
+
+        self.progressFrame.update()
 
         table = Table(self.options['token_dir'], self.options['index_name'])
         self.master_index = table.master_index
+        self.filenames = []
         if int(self.options['index']):
             self.progressFrame.text.insert(tk.INSERT, '\nSearching for and reading in old master index\n')
+            self.progressFrame.update()
+            self.progressFrame.text.see(tk.END)
 
-        for dirpath, dirnames, filenames in os.walk(self.options['xml_dir']):
+        for dirpath, dirnames, filenames in os.walk(self.options['input_dir']):
             for filename in [f for f in filenames if f.endswith(".xml")]:
                 xml_file = os.path.join(dirpath, filename)
-                subdir = string.replace(dirpath, self.options['xml_dir'], '')
-                self.progressFrame.text.insert(tk.INSERT, '\nParsing' + xml_file + '\n')
+                subdir = string.replace(dirpath, self.options['input_dir'], '')
+                self.progressFrame.text.insert(tk.INSERT, '\nParsing ' + xml_file + '\n')
+                self.progressFrame.update()
+                self.progressFrame.text.see(tk.END)
                 tree = ET.parse(xml_file)
                 root = tree.getroot()
 
@@ -474,71 +490,54 @@ class App:
                     for minion in minions.iter('character'):
                         self.make_token(minion, subdir, table.index_name)
 
+            # Parse Por/Stock files
+            for filename in [f for f in filenames if f.endswith(".por") or f.endswith(".stock")]:
+                lab_file = os.path.join(dirpath, filename)
+                subdir = string.replace(dirpath, self.options['input_dir'], '')
+                self.progressFrame.text.insert(tk.INSERT, '\nReading ' + lab_file + '\n')
+                self.progressFrame.update()
+                self.progressFrame.text.see(tk.END)
+
+                lab_zip = zipfile.ZipFile(lab_file, 'r')
+                for name in lab_zip.namelist():
+                    if re.search('statblocks_xml.*\.xml', name):
+                        xml_file = lab_zip.open(name)
+                        self.progressFrame.text.insert(tk.INSERT, '\nParsing ' + name + '\n')
+                        self.progressFrame.update()
+                        self.progressFrame.text.see(tk.END)
+                        tree = ET.parse(xml_file)
+                        xml_file.close()
+                        root = tree.getroot()
+
+                        for char in root.iter('character'):
+                            minions = char.find('minions')
+                            char.remove(minions)
+                            self.make_token(char, subdir, table.index_name)
+
+                            for minion in minions.iter('character'):
+                                self.make_token(minion, subdir, table.index_name)
+                lab_zip.close()
+
         if int(self.options['index']):
             self.progressFrame.text.insert(tk.INSERT, '\nSaving master index: ' + table.index_name + '\n')
+            self.progressFrame.update()
+            self.progressFrame.text.see(tk.END)
             table.save()
         self.progressFrame.text.insert(tk.INSERT, '\nCompleted')
+        self.progressFrame.update()
+        self.progressFrame.text.see(tk.END)
 
     def make_token(self, char, subdir, index_name):
         token = Token(char, self.master_index, index_name)
         token.properties = self.properties
         token.options = self.options
         token.colors = self.colors
+        token.filenames = self.filenames
         token.save(subdir)
-        if subdir:
-            self.progressFrame.text.insert(tk.INSERT, '   Creating ' + token.name + ' within folder ' + subdir[1:] + '\n')
-        else:
-            self.progressFrame.text.insert(tk.INSERT, '   Creating ' + token.name + '\n')
+        self.progressFrame.text.insert(tk.INSERT, '   Writing ' + token.filename + '\n')
 
         self.master_index = token.master_index
-
-
-def batch_mode(config_file):
-        config = ConfigParser.ConfigParser()
-        config.read(config_file)
-        options = config._sections['app']
-        properties = config._sections['properties']
-        print "Using config file: " + config_file + '\n'
-
-        table = Table(options['token_dir'], options['index_name'])
-        if int(options['index']):
-            print 'Searching for and reading in old master index'
-
-        for dirpath, dirnames, filenames in os.walk(options['xml_dir']):
-            for filename in [f for f in filenames if f.endswith(".xml")]:
-                xml_file = os.path.join(dirpath, filename)
-                subdir = string.replace(dirpath, options['xml_dir'], '')
-                print '\nParsing' + xml_file
-                tree = ET.parse(xml_file)
-                root = tree.getroot()
-
-                for char in root.iter('character'):
-                    minions = char.find('minions')
-                    char.remove(minions)
-                    table.master_index = make_token(char, subdir, table.index_name, table.master_index, properties,
-                                                    options)
-
-                    for minion in minions.iter('character'):
-                        table.master_index = make_token(minion, subdir, table.index_name, table.master_index,
-                                                        properties, options)
-
-        if int(options['index']):
-            print '\nSaving master index: ' + table.index_name
-            table.save()
-        print '\nCompleted'
-
-
-def make_token(char, subdir, index_name, master_index, properties, options):
-    token = Token(char, master_index, index_name)
-    token.properties = properties
-    token.options = options
-    token.save(subdir)
-    if subdir:
-        print '   Creating ' + token.name + ' within folder ' + subdir[1:]
-    else:
-        print '   Creating ' + token.name
-
-    return token.master_index
+        self.filenames.append(token.filename)
 
 parser = argparse.ArgumentParser(
     prog='main',
@@ -548,13 +547,9 @@ This script will parse a directory of HeroLab exports and convert any characters
 Each character in the XML file should have a portrait and POG image that matches the character name.''')
 
 parser.add_argument('--config', help="Alternate config file.", default='default.conf', dest='config')
-parser.add_argument('--batch', help="Run in batch mode.", action='store_true')
 
 options = parser.parse_args()
 
-if options.batch:
-    batch_mode(options.config)
-else:
-    root = tk.Tk()
-    app = App(root, options.config)
-    root.mainloop()
+root = tk.Tk()
+app = App(root, options.config)
+root.mainloop()
