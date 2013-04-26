@@ -451,16 +451,19 @@ class App:
 
         self.progressFrame.sbar = tk.Scrollbar(self.progressFrame)
         self.progressFrame.text = tk.Text(self.progressFrame, relief=tk.SUNKEN)
-        self.progressFrame.text.grid(row=0, column=0)
+        self.progressFrame.text.grid(row=0, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
         self.progressFrame.sbar.config(command=self.progressFrame.text.yview)
         self.progressFrame.text.config(yscrollcommand=self.progressFrame.sbar.set)
         self.progressFrame.sbar.grid(row=0, column=1, sticky=tk.N + tk.S)
+        tk.Grid.rowconfigure(self.progressFrame, 0, weight=1)
+        tk.Grid.columnconfigure(self.progressFrame, 0, weight=1)
 
         self.progressFrame.text.insert(tk.INSERT, 'Processing files...\n')
 
         self.progressFrame.button_done = ttk.Button(self.progressFrame, text="Close",
                                                     command=self.progress_close)
         self.progressFrame.button_done.grid(row=1, column=0, columnspan=2)
+        self.progressFrame.button_done['state'] = tk.DISABLED
 
         self.progressFrame.update()
 
@@ -498,25 +501,28 @@ class App:
                 self.progressFrame.update()
                 self.progressFrame.text.see(tk.END)
 
-                lab_zip = zipfile.ZipFile(lab_file, 'r')
-                for name in lab_zip.namelist():
-                    if re.search('statblocks_xml.*\.xml', name):
-                        xml_file = lab_zip.open(name)
-                        self.progressFrame.text.insert(tk.INSERT, '\nParsing ' + name + '\n')
-                        self.progressFrame.update()
-                        self.progressFrame.text.see(tk.END)
-                        tree = ET.parse(xml_file)
-                        xml_file.close()
-                        root = tree.getroot()
+                try:
+                    lab_zip = zipfile.ZipFile(lab_file, 'r')
+                    for name in lab_zip.namelist():
+                        if re.search('statblocks_xml.*\.xml', name):
+                            xml_file = lab_zip.open(name)
+                            self.progressFrame.text.insert(tk.INSERT, '\nParsing ' + name + '\n')
+                            self.progressFrame.update()
+                            self.progressFrame.text.see(tk.END)
+                            tree = ET.parse(xml_file)
+                            xml_file.close()
+                            root = tree.getroot()
 
-                        for char in root.iter('character'):
-                            minions = char.find('minions')
-                            char.remove(minions)
-                            self.make_token(char, subdir, table.index_name)
+                            for char in root.iter('character'):
+                                minions = char.find('minions')
+                                char.remove(minions)
+                                self.make_token(char, subdir, table.index_name)
 
-                            for minion in minions.iter('character'):
-                                self.make_token(minion, subdir, table.index_name)
-                lab_zip.close()
+                                for minion in minions.iter('character'):
+                                    self.make_token(minion, subdir, table.index_name)
+                    lab_zip.close()
+                except zipfile.BadZipfile:
+                    pass
 
         if int(self.options['index']):
             self.progressFrame.text.insert(tk.INSERT, '\nSaving master index: ' + table.index_name + '\n')
@@ -526,6 +532,7 @@ class App:
         self.progressFrame.text.insert(tk.INSERT, '\nCompleted')
         self.progressFrame.update()
         self.progressFrame.text.see(tk.END)
+        self.progressFrame.button_done['state'] = tk.NORMAL
 
     def make_token(self, char, subdir, index_name):
         token = Token(char, self.master_index, index_name)
