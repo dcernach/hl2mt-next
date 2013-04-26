@@ -263,6 +263,7 @@ class Token:
                 return filename
 
             # Search for partials: Orc, Chief
+            for name in string.split(self.name, ' '):
                 filename = self._find_image_file(glob.glob(path + name + '.*'))
                 if filename:
                     return filename
