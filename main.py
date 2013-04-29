@@ -572,6 +572,7 @@ class App:
 
         self.master_index = MasterIndex(self.options)
         self.filenames = []
+        issues = ''
 
         for dirpath, dirnames, filenames in os.walk(self.options['input_dir']):
             for filename in [f for f in filenames if f.endswith(".xml")]:
@@ -620,9 +621,7 @@ class App:
                                     self.make_token(minion, subdir)
                     lab_zip.close()
                 except zipfile.BadZipfile:
-                    self.progressFrame.text.insert(tk.INSERT, '!!! ' + filename +
-                                                              ' does not appear to be in zip format\n')
-                    self.progressFrame.text.see(tk.END)
+                    issues += '!!! ' + filename + ' does not appear to be in zip format\n'
 
         if self.options['index'] == 'Maptool Table':
             self.progressFrame.text.insert(tk.INSERT, '\nSaving ' + self.options['token_dir'] +
@@ -636,6 +635,10 @@ class App:
             self.progressFrame.update()
             self.progressFrame.text.see(tk.END)
             self.master_index.save()
+
+        if issues:
+            self.progressFrame.text.insert(tk.INSERT, issues)
+            self.progressFrame.text.see(tk.END)
 
         self.progressFrame.text.insert(tk.INSERT, '\nCompleted')
         self.progressFrame.update()

@@ -1384,13 +1384,13 @@ class Token:
         self.pog.save(output, 'png')
         rptok.writestr('assets/' + self.pog_asset, output.getvalue())
         output.close()
-        rptok.writestr('assets/' + self.pog_md5, self.pog_xml)
+        rptok.writestr('assets/' + self.pog_md5, self.pog_xml.encode('utf-8'))
 
         output = StringIO.StringIO()
         self.portrait.save(output, 'png')
         rptok.writestr('assets/' + self.portrait_asset, output.getvalue())
         output.close()
-        rptok.writestr('assets/' + self.portrait_md5, self.portrait_xml)
+        rptok.writestr('assets/' + self.portrait_md5, self.portrait_xml.encode('utf-8'))
 
         output = StringIO.StringIO()
         self.thumbnail.save(output, 'png')
