@@ -540,37 +540,36 @@ class Token:
 
         if self.properties['hp current'] and self.properties['hp max']:
 
-            tmp = '[h:status = input('
-            tmp += '"hpChange|0|Number of Hit Points",'
-            tmp += '"dmgOrHealing|Damage,Healing|Is the character taking damage or being healed?|RADIO|SELECT=0")]'
-            tmp += '[h:abort(status)]'
-            tmp += '[if(dmgOrHealing == 0),CODE:'
-            tmp += '{'
-            tmp += '[h:' + self.properties['hp current'] + ' = ' + self.properties['hp current'] + ' - hpChange]'
-            tmp += '[h:bar.Health = ' + self.properties['hp current'] + ' / ' + self.properties['hp max'] + ']'
-            tmp += '[r:token.name] loses [r:hpChange] hit points.'
-            tmp += '};'
-            tmp += '{'
-            tmp += '[h:diff = ' + self.properties['hp max'] + ' - ' + self.properties['hp current'] + ']'
-            tmp += '[h:' + self.properties['hp current'] + ' = min(' + self.properties['hp current'] + '+hpChange, ' + \
-                   self.properties['hp max'] + ')]'
-            tmp += '[h:bar.Health = ' + self.properties['hp current'] + ' / ' + self.properties['hp max'] + ']'
-            tmp += '[r:token.name] is healed and gains  [r:min(diff,hpChange)] hit points.'
-            tmp += '};]'
+            tmp = '[h:status = input(\n'
+            tmp += '"hpChange|0|Number of Hit Points",\n'
+            tmp += '"dmgOrHealing|Damage,Healing|Is the character taking damage or being healed?|RADIO|SELECT=0")]\n'
+            tmp += '[h:abort(status)]\n'
+            tmp += '[if(dmgOrHealing == 0),CODE:\n'
+            tmp += '{\n'
+            tmp += '[h:' + self.properties['hp current'] + ' = ' + self.properties['hp current'] + ' - hpChange]\n'
+            tmp += '[h:bar.Health = ' + self.properties['hp current'] + ' / ' + self.properties['hp max'] + ']\n'
+            tmp += '[r:token.name] loses [r:hpChange] hit points.\n'
+            tmp += '};\n'
+            tmp += '{\n'
+
+            tmp += '[h:' + self.properties['hp current'] + ' = ' + self.properties['hp current'] + ' + hpChange]\n'
+            tmp += '[h:bar.Health = ' + self.properties['hp current'] + ' / ' + self.properties['hp max'] + ']\n'
+            tmp += '[r:token.name] is healed and gains  [r:hpChange] hit points.\n'
+            tmp += '};]\n'
         else:
-            tmp = '[h:status = input('
-            tmp += '"hpChange|0|Number of Hit Points",'
-            tmp += '"dmgOrHealing|Damage,Healing|Is the character taking damage or being healed?|RADIO|SELECT=0")]'
-            tmp += '[h:abort(status)]'
-            tmp += '[if(dmgOrHealing == 0),CODE:'
-            tmp += '{'
-            tmp += '[h:' + self.properties['hp max'] + ' = ' + self.properties['hp max'] + ' - hpChange]'
-            tmp += '[r:token.name] loses [r:hpChange] hit points.'
-            tmp += '};'
-            tmp += '{'
-            tmp += '[h:' + self.properties['hp max'] + ' = ' + self.properties['hp max'] + ' + hpChange]'
-            tmp += '[r:token.name] is gains  [r:hpChange] hit points.'
-            tmp += '};]'
+            tmp = '[h:status = input(\n'
+            tmp += '"hpChange|0|Number of Hit Points",\n'
+            tmp += '"dmgOrHealing|Damage,Healing|Is the character taking damage or being healed?|RADIO|SELECT=0")]\n'
+            tmp += '[h:abort(status)]\n'
+            tmp += '[if(dmgOrHealing == 0),CODE:\n'
+            tmp += '{\n'
+            tmp += '[h:' + self.properties['hp max'] + ' = ' + self.properties['hp max'] + ' - hpChange]\n'
+            tmp += '[r:token.name] loses [r:hpChange] hit points.\n'
+            tmp += '};\n'
+            tmp += '{\n'
+            tmp += '[h:' + self.properties['hp max'] + ' = ' + self.properties['hp max'] + ' + hpChange]\n'
+            tmp += '[r:token.name] is gains  [r:hpChange] hit points.\n'
+            tmp += '};]\n'
 
         xml += cgi.escape(tmp)
 
@@ -1320,7 +1319,6 @@ class Token:
                 if char_class.find('arcanespellfailure').get('text') != '0%':
                     arcane_fail += '<b>' + char_class.get('name') + '</b>: ' + \
                                    char_class.find('arcanespellfailure').get('text') + '<br>'
-
 
         if classes:
             tmp += '<h3>Classes (Lvl ' + self.xml.find('classes').get('level') + ') </h3>\n'
