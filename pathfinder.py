@@ -13,10 +13,9 @@ import cgi
 class Token:
     """The Token class parses a Hero Lab XML character block and converts it into a Maptool token"""
 
-    def __init__(self, character, master_index, index_name):
+    def __init__(self, character, master_index):
         self.xml = character
         self.master_index = master_index
-        self.index_name = index_name
         self.filenames = []
         self.languages = []
         self.attrib_scores = {}
@@ -500,7 +499,8 @@ class Token:
         if self.items and int(self.options['items']):
             xml += self.items_macro_xml()
 
-        xml += self.list_show_macro_xml()
+        if self.options['index'] == 'Maptool Table':
+            xml += self.list_show_macro_xml()
 
         xml += '    </macroPropertiesMap>\n'
 
@@ -755,10 +755,11 @@ class Token:
                 xml += '&lt;h2&gt;&lt;u&gt;Level ' + str(spell['level']) + ' Spells &lt;/u&gt;&lt;/h2&gt;&#xd;\n'
 
             sname = spell['name']
-            if int(self.options['index']):
+            # Table indexing
+            if self.options['index'] == 'Maptool Table':
                 xml += '[r: macrolink(&quot;' + sname + \
                        '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;row=' +\
-                       str(self.get_index_row(self.spell_html(spell)) + 1) + ';lname=' + sname + \
+                       str(self.master_index.get_index(sname, self.spell_html(spell)) + 1) + ';lname=' + sname + \
                        '&quot;, currentToken())]'
                 if spell['save'].lower() != 'none':
                     xml += ' (CL:' + spell['casterlevel'] + ' / DC:' + spell['dc'] + ')'
@@ -766,6 +767,7 @@ class Token:
                     xml += ' (CL:' + spell['casterlevel'] + ')'
 
                 xml += '&lt;br&gt;&#xd;\n'
+            # No indexing
             else:
                 xml += spell['name']
                 if spell['save'].lower() != 'none':
@@ -884,10 +886,12 @@ class Token:
         xml += '&lt;br&gt;&#xd;\n'
 
         for k, v in items.items():
-            if int(self.options['index']):
+            # Table index
+            if self.options['index'] == 'Maptool Table':
                 # [r: macroLink("k", "lshow@token", "none", "row=num;name=k", currentToken())
                 xml += '[r: macrolink(&quot;' + k + '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;row=' + \
-                       str(self.get_index_row(v) + 1) + ';lname=' + k + '&quot;, currentToken())]'
+                       str(self.master_index.get_index(k, v) + 1) + ';lname=' + k + '&quot;, currentToken())]'
+            # No index
             else:
                 xml += k
             xml += '&lt;br&gt;&#xd;\n'
@@ -988,13 +992,6 @@ class Token:
 
         return xml
 
-    def get_index_row(self, value):
-
-        if not value in self.master_index:
-            self.master_index.append(value)
-
-        return self.master_index.index(value)
-
     def list_show_macro_xml(self):
 
         background = self.colors['submacros background']
@@ -1033,7 +1030,7 @@ class Token:
         # <h1><u>[r:lname]</u></h1>
         xml += '&lt;h1&gt;&lt;u&gt;[r:lname]&lt;/u&gt;&lt;/h1&gt;&#xd;\n'
         # [r: table("HeroLabIndex", row)]
-        xml += '[r: table(&quot;' + self.index_name + '&quot;, row)]\n'
+        xml += '[r: table(&quot;' + self.options['table_name'] + '&quot;, row)]\n'
         #</body>
         xml += '&lt;/body&gt;&#xd;\n'
         #</html>
@@ -1368,19 +1365,20 @@ class Token:
         rptok.close()
 
 
-class Table:
-    """The Table class takes an index array and outputs a Maptool table file"""
+class MasterIndex:
+    """The MasterIndex class handles creating an index for feats, spells and specials"""
 
-    def __init__(self, table_dir, index_name):
-        self.index_name = index_name
-        self.table_dir = table_dir
-        self.master_index = self.read_index()
+    def __init__(self, options):
+        self.options = options
+        self.names = []
+        self.values = []
+        if self.options['index'] == 'Maptool Table':
+            self.read_table()
         self.properties = '<map>\n  <entry>\n    <string>version</string>\n' + \
                           '    <string>1.3.b87</string>\n  </entry>\n</map>'
 
-    def read_index(self):
-        filename = self.table_dir + '/' + self.index_name + '.mttable'
-        master_index = []
+    def read_table(self):
+        filename = self.options['token_dir'] + '/' + self.options['table_name'] + '.mttable'
         if os.path.isfile(filename):
             mttable = zipfile.ZipFile(filename, 'r')
             xml = mttable.read('content.xml')
@@ -1388,23 +1386,29 @@ class Table:
 
             root = ET.fromstring(xml)
             for entry in root.iter('net.rptools.maptool.model.LookupTable_-LookupEntry'):
-                master_index.append(cgi.escape(entry.find('value').text))
+                self.values.append(cgi.escape(entry.find('value').text))
 
-        return master_index
+    def get_index(self, name, value):
 
-    def make_content_xml(self):
+        if not value in self.values:
+            self.values.append(value)
+            self.names.append(name)
+
+        return self.values.index(value)
+
+    def make_table_xml(self):
         xml = '<net.rptools.maptool.model.LookupTable>\n'
         xml += '  <entryList>\n'
 
-        for num in range(len(self.master_index)):
+        for num in range(len(self.values)):
             xml += '    <net.rptools.maptool.model.LookupTable_-LookupEntry>\n'
             xml += '      <min>' + str(num + 1) + '</min>\n'
             xml += '      <max>' + str(num + 1) + '</max>\n'
-            xml += '      <value>' + self.master_index[num] + '</value>\n'
+            xml += '      <value>' + self.values[num] + '</value>\n'
             xml += '    </net.rptools.maptool.model.LookupTable_-LookupEntry>\n'
 
         xml += '  </entryList>\n'
-        xml += '  <name>' + self.index_name + '</name>\n'
+        xml += '  <name>' + self.options['table_name'] + '</name>\n'
         xml += '  <defaultRoll></defaultRoll>\n'
         xml += '  <visible>true</visible>\n'
         xml += '  <allowLookup>true</allowLookup>\n'
@@ -1413,9 +1417,10 @@ class Table:
         self.content_xml = xml
 
     def save(self):
-        self.make_content_xml()
-        filename = self.table_dir + '/' + self.index_name + '.mttable'
-        mttable = zipfile.ZipFile(filename, 'w')
-        mttable.writestr('properties.xml', self.properties)
-        mttable.writestr('content.xml', self.content_xml.encode('utf-8'))
-        mttable.close()
+        if self.options['index'] == 'Maptool Table':
+            self.make_table_xml()
+            filename = self.options['token_dir'] + '/' + self.options['table_name'] + '.mttable'
+            mttable = zipfile.ZipFile(filename, 'w')
+            mttable.writestr('properties.xml', self.properties)
+            mttable.writestr('content.xml', self.content_xml.encode('utf-8'))
+            mttable.close()

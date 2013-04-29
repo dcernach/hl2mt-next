@@ -9,7 +9,7 @@ import glob
 import string
 import re
 import zipfile
-from pathfinder import Token, Table
+from pathfinder import Token, MasterIndex
 
 
 class App:
@@ -33,7 +33,6 @@ class App:
 
         self.check_defaults()
 
-        self.master_index = []
         self.filenames = []
         self.config_file = config_file
 
@@ -85,14 +84,17 @@ class App:
         self.button_option_frame = ttk.Button(frame, text='Token Options', command=self.options_frame)
         self.button_option_frame.grid(row=6, column=0, columnspan=2)
 
+        self.button_index_frame = ttk.Button(frame, text='Indexing Options', command=self.index_frame)
+        self.button_index_frame.grid(row=7, column=0, columnspan=2)
+
         self.button_color_frame = ttk.Button(frame, text='Macro Colors', command=self.color_frame)
-        self.button_color_frame.grid(row=7, column=0, columnspan=2)
+        self.button_color_frame.grid(row=8, column=0, columnspan=2)
 
         self.button_process = ttk.Button(frame, text="Create Tokens", command=self.process_xml)
-        self.button_process.grid(row=8, column=0, padx=5, pady=5)
+        self.button_process.grid(row=9, column=0, padx=5, pady=5)
 
         self.button_quit = ttk.Button(frame, text="Quit", command=frame.quit)
-        self.button_quit.grid(row=8, column=1, padx=5, pady=5, sticky=tk.E)
+        self.button_quit.grid(row=9, column=1, padx=5, pady=5, sticky=tk.E)
 
     def check_defaults(self):
 
@@ -100,12 +102,26 @@ class App:
             if opt not in self.options:
                 self.options[opt] = os.getcwd()
 
-        for opt in ['vision', 'index', 'maneuvers', 'weapons', 'skills', 'hp', 'basic dice', 'items']:
+        for opt in ['vision', 'maneuvers', 'weapons', 'skills', 'hp', 'basic dice', 'items']:
             if opt not in self.options:
                 self.options[opt] = 0
 
-        if 'index_name' not in self.options:
-            self.options['index_name'] = 'HeroLabIndex'
+        if 'index' not in self.options:
+            self.options['index'] = 'None'
+
+        types = ['None', 'Maptool Table', 'Remote HTML: Zip', 'Remote HTML: SSH']
+        if self.options['index'] not in types:
+            self.options['index'] = 'None'
+
+        if 'table_name' not in self.options:
+            self.options['table_name'] = 'HeroLabIndex'
+
+        if 'zipfile' not in self.options:
+            self.options['zipfile'] = 'HeroLabIndex.zip'
+
+        for opt in ['http_base', 'ssh_host', 'ssh_user', 'ssh_dir']:
+            if opt not in self.options:
+                self.options[opt] = ''
 
         if 'property name' not in self.properties:
             self.properties['property name'] = 'Basic'
@@ -325,18 +341,6 @@ class App:
         self.optionsFrame.vision.var.set(self.options['vision'])
 
         v = tk.IntVar()
-        self.optionsFrame.index = ttk.Checkbutton(self.optionsFrame, text='Create a Master Index Table',
-                                                  variable=v, onvalue=1, offvalue=0)
-        self.optionsFrame.index.grid(row=1, column=0, sticky=tk.W)
-        self.optionsFrame.index.var = v
-        self.optionsFrame.index.var.set(self.options['index'])
-
-        ttk.Label(self.optionsFrame, text='Master Index Name:').grid(row=2, column=0)
-        self.optionsFrame.index_name = ttk.Entry(self.optionsFrame, width=20)
-        self.optionsFrame.index_name.grid(row=2, column=1, sticky=tk.W)
-        self.optionsFrame.index_name.insert(0, self.options['index_name'])
-
-        v = tk.IntVar()
         self.optionsFrame.maneuvers = ttk.Checkbutton(self.optionsFrame, text='Create Individual Maneuver Macros',
                                                       variable=v, onvalue=1, offvalue=0)
         self.optionsFrame.maneuvers.grid(row=3, column=0, sticky=tk.W)
@@ -384,9 +388,7 @@ class App:
     def options_frame_save(self):
 
         self.options['vision'] = self.optionsFrame.vision.var.get()
-        self.options['index'] = self.optionsFrame.index.var.get()
         self.options['maneuvers'] = self.optionsFrame.maneuvers.var.get()
-        self.options['index_name'] = self.optionsFrame.index_name.get()
         self.options['weapons'] = self.optionsFrame.weapons.var.get()
         self.options['skills'] = self.optionsFrame.skills.var.get()
         self.options['hp'] = self.optionsFrame.hp.var.get()
@@ -396,6 +398,107 @@ class App:
         tk.Toplevel.destroy(self.optionsFrame)
 
         self.button_option_frame['state'] = tk.NORMAL
+
+    def index_frame(self):
+
+        self.button_index_frame['state'] = tk.DISABLED
+
+        self.indexFrame = tk.Toplevel()
+        self.indexFrame.title('Index Options')
+
+        # Currently 2 supported options, table and remote html indexes
+
+        types = ['None', 'Maptool Table', 'Remote HTML: Zip', 'Remote HTML: SSH']
+
+        ttk.Label(self.indexFrame, text='Index Option').grid(row=0, column=0)
+        v = tk.StringVar()
+        self.indexFrame.index = ttk.Combobox(self.indexFrame, textvariable=v, state='readonly', width=20)
+        self.indexFrame.index.var = v
+        self.indexFrame.index.var.set(self.options['index'])
+        self.indexFrame.index['values'] = types
+        self.indexFrame.index.var.trace('w', self.index_change)
+        self.indexFrame.index.grid(row=0, column=1, sticky=tk.W)
+
+        ttk.Label(self.indexFrame, text='Maptool Table Name:').grid(row=1, column=0)
+        self.indexFrame.table_name = ttk.Entry(self.indexFrame, width=20)
+        self.indexFrame.table_name.grid(row=1, column=1, sticky=tk.W)
+        self.indexFrame.table_name.insert(0, self.options['table_name'])
+
+        ttk.Label(self.indexFrame, text='Base HTTP URL:').grid(row=2, column=0)
+        self.indexFrame.http_base = ttk.Entry(self.indexFrame, width=20)
+        self.indexFrame.http_base.grid(row=2, column=1, sticky=tk.W)
+        self.indexFrame.http_base.insert(0, self.options['http_base'])
+
+        ttk.Label(self.indexFrame, text='Zip Filename:').grid(row=3, column=0)
+        self.indexFrame.zipfile = ttk.Entry(self.indexFrame, width=20)
+        self.indexFrame.zipfile.grid(row=3, column=1, sticky=tk.W)
+        self.indexFrame.zipfile.insert(0, self.options['zipfile'])
+
+        ttk.Label(self.indexFrame, text='SSH Host:').grid(row=4, column=0)
+        self.indexFrame.ssh_host = ttk.Entry(self.indexFrame, width=20)
+        self.indexFrame.ssh_host.grid(row=4, column=1, sticky=tk.W)
+        self.indexFrame.ssh_host.insert(0, self.options['ssh_host'])
+
+        ttk.Label(self.indexFrame, text='SSH Username:').grid(row=5, column=0)
+        self.indexFrame.ssh_user = ttk.Entry(self.indexFrame, width=20)
+        self.indexFrame.ssh_user.grid(row=5, column=1, sticky=tk.W)
+        self.indexFrame.ssh_user.insert(0, self.options['ssh_user'])
+
+        ttk.Label(self.indexFrame, text='SSH Directory:').grid(row=6, column=0)
+        self.indexFrame.ssh_dir = ttk.Entry(self.indexFrame, width=20)
+        self.indexFrame.ssh_dir.grid(row=6, column=1, sticky=tk.W)
+        self.indexFrame.ssh_dir.insert(0, self.options['ssh_dir'])
+
+        self.indexFrame.button_save = ttk.Button(self.indexFrame, text="Save", command=self.index_frame_save)
+        self.indexFrame.button_save.grid(row=7, column=0, padx=5, pady=5, columnspan=2)
+
+        self.index_change(0, 0, 0)
+
+    def index_change(self, index, value, op):
+        index_type = self.indexFrame.index.var.get()
+
+        if index_type == 'Maptool Table':
+            self.indexFrame.table_name['state'] = tk.NORMAL
+            self.indexFrame.http_base['state'] = tk.DISABLED
+            self.indexFrame.zipfile['state'] = tk.DISABLED
+            self.indexFrame.ssh_host['state'] = tk.DISABLED
+            self.indexFrame.ssh_user['state'] = tk.DISABLED
+            self.indexFrame.ssh_dir['state'] = tk.DISABLED
+        elif index_type == 'Remote HTML: Zip':
+            self.indexFrame.table_name['state'] = tk.DISABLED
+            self.indexFrame.http_base['state'] = tk.NORMAL
+            self.indexFrame.zipfile['state'] = tk.NORMAL
+            self.indexFrame.ssh_host['state'] = tk.DISABLED
+            self.indexFrame.ssh_user['state'] = tk.DISABLED
+            self.indexFrame.ssh_dir['state'] = tk.DISABLED
+        elif index_type == 'Remote HTML: SSH':
+            self.indexFrame.table_name['state'] = tk.DISABLED
+            self.indexFrame.http_base['state'] = tk.NORMAL
+            self.indexFrame.zipfile['state'] = tk.DISABLED
+            self.indexFrame.ssh_host['state'] = tk.NORMAL
+            self.indexFrame.ssh_user['state'] = tk.NORMAL
+            self.indexFrame.ssh_dir['state'] = tk.NORMAL
+        else:
+            self.indexFrame.table_name['state'] = tk.DISABLED
+            self.indexFrame.http_base['state'] = tk.DISABLED
+            self.indexFrame.zipfile['state'] = tk.DISABLED
+            self.indexFrame.ssh_host['state'] = tk.DISABLED
+            self.indexFrame.ssh_user['state'] = tk.DISABLED
+            self.indexFrame.ssh_dir['state'] = tk.DISABLED
+
+    def index_frame_save(self):
+
+        self.options['index'] = self.indexFrame.index.var.get()
+        self.options['table_name'] = self.indexFrame.table_name.get()
+        self.options['http_base'] = self.indexFrame.http_base.get()
+        self.options['zipfile'] = self.indexFrame.zipfile.get()
+        self.options['ssh_host'] = self.indexFrame.ssh_host.get()
+        self.options['ssh_user'] = self.indexFrame.ssh_user.get()
+        self.options['ssh_dir'] = self.indexFrame.ssh_dir.get()
+
+        tk.Toplevel.destroy(self.indexFrame)
+
+        self.button_index_frame['state'] = tk.NORMAL
 
     def options_close(self):
         tk.Toplevel.destroy(self.optionsFrame)
@@ -467,13 +570,8 @@ class App:
 
         self.progressFrame.update()
 
-        table = Table(self.options['token_dir'], self.options['index_name'])
-        self.master_index = table.master_index
+        self.master_index = MasterIndex(self.options)
         self.filenames = []
-        if int(self.options['index']):
-            self.progressFrame.text.insert(tk.INSERT, '\nSearching for and reading in old master index\n')
-            self.progressFrame.update()
-            self.progressFrame.text.see(tk.END)
 
         for dirpath, dirnames, filenames in os.walk(self.options['input_dir']):
             for filename in [f for f in filenames if f.endswith(".xml")]:
@@ -488,10 +586,10 @@ class App:
                 for char in root.iter('character'):
                     minions = char.find('minions')
                     char.remove(minions)
-                    self.make_token(char, subdir, table.index_name)
+                    self.make_token(char, subdir)
 
                     for minion in minions.iter('character'):
-                        self.make_token(minion, subdir, table.index_name)
+                        self.make_token(minion, subdir)
 
             # Parse Por/Stock files
             for filename in [f for f in filenames if f.endswith(".por") or f.endswith(".stock")]:
@@ -516,28 +614,28 @@ class App:
                             for char in root.iter('character'):
                                 minions = char.find('minions')
                                 char.remove(minions)
-                                self.make_token(char, subdir, table.index_name)
+                                self.make_token(char, subdir)
 
                                 for minion in minions.iter('character'):
-                                    self.make_token(minion, subdir, table.index_name)
+                                    self.make_token(minion, subdir)
                     lab_zip.close()
                 except zipfile.BadZipfile:
                     self.progressFrame.text.insert(tk.INSERT, '!!! ' + filename +
                                                               ' does not appear to be in zip format\n')
                     self.progressFrame.text.see(tk.END)
 
-        if int(self.options['index']):
-            self.progressFrame.text.insert(tk.INSERT, '\nSaving master index: ' + table.index_name + '\n')
+        if self.options['index'] == 'Maptool Table':
+            self.progressFrame.text.insert(tk.INSERT, '\nSaving master index....\n')
             self.progressFrame.update()
             self.progressFrame.text.see(tk.END)
-            table.save()
+            self.master_index.save()
         self.progressFrame.text.insert(tk.INSERT, '\nCompleted')
         self.progressFrame.update()
         self.progressFrame.text.see(tk.END)
         self.progressFrame.button_done['state'] = tk.NORMAL
 
-    def make_token(self, char, subdir, index_name):
-        token = Token(char, self.master_index, index_name)
+    def make_token(self, char, subdir):
+        token = Token(char, self.master_index)
         token.properties = self.properties
         token.options = self.options
         token.colors = self.colors
@@ -545,7 +643,6 @@ class App:
         token.save(subdir)
         self.progressFrame.text.insert(tk.INSERT, '   Writing ' + token.filename + '\n')
 
-        self.master_index = token.master_index
         self.filenames.append(token.filename)
 
 parser = argparse.ArgumentParser(
