@@ -178,7 +178,7 @@ for each in a single token would make the token very unwieldy to work with in.
 So by default when hl2mt creates tokens it doesn't include this detailed data. Instead it creates simple lists
 on the token of feats, spells and so on, unless you turn on master indexing.
 
-** Maptool Table indexing **
+**Maptool Table indexing**
 
 If you turn on table indexing hl2mt will build a master index table of all your parsed creature's feats, spells,
 specials and so on and when it finishes it'll save all of that data into a
@@ -215,7 +215,7 @@ PC name is Buddy Jesus I can create a BuddyJ index, use BuddyJ campaign properti
 Then I can email to the DM my token, index and campaign properties file and he can import all three into any campaign
 and I can use my token the way I want to.
 
-** Remote HTML: Zip **
+**Remote HTML: Zip**
 
 While table indexes work pretty well and have the benefit that they create self contained campaigns, tables can grow
 to become excessively large. For example in my current install with 240 tokens hl2mt builds a table with nearly 800
