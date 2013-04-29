@@ -124,11 +124,11 @@ class Token:
 
     def parse_feats(self):
         for feat in self.xml.find('feats').iter('feat'):
-            self.feats[feat.get('name')] = self.pretty_html(feat.find('description').text)
+            self.feats[feat.get('name')] = feat.find('description').text
 
     def parse_traits(self):
         for trait in self.xml.find('traits').iter('trait'):
-            self.traits[trait.get('name')] = self.pretty_html(trait.find('description').text)
+            self.traits[trait.get('name')] = trait.find('description').text
 
     def parse_senses(self):
         for sense in self.xml.find('senses').iter('special'):
@@ -162,14 +162,14 @@ class Token:
             self.weapons.append(temp)
 
     def pretty_html(self, text):
-        text = string.replace(text, '\n', '&lt;br&gt;')
-        text = string.replace(text, 'Benefit:', '&lt;b&gt;Benefit:&lt;/b&gt;')
-        text = string.replace(text, 'Special:', '&lt;b&gt;Special:&lt;/b&gt;')
-        text = string.replace(text, 'Requirement:', '&lt;b&gt;Requirement:&lt;/b&gt;')
-        text = string.replace(text, 'Requirements:', '&lt;b&gt;Requirements:&lt;/b&gt;')
-        text = string.replace(text, 'Prerequisite:', '&lt;b&gt;Prerequisite:&lt;/b&gt;')
-        text = string.replace(text, 'Prerequisites:', '&lt;b&gt;Prerequisites:&lt;/b&gt;')
-        text = string.replace(text, 'Normal:', '&lt;b&gt;Normal:&lt;/b&gt;')
+        text = string.replace(text, '\n', '<br>')
+        text = string.replace(text, 'Benefit:', '<b>Benefit:</b>')
+        text = string.replace(text, 'Special:', '<b>Special:</b>')
+        text = string.replace(text, 'Requirement:', '<b>Requirement:</b>')
+        text = string.replace(text, 'Requirements:', '<b>Requirements:</b>')
+        text = string.replace(text, 'Prerequisite:', '<b>Prerequisite:</b>')
+        text = string.replace(text, 'Prerequisites:', '<b>Prerequisites:</b>')
+        text = string.replace(text, 'Normal:', '<b>Normal:</b>')
         return text
 
     def parse_items(self):
@@ -499,7 +499,7 @@ class Token:
         if self.items and int(self.options['items']):
             xml += self.items_macro_xml()
 
-        if self.options['index'] == 'Maptool Table':
+        if self.options['index'] != 'None':
             xml += self.list_show_macro_xml()
 
         xml += '    </macroPropertiesMap>\n'
@@ -759,8 +759,23 @@ class Token:
             if self.options['index'] == 'Maptool Table':
                 xml += '[r: macrolink(&quot;' + sname + \
                        '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;row=' +\
-                       str(self.master_index.get_index(sname, self.spell_html(spell)) + 1) + ';lname=' + sname + \
-                       '&quot;, currentToken())]'
+                       str(self.master_index.get_index(cgi.escape(self.spell_html(spell)))
+                           + 1) + ';lname=' + sname + '&quot;, currentToken())]'
+
+                if spell['save'].lower() != 'none':
+                    xml += ' (CL:' + spell['casterlevel'] + ' / DC:' + spell['dc'] + ')'
+                else:
+                    xml += ' (CL:' + spell['casterlevel'] + ')'
+
+                xml += '&lt;br&gt;&#xd;\n'
+            elif self.options['index'] == 'Remote HTML: Zip' or self.options['index'] == 'Remote HTML: SSH':
+                _ = self.master_index.get_index(self.spell_html(spell))
+                xml += '[r: macrolink(&quot;' + sname + \
+                       '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;url=' + \
+                       self.options['http_base'] + \
+                       self.master_index.create_filename(self.spell_html(spell)) +\
+                       ';lname=' + sname + '&quot;, currentToken())]'
+
                 if spell['save'].lower() != 'none':
                     xml += ' (CL:' + spell['casterlevel'] + ' / DC:' + spell['dc'] + ')'
                 else:
@@ -846,7 +861,7 @@ class Token:
         html += '<hr>\n'
         html += string.replace(spell['description'], '\n', '<br>')
 
-        return cgi.escape(html)
+        return html
 
     def list_macro_xml(self, name, items, width):
 
@@ -888,9 +903,16 @@ class Token:
         for k, v in items.items():
             # Table index
             if self.options['index'] == 'Maptool Table':
-                # [r: macroLink("k", "lshow@token", "none", "row=num;name=k", currentToken())
+                # [r: macroLink("k", "lshow@token", "none", "row=num;lname=k", currentToken())
                 xml += '[r: macrolink(&quot;' + k + '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;row=' + \
-                       str(self.master_index.get_index(k, v) + 1) + ';lname=' + k + '&quot;, currentToken())]'
+                       str(self.master_index.get_index(cgi.escape(self.pretty_html(v))) + 1) + ';lname=' + k +\
+                       '&quot;, currentToken())]'
+            elif self.options['index'] == 'Remote HTML: Zip' or self.options['index'] == 'Remote HTML: SSH':
+                # [r: macroLink("k", "lshow@token", "none", "url=url;lname=k", currentToken())
+                _ = self.master_index.get_index(self.pretty_html(v))
+                xml += '[r: macrolink(&quot;' + k + '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;url=' + \
+                       self.options['http_base'] + self.master_index.create_filename(self.pretty_html(v)) + ';lname=' +\
+                       k + '&quot;, currentToken())]'
             # No index
             else:
                 xml += k
@@ -1025,12 +1047,20 @@ class Token:
         xml += '&lt;body&gt;&#xd;\n'
         # [h:lname = getStrProp(macro.args, "lname")]
         xml += '[h:lname = getStrProp(macro.args, &quot;lname&quot;)]\n'
-        # [h:row = getStrProp(macro.args, "row")]
-        xml += '[h:row = getStrProp(macro.args, &quot;row&quot;)]\n'
         # <h1><u>[r:lname]</u></h1>
         xml += '&lt;h1&gt;&lt;u&gt;[r:lname]&lt;/u&gt;&lt;/h1&gt;&#xd;\n'
-        # [r: table("HeroLabIndex", row)]
-        xml += '[r: table(&quot;' + self.options['table_name'] + '&quot;, row)]\n'
+
+        if self.options['index'] == 'Maptool Table':
+            # [h:row = getStrProp(macro.args, "row")]
+            xml += '[h:row = getStrProp(macro.args, &quot;row&quot;)]\n'
+            # [r: table("HeroLabIndex", row)]
+            xml += '[r: table(&quot;' + self.options['table_name'] + '&quot;, row)]\n'
+        else:
+            # [h:url = getStrProp(macro.args, "url")]
+            xml += '[h:url = getStrProp(macro.args, &quot;url&quot;)]\n'
+            # [r: requestURL(url)]
+            xml += '[r: requestURL(url)]\n'
+
         #</body>
         xml += '&lt;/body&gt;&#xd;\n'
         #</html>
@@ -1230,7 +1260,7 @@ class Token:
             tmp += '<b>Player:</b> ' + self.xml.get('playername') + '<br>\n'
         if self.xml.find('pathfindersociety') is not None:
             tmp += '<b>PFS:</b> ' + self.xml.find('pathfindersociety').get('playernum')\
-                   + '-'+ self.xml.find('pathfindersociety').get('characternum') + '<br>\n'
+                   + '-' + self.xml.find('pathfindersociety').get('characternum') + '<br>\n'
         tmp += '<b>Race:</b> ' + self.race + '<br>\n'
         if self.gender:
                 tmp += '<b>Gender:</b> ' + self.gender + '<br>\n'
@@ -1370,7 +1400,6 @@ class MasterIndex:
 
     def __init__(self, options):
         self.options = options
-        self.names = []
         self.values = []
         if self.options['index'] == 'Maptool Table':
             self.read_table()
@@ -1388,11 +1417,10 @@ class MasterIndex:
             for entry in root.iter('net.rptools.maptool.model.LookupTable_-LookupEntry'):
                 self.values.append(cgi.escape(entry.find('value').text))
 
-    def get_index(self, name, value):
+    def get_index(self, value):
 
         if not value in self.values:
             self.values.append(value)
-            self.names.append(name)
 
         return self.values.index(value)
 
@@ -1416,6 +1444,26 @@ class MasterIndex:
 
         self.content_xml = xml
 
+    def create_filename(self, name):
+
+        return hashlib.md5(name.encode('utf-8')).hexdigest() + '.html'
+
+    def make_files(self):
+
+        for value in self.values:
+            content = '<html>'
+            content += '<head>'
+            content += '<title></title>'
+            content += '</head>'
+            content += '<body>'
+
+            content += value
+
+            content += '</body>'
+            content += '</html>'
+
+            yield self.create_filename(value), content
+
     def save(self):
         if self.options['index'] == 'Maptool Table':
             self.make_table_xml()
@@ -1424,3 +1472,10 @@ class MasterIndex:
             mttable.writestr('properties.xml', self.properties)
             mttable.writestr('content.xml', self.content_xml.encode('utf-8'))
             mttable.close()
+
+        if self.options['index'] == 'Remote HTML: Zip':
+            filename = self.options['token_dir'] + '/' + self.options['zipfile']
+            mtzip = zipfile.ZipFile(filename, 'w')
+            for name, contents in self.make_files():
+                mtzip.writestr(name, contents.encode('utf-8'))
+            mtzip.close()

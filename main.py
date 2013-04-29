@@ -408,7 +408,7 @@ class App:
 
         # Currently 2 supported options, table and remote html indexes
 
-        types = ['None', 'Maptool Table', 'Remote HTML: Zip', 'Remote HTML: SSH']
+        types = ['None', 'Maptool Table', 'Remote HTML: Zip']
 
         ttk.Label(self.indexFrame, text='Index Option').grid(row=0, column=0)
         v = tk.StringVar()
@@ -434,20 +434,20 @@ class App:
         self.indexFrame.zipfile.grid(row=3, column=1, sticky=tk.W)
         self.indexFrame.zipfile.insert(0, self.options['zipfile'])
 
-        ttk.Label(self.indexFrame, text='SSH Host:').grid(row=4, column=0)
-        self.indexFrame.ssh_host = ttk.Entry(self.indexFrame, width=20)
-        self.indexFrame.ssh_host.grid(row=4, column=1, sticky=tk.W)
-        self.indexFrame.ssh_host.insert(0, self.options['ssh_host'])
-
-        ttk.Label(self.indexFrame, text='SSH Username:').grid(row=5, column=0)
-        self.indexFrame.ssh_user = ttk.Entry(self.indexFrame, width=20)
-        self.indexFrame.ssh_user.grid(row=5, column=1, sticky=tk.W)
-        self.indexFrame.ssh_user.insert(0, self.options['ssh_user'])
-
-        ttk.Label(self.indexFrame, text='SSH Directory:').grid(row=6, column=0)
-        self.indexFrame.ssh_dir = ttk.Entry(self.indexFrame, width=20)
-        self.indexFrame.ssh_dir.grid(row=6, column=1, sticky=tk.W)
-        self.indexFrame.ssh_dir.insert(0, self.options['ssh_dir'])
+        # ttk.Label(self.indexFrame, text='SSH Host:').grid(row=4, column=0)
+        # self.indexFrame.ssh_host = ttk.Entry(self.indexFrame, width=20)
+        # self.indexFrame.ssh_host.grid(row=4, column=1, sticky=tk.W)
+        # self.indexFrame.ssh_host.insert(0, self.options['ssh_host'])
+        #
+        # ttk.Label(self.indexFrame, text='SSH Username:').grid(row=5, column=0)
+        # self.indexFrame.ssh_user = ttk.Entry(self.indexFrame, width=20)
+        # self.indexFrame.ssh_user.grid(row=5, column=1, sticky=tk.W)
+        # self.indexFrame.ssh_user.insert(0, self.options['ssh_user'])
+        #
+        # ttk.Label(self.indexFrame, text='SSH Directory:').grid(row=6, column=0)
+        # self.indexFrame.ssh_dir = ttk.Entry(self.indexFrame, width=20)
+        # self.indexFrame.ssh_dir.grid(row=6, column=1, sticky=tk.W)
+        # self.indexFrame.ssh_dir.insert(0, self.options['ssh_dir'])
 
         self.indexFrame.button_save = ttk.Button(self.indexFrame, text="Save", command=self.index_frame_save)
         self.indexFrame.button_save.grid(row=7, column=0, padx=5, pady=5, columnspan=2)
@@ -461,30 +461,30 @@ class App:
             self.indexFrame.table_name['state'] = tk.NORMAL
             self.indexFrame.http_base['state'] = tk.DISABLED
             self.indexFrame.zipfile['state'] = tk.DISABLED
-            self.indexFrame.ssh_host['state'] = tk.DISABLED
-            self.indexFrame.ssh_user['state'] = tk.DISABLED
-            self.indexFrame.ssh_dir['state'] = tk.DISABLED
+            # self.indexFrame.ssh_host['state'] = tk.DISABLED
+            # self.indexFrame.ssh_user['state'] = tk.DISABLED
+            # self.indexFrame.ssh_dir['state'] = tk.DISABLED
         elif index_type == 'Remote HTML: Zip':
             self.indexFrame.table_name['state'] = tk.DISABLED
             self.indexFrame.http_base['state'] = tk.NORMAL
             self.indexFrame.zipfile['state'] = tk.NORMAL
-            self.indexFrame.ssh_host['state'] = tk.DISABLED
-            self.indexFrame.ssh_user['state'] = tk.DISABLED
-            self.indexFrame.ssh_dir['state'] = tk.DISABLED
-        elif index_type == 'Remote HTML: SSH':
-            self.indexFrame.table_name['state'] = tk.DISABLED
-            self.indexFrame.http_base['state'] = tk.NORMAL
-            self.indexFrame.zipfile['state'] = tk.DISABLED
-            self.indexFrame.ssh_host['state'] = tk.NORMAL
-            self.indexFrame.ssh_user['state'] = tk.NORMAL
-            self.indexFrame.ssh_dir['state'] = tk.NORMAL
+            # self.indexFrame.ssh_host['state'] = tk.DISABLED
+            # self.indexFrame.ssh_user['state'] = tk.DISABLED
+            # self.indexFrame.ssh_dir['state'] = tk.DISABLED
+        # elif index_type == 'Remote HTML: SSH':
+        #     self.indexFrame.table_name['state'] = tk.DISABLED
+        #     self.indexFrame.http_base['state'] = tk.NORMAL
+        #     self.indexFrame.zipfile['state'] = tk.DISABLED
+        #     self.indexFrame.ssh_host['state'] = tk.NORMAL
+        #     self.indexFrame.ssh_user['state'] = tk.NORMAL
+        #     self.indexFrame.ssh_dir['state'] = tk.NORMAL
         else:
             self.indexFrame.table_name['state'] = tk.DISABLED
             self.indexFrame.http_base['state'] = tk.DISABLED
             self.indexFrame.zipfile['state'] = tk.DISABLED
-            self.indexFrame.ssh_host['state'] = tk.DISABLED
-            self.indexFrame.ssh_user['state'] = tk.DISABLED
-            self.indexFrame.ssh_dir['state'] = tk.DISABLED
+            # self.indexFrame.ssh_host['state'] = tk.DISABLED
+            # self.indexFrame.ssh_user['state'] = tk.DISABLED
+            # self.indexFrame.ssh_dir['state'] = tk.DISABLED
 
     def index_frame_save(self):
 
@@ -492,9 +492,9 @@ class App:
         self.options['table_name'] = self.indexFrame.table_name.get()
         self.options['http_base'] = self.indexFrame.http_base.get()
         self.options['zipfile'] = self.indexFrame.zipfile.get()
-        self.options['ssh_host'] = self.indexFrame.ssh_host.get()
-        self.options['ssh_user'] = self.indexFrame.ssh_user.get()
-        self.options['ssh_dir'] = self.indexFrame.ssh_dir.get()
+        # self.options['ssh_host'] = self.indexFrame.ssh_host.get()
+        # self.options['ssh_user'] = self.indexFrame.ssh_user.get()
+        # self.options['ssh_dir'] = self.indexFrame.ssh_dir.get()
 
         tk.Toplevel.destroy(self.indexFrame)
 
@@ -625,10 +625,18 @@ class App:
                     self.progressFrame.text.see(tk.END)
 
         if self.options['index'] == 'Maptool Table':
-            self.progressFrame.text.insert(tk.INSERT, '\nSaving master index....\n')
+            self.progressFrame.text.insert(tk.INSERT, '\nSaving ' + self.options['token_dir'] +
+                                                      '/' + self.options['table_name'] + '.mttable' + '\n')
             self.progressFrame.update()
             self.progressFrame.text.see(tk.END)
             self.master_index.save()
+        elif self.options['index'] == 'Remote HTML: Zip':
+            self.progressFrame.text.insert(tk.INSERT, '\nSaving ' + self.options['token_dir'] + '/' +
+                                                      self.options['zipfile'] + '\n')
+            self.progressFrame.update()
+            self.progressFrame.text.see(tk.END)
+            self.master_index.save()
+
         self.progressFrame.text.insert(tk.INSERT, '\nCompleted')
         self.progressFrame.update()
         self.progressFrame.text.see(tk.END)

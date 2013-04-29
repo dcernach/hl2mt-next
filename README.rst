@@ -166,7 +166,8 @@ This will create a very simple hit point change macro. If your token properties 
 fields then hl2mt will work with both and create a macro that uses a health bar over your tokens. If you only
 have max hp on your framework then hl2mt will create a simpler macro which only works with that.
 
-**Master Indexes**
+Indexing Options
+-------------
 
 Hero Lab outputs extremely detailed data on feats, traits, special abilities, spells and so on in the output it
 generates for your creatures. This is too much data to store on each token. If your library has 100 spellcasters
@@ -177,7 +178,9 @@ for each in a single token would make the token very unwieldy to work with in.
 So by default when hl2mt creates tokens it doesn't include this detailed data. Instead it creates simple lists
 on the token of feats, spells and so on, unless you turn on master indexing.
 
-If you turn on master indexing hl2mt will build a master index table of all your parsed creature's feats, spells,
+** Maptool Table indexing **
+
+If you turn on table indexing hl2mt will build a master index table of all your parsed creature's feats, spells,
 specials and so on and when it finishes it'll save all of that data into a
 `Maptool table <http://www.youtube.com/watch?v=Lqfi0-5CEF4>`_ file(in the token directory) which you'll then need
 to import into Maptool whenever you run hl2mt.
@@ -212,6 +215,18 @@ PC name is Buddy Jesus I can create a BuddyJ index, use BuddyJ campaign properti
 Then I can email to the DM my token, index and campaign properties file and he can import all three into any campaign
 and I can use my token the way I want to.
 
+** Remote HTML: Zip **
+
+While table indexes work pretty well and have the benefit that they create self contained campaigns, tables can grow
+to become excessively large. For example in my current install with 240 tokens hl2mt builds a table with nearly 800
+entries. This can potentially slow down Maptools on a slow computer. As an option if you download and use the Nerps_
+variant of Maptool you can store all the index information in html pages on a remote web server.
+
+Simple choose this option, input the base URL of where you'll unpack the index files and hl2mt will pack all the html
+pages into a zip file you can upload to your server.
+
+
+
 Plans
 -----
 
@@ -230,3 +245,4 @@ License
 .. _tkinter: http://docs.python.org/2/library/tkinter.html
 .. _download: http://hg.tarsis.org/hl2mt/archive/tip.zip
 .. _pil: http://www.pythonware.com/products/pil/
+.. _nerps: https://docs.google.com/file/d/0B2c01YG2XtiJTzA3Z2tEN0lIVk0/edit?usp=sharing
