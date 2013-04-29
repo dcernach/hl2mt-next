@@ -971,27 +971,31 @@ class Token:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        tmp = '[frame("Items"): {'
-        tmp += '<html>'
-        tmp += '<head>'
-        tmp += '<title>Items</title>'
-        tmp += '</head>'
-        tmp += '<body>'
-        tmp += '<br>'
-        tmp += '<h1><u>' + self.name + ' Items </u></h1>'
-        tmp += '<br>'
+        tmp = '[frame("Items"): {\n'
+        tmp += '<html>\n'
+        tmp += '<head>\n'
+        tmp += '<title>Items</title>\n'
+        tmp += '</head>\n'
+        tmp += '<body>\n'
+        tmp += '<br>\n'
+        tmp += '<h1><u>' + self.name + ' Items </u></h1>\n'
+        tmp += '<br>\n'
 
         for item in self.items:
-            tmp += item['name']
+            name = item['name']
+            name = string.replace(name, "'", "")
+            name = string.replace(name, "[", "")
+            name = string.replace(name, "]", "")
+            tmp += name
             if int(item['num']) > 1:
                 tmp += ' (x' + item['num'] + ', ' + item['value'] + ')'
             else:
                 tmp += ' (' + item['value'] + ')'
-            tmp += '<br>'
+            tmp += '<br>\n'
 
-        tmp += '</body>'
-        tmp += '</html>'
-        tmp += '}]'
+        tmp += '</body>\n'
+        tmp += '</html>\n'
+        tmp += '}]\n'
 
         xml += cgi.escape(tmp)
 
@@ -1309,12 +1313,37 @@ class Token:
         tmp += '<b>Ranged:</b> ' + self.atk_ranged + '<br>\n'
 
         classes = ''
+        arcane_fail = ''
         for char_class in self.xml.find('classes').iter('class'):
             classes += '  ' + char_class.get('name') + ' / ' + char_class.get('level') + '<br>\n'
+            if char_class.find('arcanespellfailure') is not None:
+                if char_class.find('arcanespellfailure').get('text') != '0%':
+                    arcane_fail += '<b>' + char_class.get('name') + '</b>: ' + \
+                                   char_class.find('arcanespellfailure').get('text') + '<br>'
+
 
         if classes:
             tmp += '<h3>Classes (Lvl ' + self.xml.find('classes').get('level') + ') </h3>\n'
             tmp += classes
+
+        spells = ''
+        for spell_class in self.xml.find('spellclasses').iter('spellclass'):
+            spells += '<b>' + spell_class.get('name') + ':</b>'
+            spells += ' Max Spell Lvl:' + spell_class.get('maxspelllevel') + ' (lvl/day): '
+            for lvl in spell_class.iter('spelllevel'):
+                spells += '(' + lvl.get('level') + '/'
+                if lvl.get('unlimited') is not None:
+                    spells += 'unlimited) '
+                elif lvl.get('maxcasts') is not None:
+                    spells += lvl.get('maxcasts') + ') '
+            spells += '<br>\n'
+
+        if spells:
+            tmp += '<h3>Spell Casting</h3>\n'
+            tmp += spells
+            if arcane_fail:
+                tmp += '<h4>Arcane Failure</h4>\n'
+                tmp += arcane_fail
 
         if self.skills:
             tmp += '<h3>Skills</h3>\n'
