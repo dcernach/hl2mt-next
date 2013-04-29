@@ -901,6 +901,10 @@ class Token:
         xml += '&lt;br&gt;&#xd;\n'
 
         for k, v in items.items():
+            if v is None:
+                xml += k
+                xml += '&lt;br&gt;&#xd;\n'
+                continue
             # Table index
             if self.options['index'] == 'Maptool Table':
                 # [r: macroLink("k", "lshow@token", "none", "row=num;lname=k", currentToken())
