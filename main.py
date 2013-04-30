@@ -607,7 +607,7 @@ class App:
                     index_xml.close()
                     index_root = tree.getroot()
                     for index_char in index_root.iter('character'):
-                        found = re.search(' CR (\d+\/?\d*)', index_char.get('summary'))
+                        found = re.search(' CR (\d+/?\d*)$', index_char.get('summary'))
                         cr = found.group(1)
 
                         for statblock in index_char.iter('statblock'):
