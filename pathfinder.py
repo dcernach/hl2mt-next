@@ -30,6 +30,7 @@ class Token:
         self.vision_lowlight = 0
         self.vision_dark = 0
         self.num_macros = 0
+        self.cr = ''
         self.weapons = []
         self.items = []
         self.specials = {}
@@ -1263,6 +1264,8 @@ class Token:
             tmp += '<br>\n'
 
         tmp += '<br>\n'
+        if self.cr:
+                tmp += '<b>CR:</b> ' + self.cr + '<br>\n'
         if self.xml.get('playername'):
             tmp += '<b>Player:</b> ' + self.xml.get('playername') + '<br>\n'
         if self.xml.find('pathfindersociety') is not None:

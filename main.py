@@ -587,10 +587,10 @@ class App:
                 for char in root.iter('character'):
                     minions = char.find('minions')
                     char.remove(minions)
-                    self.make_token(char, subdir)
+                    self.make_token(char, subdir, '')
 
                     for minion in minions.iter('character'):
-                        self.make_token(minion, subdir)
+                        self.make_token(minion, subdir, '')
 
             # Parse Por/Stock files
             for filename in [f for f in filenames if f.endswith(".por") or f.endswith(".stock")]:
@@ -602,23 +602,32 @@ class App:
 
                 try:
                     lab_zip = zipfile.ZipFile(lab_file, 'r')
-                    for name in lab_zip.namelist():
-                        if re.search('statblocks_xml.*\.xml', name):
-                            xml_file = lab_zip.open(name)
-                            self.progressFrame.text.insert(tk.INSERT, '\nParsing ' + name + '\n')
-                            self.progressFrame.update()
-                            self.progressFrame.text.see(tk.END)
-                            tree = ET.parse(xml_file)
-                            xml_file.close()
-                            root = tree.getroot()
+                    index_xml = lab_zip.open('index.xml')
+                    tree = ET.parse(index_xml)
+                    index_xml.close()
+                    index_root = tree.getroot()
+                    for index_char in index_root.iter('character'):
+                        found = re.search(' CR (\d+\/?\d*)', index_char.get('summary'))
+                        cr = found.group(1)
 
-                            for char in root.iter('character'):
-                                minions = char.find('minions')
-                                char.remove(minions)
-                                self.make_token(char, subdir)
+                        for statblock in index_char.iter('statblock'):
+                            if statblock.get('format') == 'xml':
+                                name = statblock.get('folder') + '/' + statblock.get('filename')
+                                xml_file = lab_zip.open(name)
+                                self.progressFrame.text.insert(tk.INSERT, '\nParsing ' + name + '\n')
+                                self.progressFrame.update()
+                                self.progressFrame.text.see(tk.END)
+                                tree = ET.parse(xml_file)
+                                xml_file.close()
+                                root = tree.getroot()
 
-                                for minion in minions.iter('character'):
-                                    self.make_token(minion, subdir)
+                                for char in root.iter('character'):
+                                    minions = char.find('minions')
+                                    char.remove(minions)
+                                    self.make_token(char, subdir, cr)
+
+                                    for minion in minions.iter('character'):
+                                        self.make_token(minion, subdir, '')
                     lab_zip.close()
                 except zipfile.BadZipfile:
                     issues += '!!! ' + filename + ' does not appear to be in zip format\n'
@@ -645,12 +654,13 @@ class App:
         self.progressFrame.text.see(tk.END)
         self.progressFrame.button_done['state'] = tk.NORMAL
 
-    def make_token(self, char, subdir):
+    def make_token(self, char, subdir, cr):
         token = Token(char, self.master_index)
         token.properties = self.properties
         token.options = self.options
         token.colors = self.colors
         token.filenames = self.filenames
+        token.cr = cr
         token.save(subdir)
         self.progressFrame.text.insert(tk.INSERT, '   Writing ' + token.filename + '\n')
 
