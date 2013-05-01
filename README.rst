@@ -5,7 +5,7 @@ hl2mt: Hero Lab to Maptool
 About
 -----
 
-``hl2mt`` parses XML output from `Hero Lab <http://wolflair.com/index.php?context=hero_lab>`_ and converts it into
+``hl2mt`` parses output from `Hero Lab <http://wolflair.com/index.php?context=hero_lab>`_ and converts it into
 usable Maptool_ tokens that have basic die roll macros and text references. hl2mt is a Python_ application that has a
 Tkinter_ graphical interface that will run under Linux, Mac and Windows. The application has a lot of configuration
 options that should allow anyone to customize the created tokens so they work with existing Maptool_ frameworks.
@@ -42,7 +42,7 @@ Usage
 -----
 
 The basic usage concept behind hl2mt is you do up your encounters, PCs and monsters in Hero Lab and then save them
-into a directory. hl2mt then opens the files, parses the XML, pulls out the creatures and associates a portrait and
+into a directory. hl2mt then opens the files, parses the data, pulls out the creatures and associates a portrait and
 token image to them. It then saves the creature into a Maptool token. To do this hl2mt needs 4 directories:
 
 - Input Dir: Where the Hero Lab XML, por or stock files are
@@ -196,14 +196,14 @@ For example, let's say I have a skeleton on the map and my index table looks lik
 This is the skeleton's improved initiative feat. When I click on his feats macro and click on improved initiative
 it points to the 1st row in my master index table.
 
-If I leave a skeleton token on the map, delete my on disk table file and run hl2mt with an orc and skeleton in the XML
+If I leave a skeleton token on the map, delete my on disk table file and run hl2mt with an orc and skeleton in the Input
 dir, the orc feats/specials will come first and the first row in my index table will no longer be improved initiative.
 My skeleton, on the table, will be broken when I load in the new index table(which has the orc data). New skeletons
 in the token library will work fine, they've been built with the new index, it's old tokens on the map that'll be
 out of date.
 
 For this reason it can be a good idea to work with multiple indexes. For example when creating a Crypt of the
-Everflame campaign file I use a CryptEverFlame index with XML/Token dirs that are only for crypt creatures. I can
+Everflame campaign file I use a CryptEverFlame index with Input/Token dirs that are only for crypt creatures. I can
 build my module using that, save it, and in play I can use a different index and not have to worry about
 breaking any of my old crypt module creatures that I've placed. In fact once this module is done the tokens I've
 created in it should never go stale, since they're referencing the static CryptEverFlame table in the saved campaign
