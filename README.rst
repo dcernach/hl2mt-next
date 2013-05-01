@@ -244,6 +244,10 @@ Generally there are no plans to add in advanced macro functions. The goal of ``h
 compatible as possible for existing frameworks. If you have a framework and you want it to work with ``hl2mt`` please
 let me know and I'll try to work with you to export the data from Hero Lab into a format your framework can use.
 
+**Current Plans**
+
+- Change the app to use OS specific APPDATA save folders
+- Compile the app into a single binary file that'll run on Linux and Windows without Python installed
 
 License
 -------

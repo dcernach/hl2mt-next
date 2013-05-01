@@ -1,0 +1,4 @@
+Create a runnable binary for Linux/Windows
+Switch the config files to work in APPDATA OS folders(QT for this?)
+Possibly migrate to QT from Tk
+Ensure that single binary app runs without any config files(will create a default that models basic options)
