@@ -218,12 +218,16 @@ and I can use my token the way I want to.
 **Remote HTML: Zip**
 
 While table indexes work pretty well and have the benefit that they create self contained campaigns, tables can grow
-to become excessively large. For example in my current install with 240 tokens hl2mt builds a table with nearly 800
-entries. This can potentially slow down Maptools on a slow computer. As an option if you download and use the Nerps_
+to become excessively large. For example in my current install with 2000 tokens hl2mt builds a table with nearly 4500
+entries. This can potentially slow down Maptool on a slow computer. As an option if you download and use the Nerps_
 variant of Maptool you can store all the index information in html pages on a remote web server.
 
-Simple choose this option, input the base URL of where you'll unpack the index files and hl2mt will pack all the html
+Simply choose this option, input the base URL of where you'll unpack the index files and hl2mt will pack all the html
 pages into a zip file you can upload to your server.
+
+As an example, my base URL is http://tarsis.org/maptool/ and when I'm finished running hl2mt I upload my zip file to
+that directory and unpack it. I also make sure the files are world readable via. Now in game when I link to a Feat or
+spell Maptool will fetch the data from that directory instead of trying to keep it stored internally.
 
 
 
