@@ -6,114 +6,52 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>383</height>
+    <width>1078</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>280</y>
-      <width>131</width>
-      <height>41</height>
+      <x>0</x>
+      <y>0</y>
+      <width>1071</width>
+      <height>681</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Create Tokens</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>501</width>
-      <height>231</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <item>
+      <widget class="QTableView" name="tableView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="pushButton_2">
-         <property name="minimumSize">
-          <size>
-           <width>150</width>
-           <height>0</height>
-          </size>
-         </property>
+        <widget class="QPushButton" name="createButton">
          <property name="text">
-          <string>Input Directory</string>
+          <string>Create Tokens</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QPushButton" name="pushButton_3">
-         <property name="minimumSize">
-          <size>
-           <width>150</width>
-           <height>0</height>
-          </size>
-         </property>
+        <widget class="QPushButton" name="quitButton">
          <property name="text">
-          <string>POG Directory</string>
+          <string>Quit</string>
          </property>
         </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_2"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="QPushButton" name="pushButton_4">
-         <property name="minimumSize">
-          <size>
-           <width>150</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Portrait Directory</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_3"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
-        <widget class="QPushButton" name="pushButton_5">
-         <property name="minimumSize">
-          <size>
-           <width>150</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Token Directory</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_4"/>
        </item>
       </layout>
      </item>
@@ -125,7 +63,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>539</width>
+     <width>1078</width>
      <height>25</height>
     </rect>
    </property>
@@ -144,6 +82,7 @@
     <addaction name="actionOutput"/>
     <addaction name="actionColors"/>
     <addaction name="actionIndexing"/>
+    <addaction name="actionDirectories"/>
    </widget>
    <addaction name="menuConfig"/>
    <addaction name="menuOptions"/>
@@ -176,7 +115,7 @@
   </action>
   <action name="actionSave_Config">
    <property name="text">
-    <string>Save Config</string>
+    <string>Save Config As...</string>
    </property>
   </action>
   <action name="actionHl2mt_Help">
@@ -189,7 +128,29 @@
     <string>About</string>
    </property>
   </action>
+  <action name="actionDirectories">
+   <property name="text">
+    <string>Directories</string>
+   </property>
+  </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>quitButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>803</x>
+     <y>690</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>538</x>
+     <y>368</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

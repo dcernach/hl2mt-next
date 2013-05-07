@@ -34,6 +34,7 @@ class Token:
         self.weapons = []
         self.items = []
         self.specials = {}
+        self.itempowers = {}
         self.spells = []
         self.spells_memorized = []
         self.spells_known = []
@@ -62,6 +63,7 @@ class Token:
         self.parse_weapons()
         self.parse_items()
         self.parse_specials()
+        self.parse_itempowers()
         self.parse_spells()
 
     def parse_base(self):
@@ -199,6 +201,13 @@ class Token:
             self.specials[special.get('name')] = special.find('description').text
         for special in self.xml.find('health').iter('special'):
             self.specials[special.get('name')] = special.find('description').text
+
+    def parse_itempowers(self):
+        if self.xml.find('magicitems').find('item') is not None:
+            for special in self.xml.find('magicitems').iter('item'):
+                for power in special.iter('itempower'):
+                    self.itempowers[power.get('name')] = power.find('description').text
+
 
     def parse_spells(self):
         for spell in self.xml.find('spellbook').iter('spell'):
@@ -484,6 +493,9 @@ class Token:
 
         if self.specials:
             xml += self.list_macro_xml('Specials', self.specials, '50')
+
+        if self.itempowers:
+            xml += self.list_macro_xml('Item Powers', self.itempowers, '60')
 
         if self.resists:
             xml += self.list_macro_xml('Resists', self.resists, '50')
