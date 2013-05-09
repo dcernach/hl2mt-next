@@ -1,0 +1,17 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file>icons/folder.png</file>
+    <file>icons/pencil.png</file>
+    <file>icons/plus.png</file>
+    <file>icons/shield.png</file>
+    <file>icons/swords.png</file>
+    <file>icons/user.png</file>
+    <file>icons/export.png</file>
+    <file>icons/help_book.png</file>
+    <file>icons/import.png</file>
+    <file>icons/hl2mt.png</file>
+    <file>icons/database_add.png</file>
+    <file>icons/colors.png</file>
+    <file>icons/info.png</file>
+  </qresource>
+</RCC>

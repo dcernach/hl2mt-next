@@ -1,23 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>colorsDialog</class>
+ <widget class="QDialog" name="colorsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>497</width>
-    <height>495</height>
+    <width>484</width>
+    <height>518</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
+  <property name="minimumSize">
+   <size>
+    <width>484</width>
+    <height>518</height>
+   </size>
   </property>
-  <widget class="QWidget" name="">
+  <property name="maximumSize">
+   <size>
+    <width>484</width>
+    <height>518</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>21</y>
+     <x>130</x>
+     <y>480</y>
+     <width>341</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
      <width>461</width>
      <height>461</height>
     </rect>
@@ -26,7 +54,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="labelSheet">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -39,7 +67,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="labelSheetF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -55,7 +83,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="comboSheetF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -184,7 +212,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="labelSheetB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -197,7 +225,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_2">
+       <widget class="QComboBox" name="comboSheetB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -330,7 +358,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="labelSkills">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -343,7 +371,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="labelSkillsF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -359,7 +387,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_3">
+       <widget class="QComboBox" name="comboSkillsF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -488,7 +516,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="labelSkillsB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -501,7 +529,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_4">
+       <widget class="QComboBox" name="comboSkillsB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -634,7 +662,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLabel" name="label_7">
+       <widget class="QLabel" name="labelAttacks">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -647,7 +675,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel" name="labelAtracksF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -663,7 +691,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_5">
+       <widget class="QComboBox" name="comboAttacksF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -792,7 +820,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_9">
+       <widget class="QLabel" name="labelAttacksB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -805,7 +833,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_6">
+       <widget class="QComboBox" name="comboAttacksB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -938,7 +966,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QLabel" name="label_10">
+       <widget class="QLabel" name="labelHP">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -951,7 +979,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_11">
+       <widget class="QLabel" name="labelHPF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -967,7 +995,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_7">
+       <widget class="QComboBox" name="comboHPF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -1096,7 +1124,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_12">
+       <widget class="QLabel" name="labelHPB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -1109,7 +1137,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_8">
+       <widget class="QComboBox" name="comboHPB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -1242,7 +1270,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QLabel" name="label_13">
+       <widget class="QLabel" name="labelInit">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -1255,7 +1283,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_14">
+       <widget class="QLabel" name="labelInitF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -1271,7 +1299,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_9">
+       <widget class="QComboBox" name="comboInitF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -1400,7 +1428,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_15">
+       <widget class="QLabel" name="labelInitB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -1413,7 +1441,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_10">
+       <widget class="QComboBox" name="comboInitB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -1546,7 +1574,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
-       <widget class="QLabel" name="label_16">
+       <widget class="QLabel" name="labelCMB">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -1559,7 +1587,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_17">
+       <widget class="QLabel" name="labelCMBF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -1575,7 +1603,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_11">
+       <widget class="QComboBox" name="comboCMBF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -1704,7 +1732,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_18">
+       <widget class="QLabel" name="labelCMBB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -1717,7 +1745,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_12">
+       <widget class="QComboBox" name="comboCMBB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -1850,7 +1878,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
-       <widget class="QLabel" name="label_19">
+       <widget class="QLabel" name="labelSaves">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -1863,7 +1891,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_20">
+       <widget class="QLabel" name="labelSavesF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -1879,7 +1907,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_13">
+       <widget class="QComboBox" name="comboSavesF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -2008,7 +2036,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_21">
+       <widget class="QLabel" name="labelSavesB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -2021,7 +2049,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_14">
+       <widget class="QComboBox" name="comboSavesB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -2154,7 +2182,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_8">
       <item>
-       <widget class="QLabel" name="label_22">
+       <widget class="QLabel" name="labelSpecials">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -2167,7 +2195,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_23">
+       <widget class="QLabel" name="labelSpecialsF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -2183,7 +2211,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_15">
+       <widget class="QComboBox" name="comboSpecialsF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -2312,7 +2340,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_24">
+       <widget class="QLabel" name="labelSpecialsB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -2325,7 +2353,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_16">
+       <widget class="QComboBox" name="comboSpecialsB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -2458,7 +2486,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_9">
       <item>
-       <widget class="QLabel" name="label_25">
+       <widget class="QLabel" name="labelBasic">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -2471,7 +2499,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_26">
+       <widget class="QLabel" name="labelBasicF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -2487,7 +2515,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_17">
+       <widget class="QComboBox" name="comboBasicF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -2616,7 +2644,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_27">
+       <widget class="QLabel" name="labelBasicB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -2629,7 +2657,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_18">
+       <widget class="QComboBox" name="comboBasicB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -2762,7 +2790,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_10">
       <item>
-       <widget class="QLabel" name="label_28">
+       <widget class="QLabel" name="labelMan">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -2775,7 +2803,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_29">
+       <widget class="QLabel" name="labelManF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -2791,7 +2819,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_19">
+       <widget class="QComboBox" name="comboManF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -2920,7 +2948,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_30">
+       <widget class="QLabel" name="labelManB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -2933,7 +2961,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_20">
+       <widget class="QComboBox" name="comboManB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -3066,7 +3094,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_11">
       <item>
-       <widget class="QLabel" name="label_31">
+       <widget class="QLabel" name="labelSub">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -3079,7 +3107,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_32">
+       <widget class="QLabel" name="labelSubF">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -3095,7 +3123,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_21">
+       <widget class="QComboBox" name="comboSubF">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -3224,7 +3252,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_33">
+       <widget class="QLabel" name="labelSubB">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -3237,7 +3265,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_22">
+       <widget class="QComboBox" name="comboSubB">
         <item>
          <property name="text">
           <string>aqua</string>
@@ -3367,16 +3395,42 @@
       </item>
      </layout>
     </item>
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Save Colors</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>colorsDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>colorsDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

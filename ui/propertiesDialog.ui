@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>propertiesDialog</class>
+ <widget class="QDialog" name="propertiesDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>624</width>
+    <height>457</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>624</width>
+    <height>457</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>624</width>
+    <height>457</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/icons/tokens.png</normaloff>:/icons/tokens.png</iconset>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <item row="0" column="0" colspan="2">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QToolButton" name="basicButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Basic</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/user.png</normaloff>:/icons/user.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QToolButton" name="offenseButton">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Offense</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/swords.png</normaloff>:/icons/swords.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QToolButton" name="defenseButton">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Defense</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/shield.png</normaloff>:/icons/shield.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QToolButton" name="miscButton">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Misc</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="minimumSize">
+      <size>
+       <width>500</width>
+       <height>300</height>
+      </size>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="pageBasic">
+      <widget class="Line" name="line">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>100</y>
+         <width>551</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>591</width>
+         <height>101</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelPlayer">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Player</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="QLineEdit" name="editPlayer"/>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="labelRace">
+          <property name="text">
+           <string>Race</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QLineEdit" name="editRace"/>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLabel" name="labelAlignment">
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Alignment</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLineEdit" name="editAlignment"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>150</y>
+         <width>591</width>
+         <height>131</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelStr">
+          <property name="text">
+           <string>Strength</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="QLineEdit" name="editStr"/>
+        </item>
+        <item row="0" column="3" colspan="3">
+         <widget class="QLabel" name="labelInt">
+          <property name="text">
+           <string>Intelligence</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="6">
+         <widget class="QLineEdit" name="editInt"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelDex">
+          <property name="text">
+           <string>Dexterity</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="2">
+         <widget class="QLineEdit" name="editDex"/>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="labelWis">
+          <property name="text">
+           <string>Wisdom</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4" colspan="3">
+         <widget class="QLineEdit" name="editWis"/>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QLabel" name="labelCon">
+          <property name="text">
+           <string>Constitution</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLineEdit" name="editCon"/>
+        </item>
+        <item row="2" column="3" colspan="2">
+         <widget class="QLabel" name="labelCha">
+          <property name="text">
+           <string>Charisma</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="5" colspan="2">
+         <widget class="QLineEdit" name="editCha"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="pageOffense">
+      <widget class="QLineEdit" name="editMelee">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>50</y>
+         <width>148</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelMelee">
+       <property name="geometry">
+        <rect>
+         <x>24</x>
+         <y>50</y>
+         <width>90</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Melee Attack</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="editBAB">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>60</y>
+         <width>208</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelBAB">
+       <property name="geometry">
+        <rect>
+         <x>324</x>
+         <y>60</y>
+         <width>30</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>BAB</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelRanged">
+       <property name="geometry">
+        <rect>
+         <x>25</x>
+         <y>89</y>
+         <width>99</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ranged Attack</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="editRanged">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>90</y>
+         <width>137</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelCMB">
+       <property name="geometry">
+        <rect>
+         <x>321</x>
+         <y>99</y>
+         <width>33</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>CMB</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="editCMB">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>100</y>
+         <width>203</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="pageDefense">
+      <widget class="QLabel" name="labelCMD">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>130</y>
+         <width>34</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>CMD</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="editCMD">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>131</y>
+         <width>202</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelCMDFlat">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>130</y>
+         <width>107</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>CMD Flatfooted</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="editCMDFlat">
+       <property name="geometry">
+        <rect>
+         <x>413</x>
+         <y>132</y>
+         <width>129</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="editAC">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>20</y>
+         <width>165</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelAC">
+       <property name="geometry">
+        <rect>
+         <x>21</x>
+         <y>20</y>
+         <width>73</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>AC Normal</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelACFlat">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>20</y>
+         <width>94</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>AC Flatfooted</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="editACFlat">
+       <property name="geometry">
+        <rect>
+         <x>400</x>
+         <y>20</y>
+         <width>144</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelACTouch">
+       <property name="geometry">
+        <rect>
+         <x>21</x>
+         <y>50</y>
+         <width>63</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>AC Touch</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="editACTouch">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>50</y>
+         <width>175</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="Line" name="line_2">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>100</y>
+         <width>551</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="pageMisc">
+      <widget class="QLineEdit" name="lineEdit_12">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>30</y>
+         <width>161</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_12">
+       <property name="geometry">
+        <rect>
+         <x>19</x>
+         <y>29</y>
+         <width>75</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>HP Current</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_13">
+       <property name="geometry">
+        <rect>
+         <x>368</x>
+         <y>31</y>
+         <width>184</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_13">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>30</y>
+         <width>52</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>HP Max</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_14">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>90</y>
+         <width>194</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_14">
+       <property name="geometry">
+        <rect>
+         <x>32</x>
+         <y>89</y>
+         <width>42</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Speed</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_15">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>90</y>
+         <width>194</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_15">
+       <property name="geometry">
+        <rect>
+         <x>312</x>
+         <y>89</y>
+         <width>42</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Reach</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>editPlayer</tabstop>
+  <tabstop>editRace</tabstop>
+  <tabstop>editAlignment</tabstop>
+  <tabstop>editStr</tabstop>
+  <tabstop>editInt</tabstop>
+  <tabstop>editDex</tabstop>
+  <tabstop>editWis</tabstop>
+  <tabstop>editCon</tabstop>
+  <tabstop>editCha</tabstop>
+  <tabstop>editMelee</tabstop>
+  <tabstop>editBAB</tabstop>
+  <tabstop>editRanged</tabstop>
+  <tabstop>editCMB</tabstop>
+  <tabstop>editAC</tabstop>
+  <tabstop>editACFlat</tabstop>
+  <tabstop>editACTouch</tabstop>
+  <tabstop>editCMD</tabstop>
+  <tabstop>editCMDFlat</tabstop>
+  <tabstop>lineEdit_12</tabstop>
+  <tabstop>lineEdit_13</tabstop>
+  <tabstop>lineEdit_14</tabstop>
+  <tabstop>lineEdit_15</tabstop>
+  <tabstop>defenseButton</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>basicButton</tabstop>
+  <tabstop>offenseButton</tabstop>
+  <tabstop>miscButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>
