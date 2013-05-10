@@ -161,7 +161,7 @@ class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
             self.load_settings()
 
     def button_output_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Ouput Folder", self.settings.value("folderOutput").toString(),
+        folder = QFileDialog.getExistingDirectory(self, "Output Folder", self.settings.value("folderOutput").toString(),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
             self.settings.setValue("folderOutput", folder)
@@ -175,6 +175,34 @@ class PropertiesDialog(QDialog, propertiesDialog.Ui_propertiesDialog):
         self.setupUi(self)
         self.setWindowTitle(__appname__ + ": Token Properties")
         self.settings = settings
+
+        self.load_settings()
+
+    def load_settings(self):
+        # TODO Make sure all the below have default values
+        self.editAC.setText(self.settings.value("properties/AC").toString())
+        self.editACFlat.setText(self.settings.value("properties/ACFlat").toString())
+        self.editACTouch.setText(self.settings.value("properties/ACTouch").toString())
+        self.editAlignment.setText(self.settings.value("properties/Alignment").toString())
+        self.editBAB.setText(self.settings.value("properties/BAB").toString())
+        self.editStr.setText(self.settings.value("properties/Strength").toString())
+        self.editDex.setText(self.settings.value("properties/Dexterity").toString())
+        self.editCon.setText(self.settings.value("properties/Constitution").toString())
+        self.editInt.setText(self.settings.value("properties/Intelligence").toString())
+        self.editWis.setText(self.settings.value("properties/Wisdom").toString())
+        self.editCha.setText(self.settings.value("properties/Charisma").toString())
+        self.editCMB.setText(self.settings.value("properties/CMB").toString())
+        self.editCMD.setText(self.settings.value("properties/CMD").toString())
+        self.editCMDFlat.setText(self.settings.value("properties/CMDFlat").toString())
+        self.editPlayer.setText(self.settings.value("properties/Player").toString())
+        self.editRace.setText(self.settings.value("properties/Race").toString())
+        self.editMelee.setText(self.settings.value("properties/Melee").toString())
+        self.editRanged.setText(self.settings.value("properties/Ranged").toString())
+        self.editSpeed.setText(self.settings.value("properties/Speed").toString())
+        self.editName.setText(self.settings.value("properties/Name").toString())
+        self.editPropName.setText(self.settings.value("properties/PropName").toString())
+        self.editHP.setText(self.settings.value("properties/HP").toString())
+        self.editHPMax.setText(self.settings.value("properties/HPMax").toString())
 
 
 class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
