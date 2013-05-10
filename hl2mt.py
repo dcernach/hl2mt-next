@@ -4,7 +4,7 @@ __module__ = "main"
 import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from ui import mainWindow
+from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDialog, propertiesDialog
 import os
 from herolab import HeroLabIndex, HeroLab
 
@@ -19,7 +19,13 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.load_initial_settings()
 
         self.actionExit.triggered.connect(self.close)
-
+        self.actionFolders.triggered.connect(self.action_folders_triggered)
+        self.actionProperties.triggered.connect(self.action_properties_triggered)
+        self.actionColors.triggered.connect(self.action_colors_triggered)
+        self.actionIndexing.triggered.connect(self.action_indexing_triggered)
+        self.actionOutput.triggered.connect(self.action_output_triggered)
+        self.actionImport.triggered.connect(self.action_import_triggered)
+        self.actionSave.triggered.connect(self.action_save_triggered)
 
     def load_initial_settings(self):
         """Setup the initial values"""
@@ -73,6 +79,129 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             if not self.settings.contains("colors/" + opt + "F"):
                 self.settings.setValue("colors/" + opt + "F", "black")
 
+    def action_folders_triggered(self):
+        dialog = FoldersDialog(self, self.settings)
+        if dialog.exec_():
+            self.settings = dialog.settings
+
+    def action_properties_triggered(self):
+        dialog = PropertiesDialog(self, self.settings)
+        if dialog.exec_():
+            self.settings = dialog.settings
+
+    def action_colors_triggered(self):
+        dialog = ColorsDialog(self, self.settings)
+        if dialog.exec_():
+            self.settings = dialog.settings
+
+    def action_indexing_triggered(self):
+        dialog = IndexingDialog(self, self.settings)
+        if dialog.exec_():
+            self.settings = dialog.settings
+
+    def action_output_triggered(self):
+        dialog = OutputDialog(self, self.settings)
+        if dialog.exec_():
+            self.settings = dialog.settings
+
+    def action_import_triggered(self):
+        filename = QFileDialog.getOpenFileName(self, __appname__ + ": Import Config", os.getcwd(),
+                                               filter="Conf files (*.conf)")
+        if filename != '':
+            print filename
+
+    def action_save_triggered(self):
+        filename = QFileDialog.getSaveFileName(self, __appname__ + ": Save Config As...", os.getcwd(),
+                                               filter="Conf files (*.conf)")
+        if filename != '':
+            print filename
+
+
+class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
+
+    def __init__(self, parent, settings):
+        super(FoldersDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle(__appname__ + ": Token Folders")
+        self.settings = settings
+
+        self.buttonInput.clicked.connect(self.button_input_clicked)
+        self.buttonPortrait.clicked.connect(self.button_portrait_clicked)
+        self.buttonPOG.clicked.connect(self.button_pog_clicked)
+        self.buttonOutput.clicked.connect(self.button_output_clicked)
+
+        self.load_settings()
+
+    def load_settings(self):
+        self.editInput.setText(self.settings.value("folderInput").toString())
+        self.editPortrait.setText(self.settings.value("folderPortrait").toString())
+        self.editPOG.setText(self.settings.value("folderPOG").toString())
+        self.editOutput.setText(self.settings.value("folderOutput").toString())
+
+    def button_input_clicked(self):
+        folder = QFileDialog.getExistingDirectory(self, "Input Folder", self.settings.value("folderInput").toString(),
+                                                  QFileDialog.ShowDirsOnly)
+        if folder != '':
+            self.settings.setValue("folderInput", folder)
+            self.load_settings()
+
+    def button_portrait_clicked(self):
+        folder = QFileDialog.getExistingDirectory(self, "Portrait Folder",
+                                                  self.settings.value("folderPortrait").toString(),
+                                                  QFileDialog.ShowDirsOnly)
+        if folder != '':
+            self.settings.setValue("folderPortrait", folder)
+            self.load_settings()
+
+    def button_pog_clicked(self):
+        folder = QFileDialog.getExistingDirectory(self, "POG Folder", self.settings.value("folderPOG").toString(),
+                                                  QFileDialog.ShowDirsOnly)
+        if folder != '':
+            self.settings.setValue("folderPOG", folder)
+            self.load_settings()
+
+    def button_output_clicked(self):
+        folder = QFileDialog.getExistingDirectory(self, "Ouput Folder", self.settings.value("folderOutput").toString(),
+                                                  QFileDialog.ShowDirsOnly)
+        if folder != '':
+            self.settings.setValue("folderOutput", folder)
+            self.load_settings()
+
+
+class PropertiesDialog(QDialog, propertiesDialog.Ui_propertiesDialog):
+
+    def __init__(self, parent, settings):
+        super(PropertiesDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle(__appname__ + ": Token Properties")
+        self.settings = settings
+
+
+class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
+
+    def __init__(self, parent, settings):
+        super(ColorsDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle(__appname__ + ": Macro Colors")
+        self.settings = settings
+
+
+class IndexingDialog(QDialog, indexingDialog.Ui_indexDialog):
+
+    def __init__(self, parent, settings):
+        super(IndexingDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle(__appname__ + ": Indexing Options")
+        self.settings = settings
+
+
+class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
+
+    def __init__(self, parent, settings):
+        super(OutputDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle(__appname__ + ": Token Output Options")
+        self.settings = settings
 
 
 def main():
@@ -88,4 +217,3 @@ def main():
 
 if __module__ == "main":
     main()
-

@@ -70,7 +70,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="editInput"/>
+       <widget class="QLineEdit" name="editInput">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -90,7 +94,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="editPOG"/>
+       <widget class="QLineEdit" name="editPOG">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -110,7 +118,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="editPortrait"/>
+       <widget class="QLineEdit" name="editPortrait">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -130,7 +142,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="editOutput"/>
+       <widget class="QLineEdit" name="editOutput">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

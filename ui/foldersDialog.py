@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'foldersDialog.ui'
 #
-# Created: Thu May  9 16:01:11 2013
+# Created: Fri May 10 15:47:12 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,6 +39,7 @@ class Ui_foldersDialog(object):
         self.buttonInput.setObjectName(_fromUtf8("buttonInput"))
         self.horizontalLayout.addWidget(self.buttonInput)
         self.editInput = QtGui.QLineEdit(self.layoutWidget)
+        self.editInput.setReadOnly(True)
         self.editInput.setObjectName(_fromUtf8("editInput"))
         self.horizontalLayout.addWidget(self.editInput)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -49,6 +50,7 @@ class Ui_foldersDialog(object):
         self.buttonPOG.setObjectName(_fromUtf8("buttonPOG"))
         self.horizontalLayout_2.addWidget(self.buttonPOG)
         self.editPOG = QtGui.QLineEdit(self.layoutWidget)
+        self.editPOG.setReadOnly(True)
         self.editPOG.setObjectName(_fromUtf8("editPOG"))
         self.horizontalLayout_2.addWidget(self.editPOG)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
@@ -59,6 +61,7 @@ class Ui_foldersDialog(object):
         self.buttonPortrait.setObjectName(_fromUtf8("buttonPortrait"))
         self.horizontalLayout_3.addWidget(self.buttonPortrait)
         self.editPortrait = QtGui.QLineEdit(self.layoutWidget)
+        self.editPortrait.setReadOnly(True)
         self.editPortrait.setObjectName(_fromUtf8("editPortrait"))
         self.horizontalLayout_3.addWidget(self.editPortrait)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
@@ -69,6 +72,7 @@ class Ui_foldersDialog(object):
         self.buttonOutput.setObjectName(_fromUtf8("buttonOutput"))
         self.horizontalLayout_4.addWidget(self.buttonOutput)
         self.editOutput = QtGui.QLineEdit(self.layoutWidget)
+        self.editOutput.setReadOnly(True)
         self.editOutput.setObjectName(_fromUtf8("editOutput"))
         self.horizontalLayout_4.addWidget(self.editOutput)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
