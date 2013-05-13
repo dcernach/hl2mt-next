@@ -593,7 +593,7 @@ class App:
                         self.make_token(minion, subdir, '')
 
             # Parse Por/Stock files
-            for filename in [f for f in filenames if f.endswith(".por") or f.endswith(".stock")]:
+            for filename in [f for f in filenames if f.endswith(".por")]:
                 lab_file = os.path.join(dirpath, filename)
                 subdir = string.replace(dirpath, self.options['input_dir'], '')
                 self.progressFrame.text.insert(tk.INSERT, '\nReading ' + lab_file + '\n')
