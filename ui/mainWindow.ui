@@ -52,6 +52,11 @@
       </attribute>
       <column>
        <property name="text">
+        <string>Subdir</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>Filename</string>
        </property>
       </column>

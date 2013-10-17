@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Wed Oct 16 19:31:24 2013
+# Created: Thu Oct 17 15:51:38 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,7 +35,7 @@ class Ui_mainWindow(object):
         self.gridLayout.addWidget(self.createButton, 1, 1, 1, 1)
         self.tableWidget = QtGui.QTableWidget(self.centralwidget)
         self.tableWidget.setObjectName(_fromUtf8("tableWidget"))
-        self.tableWidget.setColumnCount(6)
+        self.tableWidget.setColumnCount(7)
         self.tableWidget.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
@@ -49,6 +49,8 @@ class Ui_mainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(4, item)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(5, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(6, item)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
         self.gridLayout.addWidget(self.tableWidget, 0, 0, 1, 2)
         mainWindow.setCentralWidget(self.centralwidget)
@@ -157,16 +159,18 @@ class Ui_mainWindow(object):
         self.processButton.setText(QtGui.QApplication.translate("mainWindow", "Process Files", None, QtGui.QApplication.UnicodeUTF8))
         self.createButton.setText(QtGui.QApplication.translate("mainWindow", "Create Tokens", None, QtGui.QApplication.UnicodeUTF8))
         item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(QtGui.QApplication.translate("mainWindow", "Filename", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("mainWindow", "Subdir", None, QtGui.QApplication.UnicodeUTF8))
         item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(QtGui.QApplication.translate("mainWindow", "Source", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("mainWindow", "Filename", None, QtGui.QApplication.UnicodeUTF8))
         item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(QtGui.QApplication.translate("mainWindow", "Name", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("mainWindow", "Source", None, QtGui.QApplication.UnicodeUTF8))
         item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(QtGui.QApplication.translate("mainWindow", "Portrait", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("mainWindow", "Name", None, QtGui.QApplication.UnicodeUTF8))
         item = self.tableWidget.horizontalHeaderItem(4)
-        item.setText(QtGui.QApplication.translate("mainWindow", "Token Image", None, QtGui.QApplication.UnicodeUTF8))
+        item.setText(QtGui.QApplication.translate("mainWindow", "Portrait", None, QtGui.QApplication.UnicodeUTF8))
         item = self.tableWidget.horizontalHeaderItem(5)
+        item.setText(QtGui.QApplication.translate("mainWindow", "Token Image", None, QtGui.QApplication.UnicodeUTF8))
+        item = self.tableWidget.horizontalHeaderItem(6)
         item.setText(QtGui.QApplication.translate("mainWindow", "Destination", None, QtGui.QApplication.UnicodeUTF8))
         self.menuConfig.setTitle(QtGui.QApplication.translate("mainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuOptions.setTitle(QtGui.QApplication.translate("mainWindow", "Options", None, QtGui.QApplication.UnicodeUTF8))

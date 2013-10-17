@@ -4,7 +4,7 @@ __module__ = "main"
 import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDialog, propertiesDialog
+from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDialog, propertiesDialog, htmlDialog
 import os
 import ConfigParser
 from herolab import HeroLabIndex, HeroLab
@@ -20,6 +20,12 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.load_initial_settings()
         self.check_defaults()
 
+        self.searchThread = SearchThread()
+        self.searchThread.entryFoundSignal.connect(self.entry_found)
+        self.searchThread.searchFinishedSignal.connect(self.search_finished)
+        self.searchThread.searchErrorSignal.connect(self.search_error)
+
+
         self.actionExit.triggered.connect(self.close)
         self.actionFolders.triggered.connect(self.action_folders_triggered)
         self.actionProperties.triggered.connect(self.action_properties_triggered)
@@ -28,6 +34,9 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.actionOutput.triggered.connect(self.action_output_triggered)
         self.actionImport.triggered.connect(self.action_import_triggered)
         self.actionSave.triggered.connect(self.action_save_triggered)
+        self.processButton.clicked.connect(self.process_button_clicked)
+
+        self.tableWidget.cellDoubleClicked.connect(self.table_widget_doubleclicked)
 
     # TODO Create a help trigger and dialog
     # TODO Create an About trigger and dialog
@@ -36,12 +45,14 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         """Setup the initial values"""
         self.settings = QSettings(QSettings.NativeFormat, QSettings.UserScope, "Tarsis", "hl2mt")
 
-        self.tableWidget.setColumnCount(6)
+        self.tableWidget.setColumnCount(7)
         self.tableWidget.hideColumn(0)
         self.tableWidget.hideColumn(1)
-        self.tableWidget.setColumnWidth(2, 200)
-        self.tableWidget.setColumnWidth(3, 300)
-        self.tableWidget.setColumnWidth(4, 300)
+        self.tableWidget.hideColumn(2)
+        self.tableWidget.setColumnWidth(3, 200)
+        self.tableWidget.setColumnWidth(4, 200)
+        self.tableWidget.setColumnWidth(5, 200)
+        self.tableWidget.setColumnWidth(6, 200)
         self.createButton.setDisabled(True)
 
     def check_defaults(self):
@@ -186,6 +197,72 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             with open(filename, 'wb') as cf:
                 config.write(cf)
                 cf.close()
+
+    def table_widget_doubleclicked(self, row, _):
+        subdir = self.tableWidget.item(row, 0).text()
+        filename = self.tableWidget.item(row, 1).text()
+        source = self.tableWidget.item(row, 2).text()
+        input_folder = self.settings.value("folderInput").toString()
+
+        heroLab = HeroLab(input_folder, subdir, source, filename)
+        if heroLab.html != '':
+            htmlDialog = HtmlDialog(self)
+            htmlDialog.show_html(heroLab.html)
+        else:
+            QMessageBox.warning(self, __appname__ + " Error", "Could not find HTML in file")
+
+    def process_button_clicked(self):
+        """Search through the files and display the output"""
+        self.row = 0
+        self.errors = ""
+        self.processButton.setDisabled(True)
+        self.tableWidget.setSortingEnabled(False)
+        self.tableWidget.clearContents()
+        self.tableWidget.setRowCount(0)
+        self.searchThread.input_folder = self.settings.value("folderInput").toString()
+        self.searchThread.pog_folder = self.settings.value("folderPOG").toString()
+        self.searchThread.portrait_folder = self.settings.value("folderPortrait").toString()
+        self.searchThread.token_folder = self.settings.value("folderOutput").toString()
+        self.searchThread.start()
+
+    def entry_found(self, subdir, source, filename, name, portrait, pog, token):
+        if self.tableWidget.rowCount() < self.row + 1:
+            self.tableWidget.setRowCount(self.row + 1)
+
+        self.tableWidget.setItem(self.row, 0, QTableWidgetItem(subdir))
+        self.tableWidget.setItem(self.row, 1, QTableWidgetItem(filename))
+        self.tableWidget.setItem(self.row, 2, QTableWidgetItem(source))
+        self.tableWidget.setItem(self.row, 3, QTableWidgetItem(name))
+        self.tableWidget.setItem(self.row, 4, QTableWidgetItem(portrait))
+        self.tableWidget.setItem(self.row, 5, QTableWidgetItem(pog))
+        self.tableWidget.setItem(self.row, 6, QTableWidgetItem(token))
+        self.row += 1
+
+    def search_finished(self):
+        self.processButton.setDisabled(False)
+        if self.errors:
+            QMessageBox.warning(self, __appname__ + " Errors", self.errors)
+
+        if self.tableWidget.rowCount() < 1:
+            QMessageBox.information(self, __appname__ + " No Files", "Nothing found to create tokens from")
+
+        self.tableWidget.setSortingEnabled(True)
+        self.createButton.setDisabled(False)
+
+    def search_error(self, error):
+        self.errors += error
+
+
+class HtmlDialog(QDialog, htmlDialog.Ui_htmlDialog):
+
+    def __init__(self, parent):
+        super(HtmlDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle(__appname__ + " Statblock")
+
+    def show_html(self, html):
+        self.webView.setHtml(html)
+        self.show()
 
 
 class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
@@ -367,6 +444,30 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
         self.checkSkill.setChecked(self.settings.value("skills").toBool())
 
 
+class SearchThread(QThread):
+
+    entryFoundSignal = pyqtSignal(str, str, str, str, str, str, str)
+    searchFinishedSignal = pyqtSignal()
+    searchErrorSignal = pyqtSignal(str)
+
+    def __init__(self, parent=None):
+        super(SearchThread, self).__init__(parent)
+
+    def run(self):
+        """Here we'll search through the files and pass the output up"""
+
+        heroLabIndex = HeroLabIndex(self.input_folder, self.pog_folder, self.portrait_folder, self.token_folder)
+
+        for entry in heroLabIndex.get_creatures():
+            self.entryFoundSignal.emit(entry["subdir"], entry["source"], entry["filename"], entry["name"],
+                                       entry["pog"], entry["portrait"], entry["token"])
+
+        for bad_file in heroLabIndex.bad_files:
+            self.searchErrorSignal.emit("Could not open file %s\n" % bad_file)
+
+        self.searchFinishedSignal.emit()
+
+
 def main():
     QCoreApplication.setApplicationName("hl2mt")
     QCoreApplication.setApplicationVersion("0.5")
@@ -381,10 +482,8 @@ def main():
 if __module__ == "main":
     main()
 
-# TODO Wire in file scanning from HeroLabIndex to output to main window table
-# TODO Create new class to generate filenames for rptok and pull in pog/portrait
 # TODO Wire in process files to use main window table to lookup XML's from HeroLab class and stamp out tokens via Token
 # TODO Pass HeroLab class HTML to Token and use that for char sheets
 # TODO Clean up and rename Token class file
-# TODO Allow user to click on table fields to show char data and change token name, pog and portrait
+# TODO Allow user to click on table fields to change token name, pog and portrait
 # TODO Create an indexing option that doesn't require remote HTTP

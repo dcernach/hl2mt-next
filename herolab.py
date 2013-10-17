@@ -2,16 +2,20 @@ import xml.etree.ElementTree as ET
 import os
 import re
 import zipfile
+import string
+import glob
 
 
 class HeroLab:
 
-    def __init__(self, folder, source, filename):
+    def __init__(self, input_folder, subdir, source, filename):
         self.html = ''
         self.text = ''
         self.xml = ''
 
-        lab_zip = zipfile.ZipFile(str(folder) + '/' + str(source.toAscii()), 'r')
+        lab_file = input_folder + subdir + '/' + source
+
+        lab_zip = zipfile.ZipFile(str(lab_file.toAscii()), 'r')
         index_xml = lab_zip.open('index.xml')
         tree = ET.parse(index_xml)
         index_xml.close()
@@ -34,17 +38,24 @@ class HeroLab:
 
 class HeroLabIndex:
 
-    def __init__(self, search_folder):
-        self.search_folder = search_folder
+    def __init__(self, input_folder, pog_folder, portrait_folder, token_folder):
+        self.input_folder = str(input_folder)
+        self.pog_folder = str(pog_folder)
+        self.portrait_folder = str(portrait_folder)
+        self.token_folder = str(token_folder)
+        self.filenames = []
+
 
     def get_creatures(self):
 
         self.bad_files = []
-       # Parse Por/Stock files
-        for filename in os.listdir(self.search_folder):
-            if re.match('.*\.stock|.*\.por', filename):
+       # Parse Por files
+        for dirpath, dirnames, filenames in os.walk(self.input_folder):
+            for filename in [f for f in filenames if f.endswith(".por")]:
+                lab_file = os.path.join(dirpath, filename)
+                subdir = string.replace(dirpath, self.input_folder, '')
                 try:
-                    lab_zip = zipfile.ZipFile(str(self.search_folder) + '/' + filename, 'r')
+                    lab_zip = zipfile.ZipFile(lab_file, 'r')
                     index_xml = lab_zip.open('index.xml')
                     tree = ET.parse(index_xml)
                     index_xml.close()
@@ -66,8 +77,12 @@ class HeroLabIndex:
                             for statblock in index_char.iter('statblock'):
                                 char_filename = statblock.get('filename')
                                 char_filename = re.sub(r"\.\w\w\w$", "", char_filename)
+                            pog_file = self._search_file(self.pog_folder, subdir, name)
+                            portrait_file = self._search_file(self.portrait_folder, subdir, name)
+                            token = self._token_name(subdir, name)
                             yield {"name": name, "summary": summary, "cr": cr, "source": filename,
-                                   "filename": char_filename, "mr": mr}
+                                   "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
+                                   "portrait": portrait_file, "token": token}
                             for minion in minions.iter('character'):
                                 if name.endswith('s'):
                                     minion_name = name + "' " + minion.get('name')
@@ -86,8 +101,12 @@ class HeroLabIndex:
                                 for statblock in minion.iter('statblock'):
                                     char_filename = statblock.get('filename')
                                     char_filename = re.sub(r"\.\w\w\w$", "", char_filename)
+                                pog_file = self._search_file(self.pog_folder, subdir, minion_name)
+                                portrait_file = self._search_file(self.portrait_folder, subdir, minion_name)
+                                token = self._token_name(subdir, minion_name)
                                 yield {"name": minion_name, "summary": summary, "cr": cr, "source": filename,
-                                       "filename": char_filename, "mr": mr}
+                                       "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
+                                       "portrait": portrait_file, "token": token}
                         else:
                             name = index_char.get('name')
                             summary = index_char.get('summary')
@@ -102,9 +121,87 @@ class HeroLabIndex:
                             for statblock in index_char.iter('statblock'):
                                 char_filename = statblock.get('filename')
                                 char_filename = re.sub(r"\.\w\w\w$", "", char_filename)
+                            pog_file = self._search_file(self.pog_folder, subdir, name)
+                            portrait_file = self._search_file(self.portrait_folder, subdir, name)
+                            token = self._token_name(subdir, name)
                             yield {"name": name, "summary": summary, "cr": cr, "source": filename,
-                                   "filename": char_filename, "mr": mr}
+                                   "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
+                                   "portrait": portrait_file, "token": token}
 
                     lab_zip.close()
                 except zipfile.BadZipfile:
                     self.bad_files.append(filename)
+
+    def _search_file(self, search_dir, subdir, char_name):
+
+        paths = [search_dir + subdir + '/', search_dir + '/']
+
+        for path in paths:
+           # Full name search: Orc Chief
+            filename = self._find_image_file(glob.glob(path + string.replace(char_name, ' ', '?') + '.*'))
+            if filename:
+                return filename
+            filename = self._find_image_file(glob.glob(path + string.replace(char_name.lower(), ' ', '?') + '.*'))
+            if filename:
+                return filename
+
+            # Search for partials: Orc, Chief
+            for name in string.split(char_name, ' '):
+                filename = self._find_image_file(glob.glob(path + name + '.*'))
+                if filename:
+                    return filename
+                filename = self._find_image_file(glob.glob(path + name.lower() + '.*'))
+                if filename:
+                    return filename
+
+            # Search for star partials: Orc*, Chief*
+            for name in string.split(char_name, ' '):
+                filename = self._find_image_file(glob.glob(path + name + '*'))
+                if filename:
+                    return filename
+                filename = self._find_image_file(glob.glob(path + name.lower() + '*'))
+                if filename:
+                    return filename
+
+            # Look for Default.* or default.*
+            filename = self._find_image_file(glob.glob(path + 'Default.*'))
+            if filename:
+                return filename
+            filename = self._find_image_file(glob.glob(path + 'default.*'))
+            if filename:
+                return filename
+
+        # Fall through, grab *
+        path = search_dir + '/'
+        filename = self._find_image_file(glob.glob(path + '*'))
+
+        return filename
+
+    def _find_image_file(self, files):
+
+        for filename in files:
+            if os.path.isfile(filename):
+                return filename
+
+        return False
+
+    def _token_name(self, subdir, name):
+
+        full_dir = self.token_folder + subdir
+        name = string.replace(name, " (combat trained) ", "")
+        name = string.replace(name, " (combat trained)", "")
+        name = string.replace(name, "(combat trained)", "")
+        name = re.sub(r'([^\s\w]|_)+', '', name)
+        name = string.replace(name, "  ", "_")
+        name = string.replace(name, " ", "_")
+
+
+        filename = full_dir + '/' + name + '.rptok'
+        num = 1
+        while filename in self.filenames:
+            filename = full_dir + '/' + name + str(num) + '.rptok'
+            num += 1
+
+        self.filenames.append(filename)
+
+        return filename
