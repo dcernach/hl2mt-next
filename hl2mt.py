@@ -25,6 +25,9 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.searchThread.searchFinishedSignal.connect(self.search_finished)
         self.searchThread.searchErrorSignal.connect(self.search_error)
 
+        self.createThread = CreateThread()
+        self.createThread.tokenCreatedSignal.connect(self.token_created)
+        self.createThread.createFinishedSignal.connect(self.create_finished)
 
         self.actionExit.triggered.connect(self.close)
         self.actionFolders.triggered.connect(self.action_folders_triggered)
@@ -35,6 +38,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.actionImport.triggered.connect(self.action_import_triggered)
         self.actionSave.triggered.connect(self.action_save_triggered)
         self.processButton.clicked.connect(self.process_button_clicked)
+        self.createButton.clicked.connect(self.create_button_clicked)
 
         self.tableWidget.cellDoubleClicked.connect(self.table_widget_doubleclicked)
 
@@ -216,6 +220,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.row = 0
         self.errors = ""
         self.processButton.setDisabled(True)
+        self.createButton.setDisabled(True)
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.clearContents()
         self.tableWidget.setRowCount(0)
@@ -224,6 +229,15 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.searchThread.portrait_folder = self.settings.value("folderPortrait").toString()
         self.searchThread.token_folder = self.settings.value("folderOutput").toString()
         self.searchThread.start()
+
+    def create_button_clicked(self):
+        """Create the tokens"""
+        self.processButton.setDisabled(True)
+        self.createButton.setDisabled(True)
+        self.tableWidget.setSortingEnabled(False)
+        self.createThread.settings = self.settings
+        self.createThread.table_widget = self.tableWidget
+        self.createThread.start()
 
     def entry_found(self, subdir, source, filename, name, portrait, pog, token):
         if self.tableWidget.rowCount() < self.row + 1:
@@ -251,6 +265,16 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
     def search_error(self, error):
         self.errors += error
+
+    def token_created(self, row):
+
+        self.tableWidget.setRowHidden(row, True)
+
+    def create_finished(self):
+
+        self.processButton.setDisabled(False)
+        self.tableWidget.setSortingEnabled(True)
+        QMessageBox.information(self, __appname__ + " Finished", "Tokens have been created")
 
 
 class HtmlDialog(QDialog, htmlDialog.Ui_htmlDialog):
@@ -468,6 +492,39 @@ class SearchThread(QThread):
         self.searchFinishedSignal.emit()
 
 
+class CreateThread(QThread):
+
+    tokenCreatedSignal = pyqtSignal(int)
+    createFinishedSignal = pyqtSignal()
+
+    def __init__(self, parent=None):
+        super(CreateThread, self).__init__(parent)
+
+        self.table_widget = QTableWidget
+        self.settings = QSettings
+        self.index_values = []
+
+    def run(self):
+        """Loop through the table and create a token for each row"""
+
+        for row in xrange(0, self.table_widget.rowCount()):
+            subdir = self.table_widget.item(row, 0).text()
+            filename = self.table_widget.item(row, 1).text()
+            source = self.table_widget.item(row, 2).text()
+            name = self.table_widget.item(row, 3).text()
+            portrait = self.table_widget.item(row, 4).text()
+            pog = self.table_widget.item(row, 5).text()
+            token = self.table_widget.item(row, 6).text()
+
+            # TODO Create the token
+
+            self.tokenCreatedSignal.emit(row)
+
+        # TODO Create the indexes
+
+        self.createFinishedSignal.emit()
+
+
 def main():
     QCoreApplication.setApplicationName("hl2mt")
     QCoreApplication.setApplicationVersion("0.5")
@@ -486,4 +543,5 @@ if __module__ == "main":
 # TODO Pass HeroLab class HTML to Token and use that for char sheets
 # TODO Clean up and rename Token class file
 # TODO Allow user to click on table fields to change token name, pog and portrait
+# TODO Allow the user the do a search filter for the process files part
 # TODO Create an indexing option that doesn't require remote HTTP

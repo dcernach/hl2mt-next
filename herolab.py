@@ -45,7 +45,6 @@ class HeroLabIndex:
         self.token_folder = str(token_folder)
         self.filenames = []
 
-
     def get_creatures(self):
 
         self.bad_files = []
