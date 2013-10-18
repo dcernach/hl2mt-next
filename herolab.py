@@ -20,63 +20,66 @@ class HeroLab:
         self.source = source
         self.input_folder = input_folder
         self.values = []
+        filename = str(filename)
 
         lab_file = input_folder + subdir + '/' + source
-        print lab_file
+
+        minion_num = 0
+        txt_search = ''
+        html_search = ''
+        xml_search = ''
+
+        if re.search('^(\d+)\.(\d+)_', filename):
+            found = re.search('^(\d+)\.(\d+)_', filename)
+            char_num = found.group(1)
+            minion_num = found.group(2)
+
+            txt_search = '^' + filename + '\.txt$'
+            html_search = '^' + filename + '\.htm$'
+            xml_search = '^' + char_num + '_.+\.xml$'
+
+        elif re.search('^(\d+)_', filename):
+
+            txt_search = '^' + filename + '\.txt$'
+            html_search = '^' + filename + '\.htm$'
+            xml_search = '^' + filename + '\.xml$'
 
         lab_zip = zipfile.ZipFile(str(lab_file.toAscii()), 'r')
         index_xml = lab_zip.open('index.xml')
         tree = ET.parse(index_xml)
         index_xml.close()
         index_root = tree.getroot()
-        for index_char in index_root.find('characters').iter('character'):
-            # TODO Pull out the minion block and name search through that for XML
-            index_minions = index_char.find('minions')
-            if index_minions is not None:
-                index_char.remove(index_minions)
-                for statblock in index_minions.iter('statblock'):
-                    if str(filename) in statblock.get("filename"):
-                        if statblock.get("format") == "html":
-                            html_file = statblock.get("folder") + "/" + statblock.get("filename")
-                            self.html = lab_zip.read(html_file)
-                        if statblock.get("format") == "text":
-                            text_file = statblock.get("folder") + "/" + statblock.get("filename")
-                            self.text = lab_zip.read(text_file)
-                        for statblock in index_char.iter('statblock'):
-                            if statblock.get("format") == "xml":
-                                xml_name = statblock.get("folder") + "/" + statblock.get("filename")
-                                xml_file = lab_zip.open(xml_name)
-                                tree = ET.parse(xml_file)
-                                xml_file.close()
-                                root = tree.getroot()
-                                for char in root.iter('character'):
-                                    minions = char.find('minions')
-                                    self.xml = minions
 
+        for index_char in index_root.find('characters').iter('character'):
             for statblock in index_char.iter('statblock'):
-                if str(filename) in statblock.get("filename"):
-                    if statblock.get("format") == "html":
-                        html_file = statblock.get("folder") + "/" + statblock.get("filename")
-                        self.html = lab_zip.read(html_file)
-                    if statblock.get("format") == "text":
-                        text_file = statblock.get("folder") + "/" + statblock.get("filename")
-                        self.text = lab_zip.read(text_file)
-                    if statblock.get("format") == "xml":
-                        xml_name = statblock.get("folder") + "/" + statblock.get("filename")
-                        xml_file = lab_zip.open(xml_name)
-                        tree = ET.parse(xml_file)
-                        xml_file.close()
-                        root = tree.getroot()
-                        for char in root.iter('character'):
-                            minions = char.find('minions')
+                if re.search(txt_search, statblock.get("filename")):
+                    text_file = statblock.get("folder") + "/" + statblock.get("filename")
+                    self.text = lab_zip.read(text_file)
+                if re.search(html_search, statblock.get("filename")):
+                    html_file = statblock.get("folder") + "/" + statblock.get("filename")
+                    self.html = lab_zip.read(html_file)
+                if re.search(xml_search, statblock.get("filename")):
+                    xml_name = statblock.get("folder") + "/" + statblock.get("filename")
+                    xml_file = lab_zip.open(xml_name)
+                    xml_tree = ET.parse(xml_file)
+                    xml_file.close()
+                    xml_root = xml_tree.getroot()
+                    for char in xml_root.iter('character'):
+                        minions = char.find('minions')
+                        if minions is not None:
                             char.remove(minions)
+                        if minion_num:
+                            minion_count = 0
+                            for minion in minions.iter('character'):
+                                minion_count += 1
+                                if minion_count == int(minion_num):
+                                    self.xml = minion
+                        else:
                             self.xml = char
 
         lab_zip.close()
 
     def create_token(self, name, portrait, pog, filename):
-
-        print name
 
         token = Pathfinder(name, self.xml, self.html)
         token.name = name
@@ -164,11 +167,7 @@ class HeroLabIndex:
                                    "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
                                    "portrait": portrait_file, "token": token}
                             for minion in minions.iter('character'):
-                                if name.endswith('s'):
-                                    minion_name = name + "' " + minion.get('name')
-                                else:
-                                    minion_name = name + "'s " + minion.get('name')
-
+                                minion_name = name + minion.get('name')
                                 summary = minion.get('summary')
                                 found = re.search(' CR (\d+/?\d*)/?M?R?\s*(\d*/?\d*)$', summary)
                                 cr = ''

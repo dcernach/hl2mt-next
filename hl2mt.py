@@ -526,6 +526,8 @@ class CreateThread(QThread):
             herolab.create_token(name, portrait, pog, token)
             self.values = herolab.values
 
+            self.tokenCreatedSignal.emit(row)
+
         if self.settings.value("indexing").toString() == 'HTML':
             filename = str(self.settings.value("folderoutput").toString() + '/' + self.settings.value("zipfile").toString())
             mtzip = zipfile.ZipFile(filename, 'w')

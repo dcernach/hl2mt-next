@@ -11,7 +11,7 @@ class Pathfinder:
     """The Pathfinder class parses a Hero Lab character and converts it into a Maptool token"""
 
     def __init__(self, name, xml, html):
-        self.name = str(name)
+        self.name = str(name.toUtf8())
         self.xml = xml
         self.html = html
         self.languages = []
@@ -1218,5 +1218,3 @@ class Pathfinder:
             self.values.append(value)
 
         return hashlib.md5(value.encode('utf-8')).hexdigest() + '.html'
-
-
