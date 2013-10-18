@@ -8,6 +8,8 @@ from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDi
 import os
 import ConfigParser
 from herolab import HeroLabIndex, HeroLab
+import zipfile
+import hashlib
 
 
 class Main(QMainWindow, mainWindow.Ui_mainWindow):
@@ -72,11 +74,11 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         if not self.settings.contains("indexing"):
             self.settings.setValue("indexing", "None")
 
-        if not self.settings.contains("zipFile"):
-            self.settings.setValue("zipFile", "HeroLabIndex.zip")
+        if not self.settings.contains("zipfile"):
+            self.settings.setValue("zipfile", "HeroLabIndex.zip")
 
-        if not self.settings.contains("httpBase"):
-            self.settings.setValue("httpBase", "")
+        if not self.settings.contains("httpbase"):
+            self.settings.setValue("httpbase", "")
 
         if not self.settings.contains("properties/propName"):
             self.settings.setValue("properties/propName", "Basic")
@@ -484,7 +486,7 @@ class SearchThread(QThread):
 
         for entry in heroLabIndex.get_creatures():
             self.entryFoundSignal.emit(entry["subdir"], entry["source"], entry["filename"], entry["name"],
-                                       entry["pog"], entry["portrait"], entry["token"])
+                                       entry["portrait"], entry["pog"], entry["token"])
 
         for bad_file in heroLabIndex.bad_files:
             self.searchErrorSignal.emit("Could not open file %s\n" % bad_file)
@@ -502,10 +504,12 @@ class CreateThread(QThread):
 
         self.table_widget = QTableWidget
         self.settings = QSettings
-        self.index_values = []
+        self.values = []
 
     def run(self):
         """Loop through the table and create a token for each row"""
+
+        input_folder = self.settings.value("folderInput").toString()
 
         for row in xrange(0, self.table_widget.rowCount()):
             subdir = self.table_widget.item(row, 0).text()
@@ -516,13 +520,40 @@ class CreateThread(QThread):
             pog = self.table_widget.item(row, 5).text()
             token = self.table_widget.item(row, 6).text()
 
-            # TODO Create the token
+            herolab = HeroLab(input_folder, subdir, source, filename)
+            herolab.values = self.values
+            herolab.settings = self.settings
+            herolab.create_token(name, portrait, pog, token)
+            self.values = herolab.values
 
-            self.tokenCreatedSignal.emit(row)
-
-        # TODO Create the indexes
+        if self.settings.value("indexing").toString() == 'HTML':
+            filename = str(self.settings.value("folderoutput").toString() + '/' + self.settings.value("zipfile").toString())
+            mtzip = zipfile.ZipFile(filename, 'w')
+            for name, contents in self.make_files():
+                mtzip.writestr(name, contents.encode('utf-8'))
+            mtzip.close()
 
         self.createFinishedSignal.emit()
+
+    def make_files(self):
+
+        for value in self.values:
+            content = '<html>'
+            content += '<head>'
+            content += '<title></title>'
+            content += '</head>'
+            content += '<body>'
+
+            content += value
+
+            content += '</body>'
+            content += '</html>'
+
+            yield self.create_filename(value), content
+
+    def create_filename(self, name):
+
+        return hashlib.md5(name.encode('utf-8')).hexdigest() + '.html'
 
 
 def main():
@@ -539,9 +570,6 @@ def main():
 if __module__ == "main":
     main()
 
-# TODO Wire in process files to use main window table to lookup XML's from HeroLab class and stamp out tokens via Token
-# TODO Pass HeroLab class HTML to Token and use that for char sheets
-# TODO Clean up and rename Token class file
 # TODO Allow user to click on table fields to change token name, pog and portrait
 # TODO Allow the user the do a search filter for the process files part
 # TODO Create an indexing option that doesn't require remote HTTP

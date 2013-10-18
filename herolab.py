@@ -4,6 +4,9 @@ import re
 import zipfile
 import string
 import glob
+from token import Pathfinder
+from PyQt4.QtCore import *
+import StringIO
 
 
 class HeroLab:
@@ -12,8 +15,14 @@ class HeroLab:
         self.html = ''
         self.text = ''
         self.xml = ''
+        self.settings = QSettings
+        self.subdir = subdir
+        self.source = source
+        self.input_folder = input_folder
+        self.values = []
 
         lab_file = input_folder + subdir + '/' + source
+        print lab_file
 
         lab_zip = zipfile.ZipFile(str(lab_file.toAscii()), 'r')
         index_xml = lab_zip.open('index.xml')
@@ -21,6 +30,29 @@ class HeroLab:
         index_xml.close()
         index_root = tree.getroot()
         for index_char in index_root.find('characters').iter('character'):
+            # TODO Pull out the minion block and name search through that for XML
+            index_minions = index_char.find('minions')
+            if index_minions is not None:
+                index_char.remove(index_minions)
+                for statblock in index_minions.iter('statblock'):
+                    if str(filename) in statblock.get("filename"):
+                        if statblock.get("format") == "html":
+                            html_file = statblock.get("folder") + "/" + statblock.get("filename")
+                            self.html = lab_zip.read(html_file)
+                        if statblock.get("format") == "text":
+                            text_file = statblock.get("folder") + "/" + statblock.get("filename")
+                            self.text = lab_zip.read(text_file)
+                        for statblock in index_char.iter('statblock'):
+                            if statblock.get("format") == "xml":
+                                xml_name = statblock.get("folder") + "/" + statblock.get("filename")
+                                xml_file = lab_zip.open(xml_name)
+                                tree = ET.parse(xml_file)
+                                xml_file.close()
+                                root = tree.getroot()
+                                for char in root.iter('character'):
+                                    minions = char.find('minions')
+                                    self.xml = minions
+
             for statblock in index_char.iter('statblock'):
                 if str(filename) in statblock.get("filename"):
                     if statblock.get("format") == "html":
@@ -30,10 +62,59 @@ class HeroLab:
                         text_file = statblock.get("folder") + "/" + statblock.get("filename")
                         self.text = lab_zip.read(text_file)
                     if statblock.get("format") == "xml":
-                        text_file = statblock.get("folder") + "/" + statblock.get("filename")
-                        self.text = lab_zip.read(text_file)
+                        xml_name = statblock.get("folder") + "/" + statblock.get("filename")
+                        xml_file = lab_zip.open(xml_name)
+                        tree = ET.parse(xml_file)
+                        xml_file.close()
+                        root = tree.getroot()
+                        for char in root.iter('character'):
+                            minions = char.find('minions')
+                            char.remove(minions)
+                            self.xml = char
 
         lab_zip.close()
+
+    def create_token(self, name, portrait, pog, filename):
+
+        print name
+
+        token = Pathfinder(name, self.xml, self.html)
+        token.name = name
+        token.values = self.values
+        token.settings = self.settings
+        token.parse()
+        token.make_pog(pog)
+        token.make_portrait(portrait)
+        token.make_thumbnail()
+        token.make_content_xml()
+
+        full_dir = str(self.settings.value("folderOutput").toString() + self.subdir)
+        if not os.path.exists(full_dir):
+            os.makedirs(full_dir)
+
+        rptok = zipfile.ZipFile(str(filename), 'w')
+        rptok.writestr('properties.xml', token.properties_xml)
+        rptok.writestr('content.xml', token.content_xml.toUtf8())
+
+        output = StringIO.StringIO()
+        token.pog.save(output, 'png')
+        rptok.writestr('assets/' + token.pog_asset, output.getvalue())
+        output.close()
+        rptok.writestr('assets/' + token.pog_md5, token.pog_xml.toUtf8())
+
+        output = StringIO.StringIO()
+        token.portrait.save(output, 'png')
+        rptok.writestr('assets/' + token.portrait_asset, output.getvalue())
+        output.close()
+        rptok.writestr('assets/' + token.portrait_md5, token.portrait_xml.toUtf8())
+
+        output = StringIO.StringIO()
+        token.thumbnail.save(output, 'png')
+        rptok.writestr('thumbnail', output.getvalue())
+        output.close()
+        rptok.close()
+
+        self.values = token.values
 
 
 class HeroLabIndex:
