@@ -56,11 +56,18 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.tableWidget.hideColumn(0)
         self.tableWidget.hideColumn(1)
         self.tableWidget.hideColumn(2)
-        self.tableWidget.setColumnWidth(3, 200)
-        self.tableWidget.setColumnWidth(4, 200)
-        self.tableWidget.setColumnWidth(5, 200)
-        self.tableWidget.setColumnWidth(6, 200)
+
+        for column in [3, 4, 5, 6]:
+            width, _ = self.settings.value("tableWidth" + str(column)).toInt()
+            if width:
+                self.tableWidget.setColumnWidth(column, width)
+            else:
+                self.tableWidget.setColumnWidth(column, 200)
+
         self.createButton.setDisabled(True)
+
+        self.restoreGeometry(self.settings.value("geometry").toByteArray())
+        self.restoreState(self.settings.value("windowState").toByteArray())
 
     def check_defaults(self):
 
@@ -103,6 +110,16 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
                 self.settings.setValue("colors/" + opt + "B", "white")
             if not self.settings.contains("colors/" + opt + "F"):
                 self.settings.setValue("colors/" + opt + "F", "black")
+
+    def closeEvent(self, event):
+
+        self.settings.setValue("geometry", self.saveGeometry())
+        self.settings.setValue("windowState", self.saveState())
+        self.settings.setValue("tableWidth3", self.tableWidget.columnWidth(3))
+        self.settings.setValue("tableWidth4", self.tableWidget.columnWidth(4))
+        self.settings.setValue("tableWidth5", self.tableWidget.columnWidth(5))
+        self.settings.setValue("tableWidth6", self.tableWidget.columnWidth(6))
+        QMainWindow.closeEvent(self, event)
 
     def action_folders_triggered(self):
         dialog = FoldersDialog(self, self.settings)
@@ -205,18 +222,43 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
                 config.write(cf)
                 cf.close()
 
-    def table_widget_doubleclicked(self, row, _):
+    def table_widget_doubleclicked(self, row, col):
         subdir = self.tableWidget.item(row, 0).text()
         filename = self.tableWidget.item(row, 1).text()
         source = self.tableWidget.item(row, 2).text()
         input_folder = self.settings.value("folderInput").toString()
+        pog_folder = self.settings.value("folderPOG").toString()
+        portrait_folder = self.settings.value("folderPortrait").toString()
+        token_folder = self.settings.value("folderOutput").toString()
 
-        heroLab = HeroLab(input_folder, subdir, source, filename)
-        if heroLab.html != '':
-            htmlDialog = HtmlDialog(self)
-            htmlDialog.show_html(heroLab.html)
-        else:
-            QMessageBox.warning(self, __appname__ + " Error", "Could not find HTML in file")
+        # Character name brings up HTML sheet
+        if col == 3:
+            heroLab = HeroLab(input_folder, subdir, source, filename)
+            if heroLab.html != '':
+                htmlDialog = HtmlDialog(self)
+                htmlDialog.show_html(heroLab.html)
+            else:
+                QMessageBox.warning(self, __appname__ + " Error", "Could not find HTML in file")
+
+        # Portrait and POG bring up file open dialogs
+        if col == 4:
+            filename = QFileDialog.getOpenFileName(self, __appname__ + ": Choose Image", portrait_folder,
+                                                   filter="Image files (*.png)")
+            if filename != '' and os.path.isfile(filename):
+                self.tableWidget.setItem(row, col, QTableWidgetItem(filename))
+
+        if col == 5:
+            filename = QFileDialog.getOpenFileName(self, __appname__ + ": Choose Image", pog_folder,
+                                                   filter="Image files (*.png)")
+            if filename != '' and os.path.isfile(filename):
+                self.tableWidget.setItem(row, col, QTableWidgetItem(filename))
+
+        # Token column brings up a save dialog
+        if col == 6:
+            filename = QFileDialog.getSaveFileName(self, __appname__ + ": Save Token As...", token_folder,
+                                                   filter="Token files (*.rptok)")
+            if filename != '':
+                self.tableWidget.setItem(row, col, QTableWidgetItem(filename))
 
     def process_button_clicked(self):
         """Search through the files and display the output"""
@@ -589,5 +631,4 @@ def main():
 if __module__ == "main":
     main()
 
-# TODO Allow user to click on table fields to change token name, pog and portrait
 # TODO Allow the user the do a search filter for the process files part
