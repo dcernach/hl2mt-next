@@ -243,13 +243,13 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         # Portrait and POG bring up file open dialogs
         if col == 4:
             filename = QFileDialog.getOpenFileName(self, __appname__ + ": Choose Image", portrait_folder,
-                                                   filter="Image files (*.png)")
+                                                   filter="Image files (*.png *.jpg *.jpeg *.gif *.bmp)")
             if filename != '' and os.path.isfile(filename):
                 self.tableWidget.setItem(row, col, QTableWidgetItem(filename))
 
         if col == 5:
             filename = QFileDialog.getOpenFileName(self, __appname__ + ": Choose Image", pog_folder,
-                                                   filter="Image files (*.png)")
+                                                   filter="Image files (*.png *.jpg *.jpeg *.gif *.bmp)")
             if filename != '' and os.path.isfile(filename):
                 self.tableWidget.setItem(row, col, QTableWidgetItem(filename))
 
@@ -630,5 +630,3 @@ def main():
 
 if __module__ == "main":
     main()
-
-# TODO Allow the user the do a search filter for the process files part
