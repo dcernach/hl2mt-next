@@ -443,12 +443,22 @@ class IndexingDialog(QDialog, indexingDialog.Ui_indexDialog):
         self.setWindowTitle(__appname__ + ": Indexing Options")
         self.settings = settings
         self.load_settings()
+        self.comboIndex.currentIndexChanged.connect(self.combo_index_changed)
 
     def load_settings(self):
 
         self.comboIndex.setCurrentIndex(self.comboIndex.findText(self.settings.value("indexing").toString()))
         self.editURL.setText(self.settings.value("httpbase").toString())
         self.editZip.setText(self.settings.value("zipfile").toString())
+        self.combo_index_changed()
+
+    def combo_index_changed(self):
+        if self.comboIndex.currentText() == 'None':
+            self.editZip.setDisabled(True)
+            self.editURL.setDisabled(True)
+        else:
+            self.editZip.setDisabled(False)
+            self.editURL.setDisabled(False)
 
 
 class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
@@ -512,7 +522,6 @@ class CreateThread(QThread):
 
         input_folder = self.settings.value("folderInput").toString()
 
-        # TODO Change char sheet zip to use the normal indexing
         if self.settings.value("indexing").toString() == 'HTML':
             filename = str(self.settings.value("folderoutput").toString() + '/' + self.settings.value("zipfile").toString())
             mtzip = zipfile.ZipFile(filename, 'w')
@@ -582,4 +591,3 @@ if __module__ == "main":
 
 # TODO Allow user to click on table fields to change token name, pog and portrait
 # TODO Allow the user the do a search filter for the process files part
-# TODO Create an indexing option that doesn't require remote HTTP

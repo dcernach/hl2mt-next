@@ -82,7 +82,7 @@ class HeroLab:
 
     def create_token(self, name, portrait, pog, filename):
 
-        token = Pathfinder(name, self.xml, self.html)
+        token = Pathfinder(name, self.xml)
         token.name = name
         token.values = self.values
         token.settings = self.settings
@@ -98,7 +98,6 @@ class HeroLab:
         token.make_portrait(portrait)
         token.make_thumbnail()
         token.make_content_xml()
-
 
         if not os.path.exists(full_dir):
             os.makedirs(full_dir)
@@ -136,6 +135,7 @@ class HeroLabIndex:
         self.portrait_folder = str(portrait_folder)
         self.token_folder = str(token_folder)
         self.filenames = []
+        self.bad_files = []
 
     def get_creatures(self):
 
@@ -264,7 +264,8 @@ class HeroLabIndex:
 
         return filename
 
-    def _find_image_file(self, files):
+    @staticmethod
+    def _find_image_file(files):
 
         for filename in files:
             if os.path.isfile(filename):

@@ -10,7 +10,7 @@ from PyQt4.QtCore import *
 class Pathfinder:
     """The Pathfinder class parses a Hero Lab character and converts it into a Maptool token"""
 
-    def __init__(self, name, xml, html):
+    def __init__(self, name, xml):
         self.name = str(name.toUtf8())
         self.xml = xml
         self.html_filename = ''
@@ -204,7 +204,6 @@ class Pathfinder:
                 for power in special.iter('itempower'):
                     self.itempowers[power.get('name')] = power.find('description').text
 
-
     def parse_spells(self):
         for spell in self.xml.find('spellbook').iter('spell'):
             temp = {'name': spell.get('name'), 'level': spell.get('level'), 'casttime': spell.get('casttime'),
@@ -345,7 +344,8 @@ class Pathfinder:
 
         xml += '    <macroPropertiesMap>\n'
 
-        xml += self.charsheet_macro_xml()
+        if self.settings.value("indexing").toString() == 'HTML':
+            xml += self.charsheet_macro_xml()
 
         if self.settings.value("hp").toBool():
             xml += self.hp_macro_xml()
@@ -448,8 +448,8 @@ class Pathfinder:
         self.num_macros += 1
         colorf = self.settings.value("colors/hpf").toString()
         colorb = self.settings.value("colors/hpb").toString()
-        hpc = self.settings.value("properties/HP").toString()
-        hpm = self.settings.value("properties/HPm").toString()
+        hpc = self.settings.value("properties/hp").toString()
+        hpm = self.settings.value("properties/hpmax").toString()
 
         xml = '        <entry>\n'
         xml += '         <int>' + str(self.num_macros) + '</int>\n'
@@ -460,9 +460,11 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
+        tmp = ''
+
         if hpc and hpm:
 
-            tmp = '[h:status = input(\n'
+            tmp += '[h:status = input(\n'
             tmp += '"hpChange|0|Number of Hit Points",\n'
             tmp += '"dmgOrHealing|Damage,Healing|Is the character taking damage or being healed?|RADIO|SELECT=0")]\n'
             tmp += '[h:abort(status)]\n'
@@ -478,8 +480,8 @@ class Pathfinder:
             tmp += '[h:bar.Health = ' + hpc + ' / ' + hpm + ']\n'
             tmp += '[r:token.name] is healed and gains  [r:hpChange] hit points.\n'
             tmp += '};]\n'
-        else:
-            tmp = '[h:status = input(\n'
+        elif hpm:
+            tmp += '[h:status = input(\n'
             tmp += '"hpChange|0|Number of Hit Points",\n'
             tmp += '"dmgOrHealing|Damage,Healing|Is the character taking damage or being healed?|RADIO|SELECT=0")]\n'
             tmp += '[h:abort(status)]\n'
@@ -490,6 +492,20 @@ class Pathfinder:
             tmp += '};\n'
             tmp += '{\n'
             tmp += '[h:' + hpm + ' = ' + hpm + ' + hpChange]\n'
+            tmp += '[r:token.name] is gains  [r:hpChange] hit points.\n'
+            tmp += '};]\n'
+        elif hpc:
+            tmp += '[h:status = input(\n'
+            tmp += '"hpChange|0|Number of Hit Points",\n'
+            tmp += '"dmgOrHealing|Damage,Healing|Is the character taking damage or being healed?|RADIO|SELECT=0")]\n'
+            tmp += '[h:abort(status)]\n'
+            tmp += '[if(dmgOrHealing == 0),CODE:\n'
+            tmp += '{\n'
+            tmp += '[h:' + hpc + ' = ' + hpc + ' - hpChange]\n'
+            tmp += '[r:token.name] loses [r:hpChange] hit points.\n'
+            tmp += '};\n'
+            tmp += '{\n'
+            tmp += '[h:' + hpc + ' = ' + hpc + ' + hpChange]\n'
             tmp += '[r:token.name] is gains  [r:hpChange] hit points.\n'
             tmp += '};]\n'
 
@@ -729,7 +745,8 @@ class Pathfinder:
 
         return xml
 
-    def spell_html(self, spell):
+    @staticmethod
+    def spell_html(spell):
 
         # <b>School</b>
         html = '<b>School</b> ' + spell['schooltext']
