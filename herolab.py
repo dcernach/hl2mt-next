@@ -21,6 +21,7 @@ class HeroLab:
         self.input_folder = input_folder
         self.values = []
         filename = str(filename)
+        self.html_filename = ''
 
         lab_file = input_folder + subdir + '/' + source
 
@@ -85,13 +86,20 @@ class HeroLab:
         token.name = name
         token.values = self.values
         token.settings = self.settings
+
+        full_dir = str(self.settings.value("folderOutput").toString() + self.subdir)
+        self.html_filename = string.replace(str(filename), full_dir + '/', '')
+        self.html_filename = re.sub(r'\.rptok$', '.html', self.html_filename)
+        self.html_filename = str(self.subdir)[1:] + '_' + self.html_filename
+
+        token.html_filename = self.html_filename
         token.parse()
         token.make_pog(pog)
         token.make_portrait(portrait)
         token.make_thumbnail()
         token.make_content_xml()
 
-        full_dir = str(self.settings.value("folderOutput").toString() + self.subdir)
+
         if not os.path.exists(full_dir):
             os.makedirs(full_dir)
 
@@ -267,15 +275,8 @@ class HeroLabIndex:
     def _token_name(self, subdir, name):
 
         full_dir = self.token_folder + subdir
-        name = string.replace(name, " (combat trained) ", "")
-        name = string.replace(name, " (combat trained)", "")
-        name = string.replace(name, "(combat trained)", "")
-        name = re.sub(r'([^\s\w]|_)+', '', name)
-        name = string.replace(name, "  ", "_")
-        name = string.replace(name, " ", "_")
 
-
-        filename = full_dir + '/' + name + '.rptok'
+        filename = full_dir + '/' + self.clean_name(name) + '.rptok'
         num = 1
         while filename in self.filenames:
             filename = full_dir + '/' + name + str(num) + '.rptok'
@@ -284,3 +285,15 @@ class HeroLabIndex:
         self.filenames.append(filename)
 
         return filename
+
+    @staticmethod
+    def clean_name(name):
+
+        name = string.replace(name, " (combat trained) ", "")
+        name = string.replace(name, " (combat trained)", "")
+        name = string.replace(name, "(combat trained)", "")
+        name = re.sub(r'([^\s\w]|_)+', '', name)
+        name = string.replace(name, "  ", "_")
+        name = string.replace(name, " ", "_")
+
+        return name

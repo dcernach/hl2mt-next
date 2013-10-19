@@ -10,6 +10,7 @@ import ConfigParser
 from herolab import HeroLabIndex, HeroLab
 import zipfile
 import hashlib
+import re
 
 
 class Main(QMainWindow, mainWindow.Ui_mainWindow):
@@ -511,6 +512,11 @@ class CreateThread(QThread):
 
         input_folder = self.settings.value("folderInput").toString()
 
+        # TODO Change char sheet zip to use the normal indexing
+        if self.settings.value("indexing").toString() == 'HTML':
+            filename = str(self.settings.value("folderoutput").toString() + '/' + self.settings.value("zipfile").toString())
+            mtzip = zipfile.ZipFile(filename, 'w')
+
         for row in xrange(0, self.table_widget.rowCount()):
             subdir = self.table_widget.item(row, 0).text()
             filename = self.table_widget.item(row, 1).text()
@@ -526,11 +532,13 @@ class CreateThread(QThread):
             herolab.create_token(name, portrait, pog, token)
             self.values = herolab.values
 
+            if self.settings.value("indexing").toString() == 'HTML':
+                html = re.sub(r'<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">', '', herolab.html)
+                mtzip.writestr(herolab.html_filename, html)
+
             self.tokenCreatedSignal.emit(row)
 
         if self.settings.value("indexing").toString() == 'HTML':
-            filename = str(self.settings.value("folderoutput").toString() + '/' + self.settings.value("zipfile").toString())
-            mtzip = zipfile.ZipFile(filename, 'w')
             for name, contents in self.make_files():
                 mtzip.writestr(name, contents.encode('utf-8'))
             mtzip.close()

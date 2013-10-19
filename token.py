@@ -13,7 +13,7 @@ class Pathfinder:
     def __init__(self, name, xml, html):
         self.name = str(name.toUtf8())
         self.xml = xml
-        self.html = html
+        self.html_filename = ''
         self.languages = []
         self.attrib_scores = {}
         self.attrib_bonuses = {}
@@ -1131,8 +1131,7 @@ class Pathfinder:
         group = 'Basic'
         label = 'Sheet'
         width = '40'
-
-        # TODO Go HTTP on char sheet macro
+        url = self.settings.value("httpbase").toString()
 
         self.num_macros += 1
 
@@ -1145,8 +1144,8 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        tmp = '[frame("name"): {\n'
-        tmp += self.html
+        tmp = '[frame("Character Sheet"): {\n'
+        tmp += '[r: requestURL("' + url + self.html_filename + '")]\n'
         tmp += '}]\n'
 
         xml += cgi.escape(tmp)
