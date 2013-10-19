@@ -1,10 +1,12 @@
 __appname__ = "hl2mt"
+__version__ = "0.5"
 __module__ = "main"
 
 import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDialog, propertiesDialog, htmlDialog
+from ui import aboutDialog, helpDialog
 import os
 import ConfigParser
 from herolab import HeroLabIndex, HeroLab
@@ -40,13 +42,13 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.actionOutput.triggered.connect(self.action_output_triggered)
         self.actionImport.triggered.connect(self.action_import_triggered)
         self.actionSave.triggered.connect(self.action_save_triggered)
+        self.actionHelp.triggered.connect(self.action_help_triggered)
+        self.actionAbout.triggered.connect(self.action_about_triggered)
+
         self.processButton.clicked.connect(self.process_button_clicked)
         self.createButton.clicked.connect(self.create_button_clicked)
 
         self.tableWidget.cellDoubleClicked.connect(self.table_widget_doubleclicked)
-
-    # TODO Create a help trigger and dialog
-    # TODO Create an About trigger and dialog
 
     def load_initial_settings(self):
         """Setup the initial values"""
@@ -222,6 +224,123 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
                 config.write(cf)
                 cf.close()
 
+    def action_help_triggered(self):
+        html = "<html>"
+        html += "<head><title>hl2mt Help</title></head>"
+
+        html += "<body>"
+        html += "<h2>" + __appname__ + " Help</h2>"
+
+        html += "<a name=\"toc\"></a>"
+        html += "<ul id=\"toc\">"
+        html += "<li><a href=\"#chapter1\">Chapter 1</a>: <span>Introduction</span></li>"
+        html += "<li><a href=\"#chapter2\">Chapter 2</a>: <span>Basics of a Token</span></li>"
+        html += "<li><a href=\"#chapter3\">Chapter 3</a>: <span>Folders</span></li>"
+        html += "<li><a href=\"#chapter4\">Chapter 4</a>: <span>Token Properties</span></li>"
+        html += "<li><a href=\"#chapter5\">Chapter 5</a>: <span>Macro Colors</span></li>"
+        html += "<li><a href=\"#chapter6\">Chapter 6</a>: <span>Indexing</span></li>"
+        html += "<li><a href=\"#chapter7\">Chapter 7</a>: <span>Output Options</span></li>"
+        html += "<li><a href=\"#chapter8\">Chapter 8</a>: <span>Importing and Exporting Configs</span></li>"
+        html += "</ul>"
+        html += "<br><br><br>"
+
+        # Chapter 1
+        html += "<a name=\"chapter1\"></a>"
+        html += "<h3>Introduction</h3>"
+
+        html += "hl2mt parses output from Hero Lab and converts it into usable Maptool tokens that have basic die roll "
+        html += "macros and text references. The application has a lot of configuration options that should allow "
+        html += "anyone to customize the created tokens so they work with existing Maptool frameworks."
+
+        html += "<a href=\"#toc\">Back to table of contents</a>"
+        html += "<br><br><br>"
+
+        # Chapter 2
+        html += "<a name=\"chapter2\"></a>"
+        html += "<h3>Basics of a Token</h3>"
+
+        html += "The basic usage concept behind hl2mt is you do up your encounters, PCs and monsters in Hero Lab and "
+        html += "then save them into a directory. hl2mt then opens the files, parses the data, pulls out the creatures "
+        html += "and associates a portrait and token image to them. It then saves the creature into a Maptool token."
+
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
+        html += "<br><br><br>"
+
+        # Chapter 3
+        html += "<a name=\"chapter3\"></a>"
+        html += "<h3>Folders</h3>"
+
+        html += "<ul>"
+        html += "<li><b>Input Dir</b>: Where the Hero Lab XML, por or stock files are</li>"
+        html += "<li><b>POG Dir</b>: Where hl2mt will search for token images for each creature</li>"
+        html += "<li><b>Portrait Dir</b>: Where hl2mt will search for portrait images for each creature</li>"
+        html += "<li><b>Token Dir</b>: Where hl2mt will save the tokens</li>"
+        html += "</ul>"
+
+        html += "The filename on the Hero Lab file doesn't matter. It's the creature names that hl2mt works with. If "
+        html += "you have an orcs.por file with an Orc, Orc Champion and Chief Orc hl2mt will individually create "
+        html += "\"Orc\", \"Orc Champion\" and \"Chief Orc\" tokens and expect to find image files with those names "
+        html += "in the POG and Portrait directories."
+
+
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
+        html += "<br><br><br>"
+
+
+
+        # Chapter 4
+        html += "<a name=\"chapter4\"></a>"
+        html += "<h3>Token Properties</h3>"
+
+        html += "Within Maptool there's a campaign properties option which allows you to set properties(variables) "
+        html += "onto tokens. By default there's a simple Basic campaign property that has a few simple settings on "
+        html += "it. Most frameworks create their own campaign properties and assign a lot more values to a token that "
+        html += "the framework manipulates via macros."
+
+        html += "hl2mt allows you to customize how the Hero Lab data gets converted into token properties. Below are "
+        html += "the properties hl2mt works with:"
+        html += "<ul>"
+        html += "<li><b>Property Name</b>: The campaign property name(Basic, Pathfinder, etc)</li>"
+        html += "<li><b>Character Name</b>: What property the character name in Hero Lab should be assigned to</li>"
+        html += "<li><b>Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma</b>: The numerical stat</li>"
+        html += "<li><b>Race, Alignment, Player</b>: Basic character information</li>"
+        html += "<li><b>HP Current</b>: The current hit points of the creature(after damage is applied)</li>"
+        html += "<li><b>HP Max</b>: The max hit points of the creature</li>"
+        html += "<li><b>Initiative, Speed, Reach</b>: More basic stats</li>"
+        html += "<li><b>AC Normal, AC flatfooted, AC touch</b>: Basic defenses</li>"
+        html += "<li><b>CMD, CMD Flatfooted</b>: Maneuver defenses</li>"
+        html += "<li><b>CMB</b>: The creature's basic CMB</li>"
+        html += "<li><b>Melee Attack, Ranged Attack, BAB</b>: Basic attack values</li>"
+        html += "</ul>"
+
+
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
+        html += "<br><br><br>"
+
+
+        # TODO Finish help document
+
+        html += "</body>"
+        html += "</html>"
+
+        helpDialog = HelpDialog(self)
+        helpDialog.show_html(html)
+
+    def action_about_triggered(self):
+        html = "<html>"
+        html += "<head><title>About hl2mt</title></head>"
+
+        html += "<body>"
+        html += "<h2>" + __appname__ + " version " + __version__ + "</h2>"
+        html += "<b>hl2mt</b> is a Hero Lab to Maptool save file converter for "
+        html += "the Pathfinder roleplaying game."
+
+        html += "</body>"
+        html += "</html>"
+
+        aboutDialog = AboutDialog(self)
+        aboutDialog.show_html(html)
+
     def table_widget_doubleclicked(self, row, col):
         subdir = self.tableWidget.item(row, 0).text()
         filename = self.tableWidget.item(row, 1).text()
@@ -328,6 +447,30 @@ class HtmlDialog(QDialog, htmlDialog.Ui_htmlDialog):
         super(HtmlDialog, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle(__appname__ + " Statblock")
+
+    def show_html(self, html):
+        self.webView.setHtml(html)
+        self.show()
+
+
+class AboutDialog(QDialog, aboutDialog.Ui_aboutDialog):
+
+    def __init__(self, parent):
+        super(AboutDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle("About " + __appname__)
+
+    def show_html(self, html):
+        self.webView.setHtml(html)
+        self.show()
+
+
+class HelpDialog(QDialog, helpDialog.Ui_helpDialog):
+
+    def __init__(self, parent):
+        super(HelpDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle(__appname__ + " Help")
 
     def show_html(self, html):
         self.webView.setHtml(html)
@@ -618,8 +761,8 @@ class CreateThread(QThread):
 
 
 def main():
-    QCoreApplication.setApplicationName("hl2mt")
-    QCoreApplication.setApplicationVersion("0.5")
+    QCoreApplication.setApplicationName(__appname__)
+    QCoreApplication.setApplicationVersion(__version__)
     QCoreApplication.setOrganizationName("Tarsis")
     QCoreApplication.setOrganizationDomain("tarsis.org")
 
