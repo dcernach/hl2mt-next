@@ -72,6 +72,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.restoreState(self.settings.value("windowState").toByteArray())
 
     def check_defaults(self):
+        # TODO Make sure defaults get setup with proper colors and everything for Basic
 
         for opt in ['folderInput', 'folderPOG', 'folderOutput', 'folderPortrait']:
             if not self.settings.contains(opt):
@@ -236,28 +237,29 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         html += "<li><a href=\"#chapter1\">Chapter 1</a>: <span>Introduction</span></li>"
         html += "<li><a href=\"#chapter2\">Chapter 2</a>: <span>Basics of a Token</span></li>"
         html += "<li><a href=\"#chapter3\">Chapter 3</a>: <span>Folders</span></li>"
-        html += "<li><a href=\"#chapter4\">Chapter 4</a>: <span>Token Properties</span></li>"
-        html += "<li><a href=\"#chapter5\">Chapter 5</a>: <span>Macro Colors</span></li>"
-        html += "<li><a href=\"#chapter6\">Chapter 6</a>: <span>Indexing</span></li>"
-        html += "<li><a href=\"#chapter7\">Chapter 7</a>: <span>Output Options</span></li>"
-        html += "<li><a href=\"#chapter8\">Chapter 8</a>: <span>Importing and Exporting Configs</span></li>"
+        html += "<li><a href=\"#chapter4\">Chapter 4</a>: <span>Token Naming</span></li>"
+        html += "<li><a href=\"#chapter5\">Chapter 5</a>: <span>Token Properties</span></li>"
+        html += "<li><a href=\"#chapter6\">Chapter 6</a>: <span>Macro Colors</span></li>"
+        html += "<li><a href=\"#chapter7\">Chapter 7</a>: <span>Indexing</span></li>"
+        html += "<li><a href=\"#chapter8\">Chapter 8</a>: <span>Output Options</span></li>"
+        html += "<li><a href=\"#chapter9\">Chapter 9</a>: <span>Importing and Exporting Configs</span></li>"
         html += "</ul>"
         html += "<br><br><br>"
 
         # Chapter 1
         html += "<a name=\"chapter1\"></a>"
-        html += "<h3>Introduction</h3>"
+        html += "<h3>Chapter 1: Introduction</h3>"
 
-        html += "hl2mt parses output from Hero Lab and converts it into usable Maptool tokens that have basic die roll "
+        html += "hl2mt parses save files from Hero Lab and converts them into usable Maptool tokens that have die roll "
         html += "macros and text references. The application has a lot of configuration options that should allow "
         html += "anyone to customize the created tokens so they work with existing Maptool frameworks."
 
-        html += "<a href=\"#toc\">Back to table of contents</a>"
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
         html += "<br><br><br>"
 
         # Chapter 2
         html += "<a name=\"chapter2\"></a>"
-        html += "<h3>Basics of a Token</h3>"
+        html += "<h3>Chapter 2: Basics of a Token</h3>"
 
         html += "The basic usage concept behind hl2mt is you do up your encounters, PCs and monsters in Hero Lab and "
         html += "then save them into a directory. hl2mt then opens the files, parses the data, pulls out the creatures "
@@ -268,57 +270,225 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
         # Chapter 3
         html += "<a name=\"chapter3\"></a>"
-        html += "<h3>Folders</h3>"
+        html += "<h3>Chapter 3: Folders</h3>"
+
+        html += "Normally Hero Lab save files don't contain images in them and Maptool needs both a portrait and "
+        html += "token(called a POG from now on) image to stamp out a token. So for hl2mt to function you need "
+        html += "to tell it where to find the portrait and pog images and tell it where you save out all the tokens "
+        html += "it creates."
+        html += "<br>"
+        html += "In the config options for hl2mt, you'll be able to setup the following 4 directories:"
 
         html += "<ul>"
-        html += "<li><b>Input Dir</b>: Where the Hero Lab XML, por or stock files are</li>"
-        html += "<li><b>POG Dir</b>: Where hl2mt will search for token images for each creature</li>"
-        html += "<li><b>Portrait Dir</b>: Where hl2mt will search for portrait images for each creature</li>"
-        html += "<li><b>Token Dir</b>: Where hl2mt will save the tokens</li>"
+        html += "<li><b>Input Directory</b>: Where the Hero Lab XML, por or stock files are</li>"
+        html += "<li><b>POG Directory</b>: Where hl2mt will search for token images for each creature</li>"
+        html += "<li><b>Portrait Directory</b>: Where hl2mt will search for portrait images for each creature</li>"
+        html += "<li><b>Output Directory</b>: Where hl2mt will save the tokens</li>"
         html += "</ul>"
+
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
+        html += "<br><br><br>"
+
+        # Chapter 4
+        html += "<a name=\"chapter4\"></a>"
+        html += "<h3>Chapter 4: Token Naming</h3>"
+
+        html += "hl2mt has its own way of handling names."
 
         html += "The filename on the Hero Lab file doesn't matter. It's the creature names that hl2mt works with. If "
         html += "you have an orcs.por file with an Orc, Orc Champion and Chief Orc hl2mt will individually create "
         html += "\"Orc\", \"Orc Champion\" and \"Chief Orc\" tokens and expect to find image files with those names "
         html += "in the POG and Portrait directories."
 
+        html += "<br><br>"
+        html += "hl2mt tries to be intelligent when it looks for images and chooses a token file save name, but "
+        html += "you can double click on the appropriate column in the main table to pick a new pog/portrait image "
+        html += "or save file name."
 
         html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
         html += "<br><br><br>"
 
-
-
-        # Chapter 4
-        html += "<a name=\"chapter4\"></a>"
-        html += "<h3>Token Properties</h3>"
+        # Chapter 5
+        html += "<a name=\"chapter5\"></a>"
+        html += "<h3>Chapter 5: Token Properties</h3>"
 
         html += "Within Maptool there's a campaign properties option which allows you to set properties(variables) "
         html += "onto tokens. By default there's a simple Basic campaign property that has a few simple settings on "
         html += "it. Most frameworks create their own campaign properties and assign a lot more values to a token that "
         html += "the framework manipulates via macros."
 
+        html += "<br><br>"
+
         html += "hl2mt allows you to customize how the Hero Lab data gets converted into token properties. Below are "
-        html += "the properties hl2mt works with:"
+        html += "the properties hl2mt works with:<br>"
+
+        html += "<h4>Basic Properties</h4>"
         html += "<ul>"
-        html += "<li><b>Property Name</b>: The campaign property name(Basic, Pathfinder, etc)</li>"
+        html += "<li><b>Token Property Name</b>: The campaign property name(Basic, Pathfinder, etc)</li>"
         html += "<li><b>Character Name</b>: What property the character name in Hero Lab should be assigned to</li>"
+        html += "<li><b>Player Name</b>: What property the player name in Hero Lab should be assigned to</li>"
         html += "<li><b>Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma</b>: The numerical stat</li>"
-        html += "<li><b>Race, Alignment, Player</b>: Basic character information</li>"
-        html += "<li><b>HP Current</b>: The current hit points of the creature(after damage is applied)</li>"
-        html += "<li><b>HP Max</b>: The max hit points of the creature</li>"
-        html += "<li><b>Initiative, Speed, Reach</b>: More basic stats</li>"
-        html += "<li><b>AC Normal, AC flatfooted, AC touch</b>: Basic defenses</li>"
-        html += "<li><b>CMD, CMD Flatfooted</b>: Maneuver defenses</li>"
+        html += "</ul>"
+
+        html += "<h4>Offense Properties</h4>"
+        html += "<ul>"
         html += "<li><b>CMB</b>: The creature's basic CMB</li>"
         html += "<li><b>Melee Attack, Ranged Attack, BAB</b>: Basic attack values</li>"
         html += "</ul>"
 
+        html += "<h4>Defense Properties</h4>"
+        html += "<ul>"
+        html += "<li><b>AC Normal, AC Flatfooted, AC Touch</b>: Basic defenses</li>"
+        html += "<li><b>CMD, CMD Flatfooted</b>: Maneuver defenses</li>"
+        html += "</ul>"
+
+        html += "<h4>Misc Properties</h4>"
+        html += "<ul>"
+        html += "<li><b>Race, Alignment</b>: Basic character information</li>"
+        html += "<li><b>HP Current</b>: The current hit points of the creature(after damage is applied)</li>"
+        html += "<li><b>HP Max</b>: The max hit points of the creature</li>"
+        html += "<li><b>Speed, Reach</b>: More basic stats</li>"
+        html += "</ul>"
 
         html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
         html += "<br><br><br>"
 
+        # Chapter 6
+        html += "<a name=\"chapter6\"></a>"
+        html += "<h3>Chapter 6: Macro Colors</h3>"
 
-        # TODO Finish help document
+        html += "Macro buttons have 2 colors associated to them: font and background. From the macro colors "
+        html += "option window you can pick and choose what colors you want for each kind of macro."
+
+        html += "<br><br><b>Macro color options:</b>"
+        html += "<ul>"
+        html += "<li><b>Sheet</b>: Character sheet macro</li>"
+        html += "<li><b>Skills</b>: Character skill macros</li>"
+        html += "<li><b>Attacks</b>: Weapon macros along with base melee/ranged attack</li>"
+        html += "<li><b>HP Change</b>: The HP change macro</li>"
+        html += "<li><b>Init</b>: The initiative roll macro</li>"
+        html += "<li><b>CMB</b>: CMB macro</li>"
+        html += "<li><b>Saves</b>: Wil/Fort/Ref save macros</li>"
+        html += "<li><b>Specials</b>: Macros that deal with feats, spells, and other specials</li>"
+        html += "<li><b>Basic Dice</b>: Simple dice roll macros: d4, d6, d8, d10, d12, d20</li>"
+        html += "<li><b>Maneuvers</b>: The individual CMB macros(bull rush, trip, etc)</li>"
+        html += "<li><b>Submacros</b>: These macros are not used directly, they support other macros</li>"
+        html += "</ul>"
+
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
+        html += "<br><br><br>"
+
+        # Chapter 7
+        html += "<a name=\"chapter7\"></a>"
+        html += "<h3>Chapter 7: Indexing</h3>"
+
+        html += "Hero Lab outputs extremely detailed data on feats, traits, special abilities, spells and so on in "
+        html += "the output it generates for your creatures. This is too much data to store on each token. If your "
+        html += "library has 100 spellcasters all with magic missile it's wasteful to have 100 copies of magic "
+        html += "missile described in your campaign. Also some creatures might have hundreds of feats, special "
+        html += "abilities and spells and trying to include very detailed descriptions for each in a single token "
+        html += "would make the token very unwieldy to work with in."
+
+        html += "<br><br>"
+
+        html += "So by default when hl2mt creates tokens it doesn't include this detailed data. Instead it creates "
+        html += "simple lists on the token of feats, spells and so on, unless you turn on indexing."
+
+        html += "<br><br>"
+
+        html += "Indexing requires the Nerps variant of Maptool which allows for the software to pull in data off "
+        html += "of remote servers. When you choose the HTML option for indexing hl2mt will create html pages "
+        html += "of all the feats, spells, character sheets and so on and zip them up into a file you can manually "
+        html += "copy to a web server."
+
+        html += "<br><br>"
+
+        html += "Simply choose this option, input the base URL of where you'll unpack the index files and hl2mt will "
+        html += "pack all the html pages into a zip file you can upload to your server."
+
+        html += "<br><br>"
+
+        html += "As an example, my base URL is http://tarsis.org/maptool/ and when I'm finished running hl2mt "
+        html += "I upload my zip file to that directory and unpack it. I also make sure the files are world "
+        html += "readable by running:"
+        html += "<br>"
+
+        html += "<pre>chmod 644 *</pre>"
+
+        html += "Now in game when I link to a Feat or spell Maptool will fetch the data from that URL over the web "
+        html += "and display it in game."
+
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
+        html += "<br><br><br>"
+
+        # Chapter 8
+        html += "<a name=\"chapter8\"></a>"
+        html += "<h3>Chapter 8: Output Options</h3>"
+
+        html += "Not everyone wants all the same things on their tokens, so here you can optionally choose what you "
+        html += "want on your created tokens."
+
+        html += "<h4>Multiple Darkvision Ranges</h4>"
+
+        html += "Basic campaign frameworks typically just have a single Darkvision vision property that's assumed "
+        html += "to be 60ft in range. Pathfinder however has races with different ranges of darkvision. If your "
+        html += "framework supports these, you can click this option and your token will output darkvision in the "
+        html += "following way: Darkvision30, Darkvision60, Darkvision120 and Lowlight, etc. "
+
+        html += "<h4>Individual Maneuver Macros</h4>"
+
+        html += "Hero Lab has individual values for all the maneuvers(trip, bull rush, etc). If you'd prefer to see "
+        html += "a macro for each maneuver in addition to the basic CMB macro select this option. This can be useful "
+        html += "if you have creatures who have bonuses to certain maneuvers."
+
+        html += "<h4>Skill Macros</h4>"
+
+        html += "This option will create a macro for every skill the creature has. These are very "
+        html += "simple \"d20 + skill\" dice rolling macros."
+
+        html += "<h4>Weapon Macros</h4>"
+
+        html += "Hero Lab contains attack to hit and damage data for every weapon carried by creatures(including "
+        html += "natural attacks). If you'd like a weapon to-hit/damage roll macro created click this option. hl2mt "
+        html += "will attempt to eliminate duplicate items(if your PCs like to carry 20 daggers) and will also create "
+        html += "a Thrown option for any weapon that can also be thrown."
+
+        html += "<h4>Basic Dice Macros</h4>"
+
+        html += "These are just macros for basic die rolls: d4, d6, d8, d10, d12 and d20"
+        html += "<br><br>"
+        html += "They can be useful if you have newer players who aren't using to typing die rolls into chat."
+
+        html += "<h4>Items Macro</h4>"
+
+        html += "This is a simple list of every item carried by the creature. Unfortunately it's not editable as "
+        html += "that requires forms which would necessitate the use of library tokens."
+
+        html += "<h4>HP Change Macro</h4>"
+
+        html += "This will create a very simple hit point change macro. If your token properties includes both "
+        html += "current and max hp fields then hl2mt will work with both and create a macro that uses a health bar "
+        html += "over your tokens. If you only have max hp on your framework then hl2mt will create a simpler macro "
+        html += "which only works with that."
+
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
+        html += "<br><br><br>"
+
+        # Chapter 9
+        html += "<a name=\"chapter9\"></a>"
+        html += "<h3>Chapter 9: Importing and Exporting Configs</h3>"
+
+        html += "Sometimes you'll want to work on a few different setups with how hl2mt operates. For example, "
+        html += "you might be running Rise of the Runelords with one group and doing a PFS scenario with another."
+        html += "It can be useful to keep the modules/groups separated with their own folder setup and maybe "
+        html += "even options. To help with this hl2mt allows you to export and import different configs."
+
+        html += "<br><br>"
+
+        html += "Simple setup hl2mt the way you want and export the config. Later you can import it to bring it "
+        html += "back to that state."
+
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
 
         html += "</body>"
         html += "</html>"
