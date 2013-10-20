@@ -72,15 +72,18 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.restoreState(self.settings.value("windowState").toByteArray())
 
     def check_defaults(self):
-        # TODO Make sure defaults get setup with proper colors and everything for Basic
 
         for opt in ['folderInput', 'folderPOG', 'folderOutput', 'folderPortrait']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, os.getcwd())
 
-        for opt in ['vision', 'maneuvers', 'weapons', 'skills', 'hp', 'basicDice', 'items']:
+        for opt in ['vision', 'maneuvers']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, False)
+
+        for opt in ['weapons', 'skills', 'hp', 'basicDice', 'items']:
+            if not self.settings.contains(opt):
+                self.settings.setValue(opt, True)
 
         if not self.settings.contains("indexing"):
             self.settings.setValue("indexing", "None")
@@ -107,12 +110,34 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             if not self.settings.contains("properties/" + opt):
                 self.settings.setValue("properties/" + opt, opt.title())
 
-        for opt in ['sheet', 'skills', 'attacks', 'hp', 'init', 'cmb', 'saves', 'specials', 'basic', 'maneuvers',
-                    'sub']:
-            if not self.settings.contains("colors/" + opt + "B"):
-                self.settings.setValue("colors/" + opt + "B", "white")
-            if not self.settings.contains("colors/" + opt + "F"):
-                self.settings.setValue("colors/" + opt + "F", "black")
+        for opt in ['colors/sheetF', 'colors/skillsF', 'colors/hpF', 'colors/cmbF', 'colors/basicB',
+                    'colors/maneuversF', 'colors/subB']:
+            if not self.settings.contains(opt):
+                self.settings.setValue(opt, "black")
+
+        for opt in ['colors/initF', 'colors/attacksF', 'colors/specialsF', 'colors/basicF', 'colors/savesF',
+                    'colors/subF']:
+            if not self.settings.contains(opt):
+                self.settings.setValue(opt, "white")
+
+        if not self.settings.contains('colors/cmbB'):
+            self.settings.setValue('colors/cmbB', "teal")
+        if not self.settings.contains('colors/maneuversB'):
+            self.settings.setValue('colors/maneuversB', "teal")
+        if not self.settings.contains('colors/skillsB'):
+            self.settings.setValue('colors/skillsB', "silver")
+        if not self.settings.contains('colors/sheetB'):
+            self.settings.setValue('colors/sheetB', "gray")
+        if not self.settings.contains('colors/hpB'):
+            self.settings.setValue('colors/hpB', "cyan")
+        if not self.settings.contains('colors/initB'):
+            self.settings.setValue('colors/initB', "blue")
+        if not self.settings.contains('colors/attacksB'):
+            self.settings.setValue('colors/attacksB', "red")
+        if not self.settings.contains('colors/savesB'):
+            self.settings.setValue('colors/savesB', "green")
+        if not self.settings.contains('colors/specialsB'):
+            self.settings.setValue('colors/specialsB', "navy")
 
     def closeEvent(self, event):
 
