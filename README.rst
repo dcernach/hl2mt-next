@@ -7,35 +7,31 @@ About
 
 ``hl2mt`` parses output from `Hero Lab <http://wolflair.com/index.php?context=hero_lab>`_ and converts it into
 usable Maptool_ tokens that have basic die roll macros and text references. ``hl2mt`` is a Python_ application that has a
-Tkinter_ graphical interface that will run under Linux, Mac and Windows. The application has a lot of configuration
+Qt_ graphical interface that will run under Linux, Mac and Windows. The application has a lot of configuration
 options that should allow anyone to customize the created tokens so they work with existing Maptool_ frameworks.
 
 
-Installation
+Downloading
 ------------
 
-First you're going to need to install Python_ if you don't already have it installed. ``hl2mt`` uses Python 2.7 and on
-Windows you'll need to download PIL_, the Python Imaging Library. If you're running 64bit Windows I'd highly recommend
-installing the 32bit versions of Python_ and PIL_. The 64bit version of PIL_ doesn't install correctly.
+There are currently binaries for Windows and Linux:
 
-On Linux systems you'll need the following libraries:
+`Windows Binary <http://tarsis.org/builds/hl2mt.exe>`_
+`Linux 32bit Binary <http://tarsis.org/builds/hl2mt.i386>`_
+`Linux 64bit Binary <http://tarsis.org/builds/hl2mt.amd64>`_
 
-    python-tk
+Simply download the version for your platform and double click to run.
 
-    python-imaging
+Video Tutorials
+---------------
 
-Once you have Python_ installed you can download_ the zip file for ``hl2mt``, unzip it and double click on the main.py
-file. That should bring up the application.
+There are video tutorials covering the basic features ``hl2mt``
 
-
-Running
--------
-
-In Windows after installing Python_ and PIL_, double click on the main.py file.
-
-In Linux run it as per the below:
-
-    python main.py
+`Basic Usage <http://www.youtube.com/watch?v=LXPJk72QUCs>`_
+`Folders <http://www.youtube.com/watch?v=gMPr0a2t5oI>`_
+`Making use of sub-folders <http://www.youtube.com/watch?v=maqZ5DoPUqg>`_
+`Token Properties <http://www.youtube.com/watch?v=TtzymzEyw2s>`_
+`Indexes <http://www.youtube.com/watch?v=nY3VXWjtM2U>`_
 
 
 Usage
@@ -45,10 +41,10 @@ The basic usage concept behind ``hl2mt`` is you do up your encounters, PCs and m
 into a directory. ``hl2mt`` then opens the files, parses the data, pulls out the creatures and associates a portrait and
 token image to them. It then saves the creature into a Maptool token. To do this ``hl2mt`` needs 4 directories:
 
-- Input Dir: Where the Hero Lab XML, por or stock files are
-- POG Dir: Where ``hl2mt`` will search for token images for each creature
-- Portrait Dir: Where ``hl2mt`` will search for portrait images for each creature
-- Token Dir: Where ``hl2mt`` will save the tokens
+- Input Directory: Where the Hero Lab save files are
+- POG Directory: Where ``hl2mt`` will search for token images for each creature
+- Portrait Directory: Where ``hl2mt`` will search for portrait images for each creature
+- Output Directory: Where ``hl2mt`` will save the tokens
 
 The filename on the Hero Lab file doesn't matter. It's the creature names that ``hl2mt`` works with. If you have an orcs.por
 file with an Orc, Orc Champion and Chief Orc ``hl2mt`` will individually create "Orc", "Orc Champion" and "Chief Orc" tokens
@@ -97,24 +93,17 @@ values to a token that the framework manipulates via macros.
 ``hl2mt`` allows you to customize how the Hero Lab data gets converted into token properties. Below are the properties
 ``hl2mt`` works with:
 
-- Property Name: The campaign property name(Basic, Pathfinder, etc)
+- Token Property Name: The campaign property name(Basic, Pathfinder, etc)
 - Character Name: What property the character name in Hero Lab should be assigned to
 - Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma: The numerical stat
 - Race, Alignment, Player: Basic character information
 - HP Current: The current hit points of the creature(after damage is applied)
 - HP Max: The max hit points of the creature
-- Initiative, Speed, Reach: More basic stats
+- Speed, Reach: More basic stats
 - AC Normal, AC flatfooted, AC touch: Basic defenses
 - CMD, CMD Flatfooted: Maneuver defenses
 - CMB: The creature's basic CMB
 - Melee Attack, Ranged Attack, BAB: Basic attack values
-
-Each field can take multiple inputs. For example if you wanted a creature's Max HP to show up under HP and HP_MAX
-token properties, you'd use
-
-    HP Max: HP,HP_MAX
-
-Do not put spaces between the comma and property names.
 
 If your framework requires other token properties please let me know and I can add them in.
 
@@ -129,7 +118,7 @@ created tokens.
 Basic campaign frameworks typically just have a single Darkvision vision property that's assumed to be 60ft in
 range. Pathfinder however has races with different ranges of darkvision. If your framework supports these, you
 can click this option and your token will output darkvision in the following way: Darkvision30, Darkvision60,
-Darkvision120 and Lowlight, etc. It'll read proper darkvision ranges from Hero Lab and append it to "Darkvision".
+Darkvision120 and Lowlight, etc.
 
 **Individual Maneuver Macros**
 
@@ -176,51 +165,11 @@ creatures might have hundreds of feats, special abilities and spells and trying 
 for each in a single token would make the token very unwieldy to work with in.
 
 So by default when ``hl2mt`` creates tokens it doesn't include this detailed data. Instead it creates simple lists
-on the token of feats, spells and so on, unless you turn on master indexing.
+on the token of feats, spells and so on, unless you turn on indexing.
 
-**Maptool Table indexing**
-
-If you turn on table indexing ``hl2mt`` will build a master index table of all your parsed creature's feats, spells,
-specials and so on and when it finishes it'll save all of that data into a
-`Maptool table <http://www.youtube.com/watch?v=Lqfi0-5CEF4>`_ file(in the token directory) which you'll then need
-to import into Maptool whenever you run ``hl2mt``.
-
-``hl2mt`` will read in an existing created master index table and re-parse old index data, so old tokens shouldn't break
-when you add new ones. However if you ever delete your old index table file and run ``hl2mt`` with new creatures you'll
-likely break your old tokens.
-
-For example, let's say I have a skeleton on the map and my index table looks like:
-
-    1: Your quick reflexes allow you to react rapidly to danger...
-
-This is the skeleton's improved initiative feat. When I click on his feats macro and click on improved initiative
-it points to the 1st row in my master index table.
-
-If I leave a skeleton token on the map, delete my on disk table file and run ``hl2mt`` with an orc and skeleton in the Input
-dir, the orc feats/specials will come first and the first row in my index table will no longer be improved initiative.
-My skeleton, on the table, will be broken when I load in the new index table(which has the orc data). New skeletons
-in the token library will work fine, they've been built with the new index, it's old tokens on the map that'll be
-out of date.
-
-For this reason it can be a good idea to work with multiple indexes. For example when creating a Crypt of the
-Everflame campaign file I use a CryptEverFlame index with Input/Token dirs that are only for crypt creatures. I can
-build my module using that, save it, and in play I can use a different index and not have to worry about
-breaking any of my old crypt module creatures that I've placed. In fact once this module is done the tokens I've
-created in it should never go stale, since they're referencing the static CryptEverFlame table in the saved campaign
-file. So you can keep a module around for years, or mail to other people, and the tokens saved within it should
-always work.
-
-Another example of use, let's say I'm a player and my DM is running a Maptool game but doesn't use ``hl2mt``. If my
-PC name is Buddy Jesus I can create a BuddyJ index, use BuddyJ campaign properties and create my token against those.
-Then I can email to the DM my token, index and campaign properties file and he can import all three into any campaign
-and I can use my token the way I want to.
-
-**Remote HTML: Zip**
-
-While table indexes work pretty well and have the benefit that they create self contained campaigns, tables can grow
-to become excessively large. For example in my current install with 2000 tokens ``hl2mt`` builds a table with nearly 4500
-entries. This can potentially slow down Maptool on a slow computer. As an option if you download and use the Nerps_
-variant of Maptool you can store all the index information in html pages on a remote web server.
+Indexing requires the Nerps_ variant of Maptool which allows for the software to pull in data off of remote servers.
+When you choose the HTML option for indexing hl2mt will create html pages of all the feats, spells, character
+sheets and so on and zip them up into a file you can manually copy to a web server.
 
 Simply choose this option, input the base URL of where you'll unpack the index files and ``hl2mt`` will pack all the html
 pages into a zip file you can upload to your server.
@@ -237,18 +186,6 @@ Unlike tables these remote HTML pages are pretty safe from breaking when you re-
 you can upload new index zip files and unpack them without hurting existing token links to feats, spells and so on.
 
 
-Plans
------
-
-Generally there are no plans to add in advanced macro functions. The goal of ``hl2mt`` is to instead try to be as
-compatible as possible for existing frameworks. If you have a framework and you want it to work with ``hl2mt`` please
-let me know and I'll try to work with you to export the data from Hero Lab into a format your framework can use.
-
-**Current Plans**
-
-- Change the app to use OS specific APPDATA save folders
-- Compile the app into a single binary file that'll run on Linux and Windows without Python installed
-
 License
 -------
 
@@ -256,7 +193,5 @@ License
 
 .. _maptool: http://www.rptools.net/?page=maptool
 .. _python: http://www.python.org/
-.. _tkinter: http://docs.python.org/2/library/tkinter.html
-.. _download: http://hg.tarsis.org/hl2mt/archive/tip.zip
-.. _pil: http://www.pythonware.com/products/pil/
+.. _Qt: http://www.riverbankcomputing.com/software/pyqt/download
 .. _nerps: https://docs.google.com/file/d/0B2c01YG2XtiJTzA3Z2tEN0lIVk0/edit?usp=sharing

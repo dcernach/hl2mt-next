@@ -309,7 +309,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         html += "In the config options for hl2mt, you'll be able to setup the following 4 directories:"
 
         html += "<ul>"
-        html += "<li><b>Input Directory</b>: Where the Hero Lab XML, por or stock files are</li>"
+        html += "<li><b>Input Directory</b>: Where the Hero save files are</li>"
         html += "<li><b>POG Directory</b>: Where hl2mt will search for token images for each creature</li>"
         html += "<li><b>Portrait Directory</b>: Where hl2mt will search for portrait images for each creature</li>"
         html += "<li><b>Output Directory</b>: Where hl2mt will save the tokens</li>"
