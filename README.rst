@@ -10,6 +10,8 @@ usable Maptool_ tokens that have basic die roll macros and text references. ``hl
 Qt_ graphical interface that will run under Linux, Mac and Windows. The application has a lot of configuration
 options that should allow anyone to customize the created tokens so they work with existing Maptool_ frameworks.
 
+.. image:: http://tarsis.org/images/hl2mt.png
+
 
 Downloading
 ------------
@@ -17,7 +19,9 @@ Downloading
 There are currently binaries for Windows and Linux:
 
 `Windows Binary <http://tarsis.org/builds/hl2mt.exe>`_
+
 `Linux 32bit Binary <http://tarsis.org/builds/hl2mt.i386>`_
+
 `Linux 64bit Binary <http://tarsis.org/builds/hl2mt.amd64>`_
 
 Simply download the version for your platform and double click to run.
@@ -28,9 +32,13 @@ Video Tutorials
 There are video tutorials covering the basic features ``hl2mt``
 
 `Basic Usage <http://www.youtube.com/watch?v=LXPJk72QUCs>`_
+
 `Folders <http://www.youtube.com/watch?v=gMPr0a2t5oI>`_
+
 `Making use of sub-folders <http://www.youtube.com/watch?v=maqZ5DoPUqg>`_
+
 `Token Properties <http://www.youtube.com/watch?v=TtzymzEyw2s>`_
+
 `Indexes <http://www.youtube.com/watch?v=nY3VXWjtM2U>`_
 
 
