@@ -103,6 +103,9 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         if not self.settings.contains("properties/HPMax"):
             self.settings.setValue("properties/HPMax", "HP")
 
+        if not self.settings.contains("properties/AC"):
+            self.settings.setValue("properties/AC", "AC")
+
         if not self.settings.contains("properties/speed"):
             self.settings.setValue("properties/HPMax", "Movement")
 
