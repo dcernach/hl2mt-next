@@ -31,15 +31,15 @@ Video Tutorials
 
 There are video tutorials covering the basic features ``hl2mt``
 
-`Basic Usage <http://www.youtube.com/watch?v=LXPJk72QUCs>`_
+`Tutorial 1 - Basic Usage <http://www.youtube.com/watch?v=LXPJk72QUCs>`_
 
-`Folders <http://www.youtube.com/watch?v=gMPr0a2t5oI>`_
+`Tutorial 2 - Folders <http://www.youtube.com/watch?v=gMPr0a2t5oI>`_
 
-`Making use of sub-folders <http://www.youtube.com/watch?v=maqZ5DoPUqg>`_
+`Tutorial 3 - Making use of sub-folders <http://www.youtube.com/watch?v=maqZ5DoPUqg>`_
 
-`Token Properties <http://www.youtube.com/watch?v=TtzymzEyw2s>`_
+`Tutorial 4 - Token Properties <http://www.youtube.com/watch?v=TtzymzEyw2s>`_
 
-`Indexes <http://www.youtube.com/watch?v=nY3VXWjtM2U>`_
+`Tutorial 5 - Indexes <http://www.youtube.com/watch?v=nY3VXWjtM2U>`_
 
 
 Usage
