@@ -244,7 +244,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         if filename != '':
             config = ConfigParser.ConfigParser()
             for name in self.settings.allKeys():
-                config.set('DEFAULT', str(name), self.settings.value(name).toString())
+                if name not in ['geometry', 'windowState', 'tableWidth3', 'tableWidth4', 'tableWidth5', 'tableWidth6']:
+                    config.set('DEFAULT', str(name), self.settings.value(name).toString())
 
             with open(filename, 'wb') as cf:
                 config.write(cf)
