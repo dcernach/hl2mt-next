@@ -175,7 +175,7 @@ class HeroLabIndex:
                                    "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
                                    "portrait": portrait_file, "token": token}
                             for minion in minions.iter('character'):
-                                minion_name = name + minion.get('name')
+                                minion_name = name + " " + minion.get('name')
                                 summary = minion.get('summary')
                                 found = re.search(' CR (\d+/?\d*)/?M?R?\s*(\d*/?\d*)$', summary)
                                 cr = ''
