@@ -622,9 +622,10 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
         if self.tableWidget.rowCount() < 1:
             QMessageBox.information(self, __appname__ + " No Files", "Nothing found to create tokens from")
+        else:
+            self.createButton.setDisabled(False)
 
         self.tableWidget.setSortingEnabled(True)
-        self.createButton.setDisabled(False)
 
     def search_error(self, error):
         self.errors += error
