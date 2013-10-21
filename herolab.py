@@ -219,6 +219,7 @@ class HeroLabIndex:
                 except zipfile.BadZipfile:
                     self.bad_files.append(filename)
 
+# TODO Look into the scan only grabbing image files for portraits and pogs
     def _search_file(self, search_dir, subdir, char_name):
 
         paths = [search_dir + subdir + '/', search_dir + '/']
@@ -262,8 +263,11 @@ class HeroLabIndex:
         path = search_dir + '/'
         filename = self._find_image_file(glob.glob(path + '*'))
 
+        # TODO On fall through if still no image found, maybe use an internally generated default one
+
         return filename
 
+# TODO Possibly check to make sure we find a valid image
     @staticmethod
     def _find_image_file(files):
 

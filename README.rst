@@ -10,6 +10,9 @@ usable Maptool_ tokens that have basic die roll macros and text references. ``hl
 Qt_ graphical interface that will run under Linux, Mac and Windows. The application has a lot of configuration
 options that should allow anyone to customize the created tokens so they work with existing Maptool_ frameworks.
 
+Here you can see a demo of the application: `Basic Overview <https://www.youtube.com/watch?v=TufLB57vgc4>`_
+
+
 .. image:: http://tarsis.org/images/hl2mt.png
 
 
