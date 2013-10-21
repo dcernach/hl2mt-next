@@ -107,7 +107,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("properties/AC", "AC")
 
         if not self.settings.contains("properties/speed"):
-            self.settings.setValue("properties/HPMax", "Movement")
+            self.settings.setValue("properties/speed", "Movement")
 
         for opt in ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'race', 'alignment']:
             if not self.settings.contains("properties/" + opt):
