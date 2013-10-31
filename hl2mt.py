@@ -927,7 +927,7 @@ class CreateThread(QThread):
             self.values = herolab.values
 
             if self.settings.value("indexing").toString() == 'HTML':
-                html = re.sub(r'<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">', '', herolab.html)
+                html = re.sub(r"\<meta http-equiv.*\>", '', herolab.html)
                 mtzip.writestr(herolab.html_filename, html)
 
             self.tokenCreatedSignal.emit(row)
