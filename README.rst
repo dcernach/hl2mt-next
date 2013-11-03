@@ -19,13 +19,15 @@ Here you can see a demo of the application: `Basic Overview <https://www.youtube
 Downloading
 ------------
 
-There are currently binaries for Windows and Linux:
+There are binaries for Windows, Linux and Mac:
 
 `Windows Binary <http://tarsis.org/builds/hl2mt.exe>`_
 
 `Linux 32bit Binary <http://tarsis.org/builds/hl2mt.i386>`_
 
 `Linux 64bit Binary <http://tarsis.org/builds/hl2mt.amd64>`_
+
+`OS X Mountain Lion 64bit Binary <http://tarsis.org/builds/hl2mt.dmg>`_
 
 Simply download the version for your platform and double click to run.
 

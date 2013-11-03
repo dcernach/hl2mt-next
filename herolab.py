@@ -87,7 +87,7 @@ class HeroLab:
         token.values = self.values
         token.settings = self.settings
 
-        full_dir = str(self.settings.value("folderOutput").toString() + self.subdir)
+        full_dir = str(self.settings.value("folderoutput").toString() + self.subdir)
         self.html_filename = string.replace(str(filename), full_dir + '/', '')
         self.html_filename = re.sub(r'\.rptok$', '.html', self.html_filename)
         self.html_filename = str(self.subdir)[1:] + '_' + self.html_filename

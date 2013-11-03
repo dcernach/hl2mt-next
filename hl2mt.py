@@ -60,7 +60,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.tableWidget.hideColumn(2)
 
         for column in [3, 4, 5, 6]:
-            width, _ = self.settings.value("tableWidth" + str(column)).toInt()
+            width, _ = self.settings.value("tablewidth" + str(column)).toInt()
             if width:
                 self.tableWidget.setColumnWidth(column, width)
             else:
@@ -69,11 +69,11 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.createButton.setDisabled(True)
 
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
-        self.restoreState(self.settings.value("windowState").toByteArray())
+        self.restoreState(self.settings.value("windowstate").toByteArray())
 
     def check_defaults(self):
 
-        for opt in ['folderInput', 'folderPOG', 'folderOutput', 'folderPortrait']:
+        for opt in ['folderinput', 'folderpog', 'folderoutput', 'folderportrait']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, os.getcwd())
 
@@ -81,7 +81,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, False)
 
-        for opt in ['weapons', 'skills', 'hp', 'basicDice', 'items']:
+        for opt in ['weapons', 'skills', 'hp', 'basicdice', 'items']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, True)
 
@@ -94,17 +94,17 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         if not self.settings.contains("httpbase"):
             self.settings.setValue("httpbase", "")
 
-        if not self.settings.contains("properties/propName"):
-            self.settings.setValue("properties/propName", "Basic")
+        if not self.settings.contains("properties/propname"):
+            self.settings.setValue("properties/propname", "Basic")
 
-        if not self.settings.contains("properties/characterName"):
-            self.settings.setValue("properties/characterName", "Name")
+        if not self.settings.contains("properties/charactername"):
+            self.settings.setValue("properties/charactername", "Name")
 
-        if not self.settings.contains("properties/HPMax"):
-            self.settings.setValue("properties/HPMax", "HP")
+        if not self.settings.contains("properties/hpmax"):
+            self.settings.setValue("properties/hpmax", "HP")
 
-        if not self.settings.contains("properties/AC"):
-            self.settings.setValue("properties/AC", "AC")
+        if not self.settings.contains("properties/ac"):
+            self.settings.setValue("properties/ac", "AC")
 
         if not self.settings.contains("properties/speed"):
             self.settings.setValue("properties/speed", "Movement")
@@ -113,43 +113,43 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             if not self.settings.contains("properties/" + opt):
                 self.settings.setValue("properties/" + opt, opt.title())
 
-        for opt in ['colors/sheetF', 'colors/skillsF', 'colors/hpF', 'colors/cmbF', 'colors/basicB',
-                    'colors/maneuversF', 'colors/subB']:
+        for opt in ['colors/sheetf', 'colors/skillsf', 'colors/hpf', 'colors/cmbf', 'colors/basicb',
+                    'colors/maneuversf', 'colors/subb']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, "black")
 
-        for opt in ['colors/initF', 'colors/attacksF', 'colors/specialsF', 'colors/basicF', 'colors/savesF',
-                    'colors/subF']:
+        for opt in ['colors/initf', 'colors/attacksf', 'colors/specialsf', 'colors/basicf', 'colors/savesf',
+                    'colors/subf']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, "white")
 
-        if not self.settings.contains('colors/cmbB'):
-            self.settings.setValue('colors/cmbB', "teal")
-        if not self.settings.contains('colors/maneuversB'):
-            self.settings.setValue('colors/maneuversB', "teal")
-        if not self.settings.contains('colors/skillsB'):
-            self.settings.setValue('colors/skillsB', "silver")
-        if not self.settings.contains('colors/sheetB'):
-            self.settings.setValue('colors/sheetB', "gray")
-        if not self.settings.contains('colors/hpB'):
-            self.settings.setValue('colors/hpB', "cyan")
-        if not self.settings.contains('colors/initB'):
-            self.settings.setValue('colors/initB', "blue")
-        if not self.settings.contains('colors/attacksB'):
-            self.settings.setValue('colors/attacksB', "red")
-        if not self.settings.contains('colors/savesB'):
-            self.settings.setValue('colors/savesB', "green")
-        if not self.settings.contains('colors/specialsB'):
-            self.settings.setValue('colors/specialsB', "navy")
+        if not self.settings.contains('colors/cmbb'):
+            self.settings.setValue('colors/cmbb', "teal")
+        if not self.settings.contains('colors/maneuversb'):
+            self.settings.setValue('colors/maneuversb', "teal")
+        if not self.settings.contains('colors/skillsb'):
+            self.settings.setValue('colors/skillsb', "silver")
+        if not self.settings.contains('colors/sheetb'):
+            self.settings.setValue('colors/sheetb', "gray")
+        if not self.settings.contains('colors/hpb'):
+            self.settings.setValue('colors/hpb', "cyan")
+        if not self.settings.contains('colors/initb'):
+            self.settings.setValue('colors/initb', "blue")
+        if not self.settings.contains('colors/attacksb'):
+            self.settings.setValue('colors/attacksb', "red")
+        if not self.settings.contains('colors/savesb'):
+            self.settings.setValue('colors/savesb', "green")
+        if not self.settings.contains('colors/specialsb'):
+            self.settings.setValue('colors/specialsb', "navy")
 
     def closeEvent(self, event):
 
         self.settings.setValue("geometry", self.saveGeometry())
-        self.settings.setValue("windowState", self.saveState())
-        self.settings.setValue("tableWidth3", self.tableWidget.columnWidth(3))
-        self.settings.setValue("tableWidth4", self.tableWidget.columnWidth(4))
-        self.settings.setValue("tableWidth5", self.tableWidget.columnWidth(5))
-        self.settings.setValue("tableWidth6", self.tableWidget.columnWidth(6))
+        self.settings.setValue("windowstate", self.saveState())
+        self.settings.setValue("tablewidth3", self.tableWidget.columnWidth(3))
+        self.settings.setValue("tablewidth4", self.tableWidget.columnWidth(4))
+        self.settings.setValue("tablewidth5", self.tableWidget.columnWidth(5))
+        self.settings.setValue("tablewidth6", self.tableWidget.columnWidth(6))
         QMainWindow.closeEvent(self, event)
 
     def action_folders_triggered(self):
@@ -160,30 +160,30 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
     def action_properties_triggered(self):
         dialog = PropertiesDialog(self, self.settings)
         if dialog.exec_():
-            self.settings.setValue("properties/AC", dialog.editAC.text())
-            self.settings.setValue("properties/ACFlat", dialog.editACFlat.text())
-            self.settings.setValue("properties/ACTouch", dialog.editACTouch.text())
-            self.settings.setValue("properties/Alignment", dialog.editAlignment.text())
-            self.settings.setValue("properties/BAB", dialog.editBAB.text())
-            self.settings.setValue("properties/Strength", dialog.editStr.text())
-            self.settings.setValue("properties/Dexterity", dialog.editDex.text())
-            self.settings.setValue("properties/Constitution", dialog.editCon.text())
-            self.settings.setValue("properties/Intelligence", dialog.editInt.text())
-            self.settings.setValue("properties/Wisdom", dialog.editWis.text())
-            self.settings.setValue("properties/Charisma", dialog.editCha.text())
-            self.settings.setValue("properties/CMB", dialog.editCMB.text())
-            self.settings.setValue("properties/CMD", dialog.editCMD.text())
-            self.settings.setValue("properties/CMDFlat", dialog.editCMDFlat.text())
-            self.settings.setValue("properties/Player", dialog.editPlayer.text())
-            self.settings.setValue("properties/Race", dialog.editRace.text())
-            self.settings.setValue("properties/Melee", dialog.editMelee.text())
-            self.settings.setValue("properties/Ranged", dialog.editRanged.text())
-            self.settings.setValue("properties/Reach", dialog.editReach.text())
-            self.settings.setValue("properties/Speed", dialog.editSpeed.text())
-            self.settings.setValue("properties/Name", dialog.editName.text())
-            self.settings.setValue("properties/PropName", dialog.editPropName.text())
-            self.settings.setValue("properties/HP", dialog.editHP.text())
-            self.settings.setValue("properties/HPMax", dialog.editHPMax.text())
+            self.settings.setValue("properties/ac", dialog.editAC.text())
+            self.settings.setValue("properties/acflat", dialog.editACFlat.text())
+            self.settings.setValue("properties/actouch", dialog.editACTouch.text())
+            self.settings.setValue("properties/alignment", dialog.editAlignment.text())
+            self.settings.setValue("properties/bab", dialog.editBAB.text())
+            self.settings.setValue("properties/strength", dialog.editStr.text())
+            self.settings.setValue("properties/dexterity", dialog.editDex.text())
+            self.settings.setValue("properties/constitution", dialog.editCon.text())
+            self.settings.setValue("properties/intelligence", dialog.editInt.text())
+            self.settings.setValue("properties/wisdom", dialog.editWis.text())
+            self.settings.setValue("properties/charisma", dialog.editCha.text())
+            self.settings.setValue("properties/cmb", dialog.editCMB.text())
+            self.settings.setValue("properties/cmd", dialog.editCMD.text())
+            self.settings.setValue("properties/cmdflat", dialog.editCMDFlat.text())
+            self.settings.setValue("properties/player", dialog.editPlayer.text())
+            self.settings.setValue("properties/race", dialog.editRace.text())
+            self.settings.setValue("properties/melee", dialog.editMelee.text())
+            self.settings.setValue("properties/ranged", dialog.editRanged.text())
+            self.settings.setValue("properties/reach", dialog.editReach.text())
+            self.settings.setValue("properties/speed", dialog.editSpeed.text())
+            self.settings.setValue("properties/name", dialog.editName.text())
+            self.settings.setValue("properties/propname", dialog.editPropName.text())
+            self.settings.setValue("properties/hp", dialog.editHP.text())
+            self.settings.setValue("properties/hpmax", dialog.editHPMax.text())
 
     def action_colors_triggered(self):
         dialog = ColorsDialog(self, self.settings)
@@ -224,7 +224,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
             self.settings.setValue("weapons", dialog.checkAttack.isChecked())
             self.settings.setValue("vision", dialog.checkDark.isChecked())
-            self.settings.setValue("basicDice", dialog.checkBasic.isChecked())
+            self.settings.setValue("basicdice", dialog.checkBasic.isChecked())
             self.settings.setValue("hp", dialog.checkHP.isChecked())
             self.settings.setValue("items", dialog.checkItems.isChecked())
             self.settings.setValue("maneuvers", dialog.checkMan.isChecked())
@@ -247,7 +247,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         if filename != '':
             config = ConfigParser.ConfigParser()
             for name in self.settings.allKeys():
-                if name not in ['geometry', 'windowState', 'tableWidth3', 'tableWidth4', 'tableWidth5', 'tableWidth6']:
+                if name not in ['geometry', 'windowstate', 'tablewidth3', 'tablewidth4', 'tablewidth5', 'tablewidth6']:
                     config.set('DEFAULT', str(name), self.settings.value(name).toString())
 
             with open(filename, 'wb') as cf:
@@ -544,10 +544,10 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         subdir = self.tableWidget.item(row, 0).text()
         filename = self.tableWidget.item(row, 1).text()
         source = self.tableWidget.item(row, 2).text()
-        input_folder = self.settings.value("folderInput").toString()
-        pog_folder = self.settings.value("folderPOG").toString()
-        portrait_folder = self.settings.value("folderPortrait").toString()
-        token_folder = self.settings.value("folderOutput").toString()
+        input_folder = self.settings.value("folderinput").toString()
+        pog_folder = self.settings.value("folderpog").toString()
+        portrait_folder = self.settings.value("folderportrait").toString()
+        token_folder = self.settings.value("folderoutput").toString()
 
         # Character name brings up HTML sheet
         if col == 3:
@@ -587,10 +587,10 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.clearContents()
         self.tableWidget.setRowCount(0)
-        self.searchThread.input_folder = self.settings.value("folderInput").toString()
-        self.searchThread.pog_folder = self.settings.value("folderPOG").toString()
-        self.searchThread.portrait_folder = self.settings.value("folderPortrait").toString()
-        self.searchThread.token_folder = self.settings.value("folderOutput").toString()
+        self.searchThread.input_folder = self.settings.value("folderinput").toString()
+        self.searchThread.pog_folder = self.settings.value("folderpog").toString()
+        self.searchThread.portrait_folder = self.settings.value("folderportrait").toString()
+        self.searchThread.token_folder = self.settings.value("folderoutput").toString()
         self.searchThread.start()
 
     def create_button_clicked(self):
@@ -693,38 +693,38 @@ class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
         self.load_settings()
 
     def load_settings(self):
-        self.editInput.setText(self.settings.value("folderInput").toString())
-        self.editPortrait.setText(self.settings.value("folderPortrait").toString())
-        self.editPOG.setText(self.settings.value("folderPOG").toString())
-        self.editOutput.setText(self.settings.value("folderOutput").toString())
+        self.editInput.setText(self.settings.value("folderinput").toString())
+        self.editPortrait.setText(self.settings.value("folderportrait").toString())
+        self.editPOG.setText(self.settings.value("folderpog").toString())
+        self.editOutput.setText(self.settings.value("folderoutput").toString())
 
     def button_input_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Input Folder", self.settings.value("folderInput").toString(),
+        folder = QFileDialog.getExistingDirectory(self, "Input Folder", self.settings.value("folderinput").toString(),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
-            self.settings.setValue("folderInput", folder)
+            self.settings.setValue("folderinput", folder)
             self.load_settings()
 
     def button_portrait_clicked(self):
         folder = QFileDialog.getExistingDirectory(self, "Portrait Folder",
-                                                  self.settings.value("folderPortrait").toString(),
+                                                  self.settings.value("folderportrait").toString(),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
-            self.settings.setValue("folderPortrait", folder)
+            self.settings.setValue("folderportrait", folder)
             self.load_settings()
 
     def button_pog_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "POG Folder", self.settings.value("folderPOG").toString(),
+        folder = QFileDialog.getExistingDirectory(self, "POG Folder", self.settings.value("folderpog").toString(),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
-            self.settings.setValue("folderPOG", folder)
+            self.settings.setValue("folderpog", folder)
             self.load_settings()
 
     def button_output_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Output Folder", self.settings.value("folderOutput").toString(),
+        folder = QFileDialog.getExistingDirectory(self, "Output Folder", self.settings.value("folderoutput").toString(),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
-            self.settings.setValue("folderOutput", folder)
+            self.settings.setValue("folderoutput", folder)
             self.load_settings()
 
 
@@ -759,30 +759,30 @@ class PropertiesDialog(QDialog, propertiesDialog.Ui_propertiesDialog):
 
     def load_settings(self):
 
-        self.editAC.setText(self.settings.value("properties/AC").toString())
-        self.editACFlat.setText(self.settings.value("properties/ACFlat").toString())
-        self.editACTouch.setText(self.settings.value("properties/ACTouch").toString())
-        self.editAlignment.setText(self.settings.value("properties/Alignment").toString())
-        self.editBAB.setText(self.settings.value("properties/BAB").toString())
-        self.editStr.setText(self.settings.value("properties/Strength").toString())
-        self.editDex.setText(self.settings.value("properties/Dexterity").toString())
-        self.editCon.setText(self.settings.value("properties/Constitution").toString())
-        self.editInt.setText(self.settings.value("properties/Intelligence").toString())
-        self.editWis.setText(self.settings.value("properties/Wisdom").toString())
-        self.editCha.setText(self.settings.value("properties/Charisma").toString())
-        self.editCMB.setText(self.settings.value("properties/CMB").toString())
-        self.editCMD.setText(self.settings.value("properties/CMD").toString())
-        self.editCMDFlat.setText(self.settings.value("properties/CMDFlat").toString())
-        self.editPlayer.setText(self.settings.value("properties/Player").toString())
-        self.editRace.setText(self.settings.value("properties/Race").toString())
-        self.editMelee.setText(self.settings.value("properties/Melee").toString())
-        self.editRanged.setText(self.settings.value("properties/Ranged").toString())
-        self.editReach.setText(self.settings.value("properties/Reach").toString())
-        self.editSpeed.setText(self.settings.value("properties/Speed").toString())
-        self.editName.setText(self.settings.value("properties/Name").toString())
-        self.editPropName.setText(self.settings.value("properties/PropName").toString())
-        self.editHP.setText(self.settings.value("properties/HP").toString())
-        self.editHPMax.setText(self.settings.value("properties/HPMax").toString())
+        self.editAC.setText(self.settings.value("properties/ac").toString())
+        self.editACFlat.setText(self.settings.value("properties/acflat").toString())
+        self.editACTouch.setText(self.settings.value("properties/actouch").toString())
+        self.editAlignment.setText(self.settings.value("properties/alignment").toString())
+        self.editBAB.setText(self.settings.value("properties/bab").toString())
+        self.editStr.setText(self.settings.value("properties/strength").toString())
+        self.editDex.setText(self.settings.value("properties/dexterity").toString())
+        self.editCon.setText(self.settings.value("properties/constitution").toString())
+        self.editInt.setText(self.settings.value("properties/intelligence").toString())
+        self.editWis.setText(self.settings.value("properties/wisdom").toString())
+        self.editCha.setText(self.settings.value("properties/charisma").toString())
+        self.editCMB.setText(self.settings.value("properties/cmb").toString())
+        self.editCMD.setText(self.settings.value("properties/cmd").toString())
+        self.editCMDFlat.setText(self.settings.value("properties/cmdflat").toString())
+        self.editPlayer.setText(self.settings.value("properties/player").toString())
+        self.editRace.setText(self.settings.value("properties/race").toString())
+        self.editMelee.setText(self.settings.value("properties/melee").toString())
+        self.editRanged.setText(self.settings.value("properties/ranged").toString())
+        self.editReach.setText(self.settings.value("properties/reach").toString())
+        self.editSpeed.setText(self.settings.value("properties/speed").toString())
+        self.editName.setText(self.settings.value("properties/name").toString())
+        self.editPropName.setText(self.settings.value("properties/propname").toString())
+        self.editHP.setText(self.settings.value("properties/hp").toString())
+        self.editHPMax.setText(self.settings.value("properties/hpmax").toString())
 
 
 class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
@@ -859,7 +859,7 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
 
         self.checkAttack.setChecked(self.settings.value("weapons").toBool())
         self.checkDark.setChecked(self.settings.value("vision").toBool())
-        self.checkBasic.setChecked(self.settings.value("basicDice").toBool())
+        self.checkBasic.setChecked(self.settings.value("basicdice").toBool())
         self.checkHP.setChecked(self.settings.value("hp").toBool())
         self.checkItems.setChecked(self.settings.value("items").toBool())
         self.checkMan.setChecked(self.settings.value("maneuvers").toBool())
@@ -905,7 +905,7 @@ class CreateThread(QThread):
     def run(self):
         """Loop through the table and create a token for each row"""
 
-        input_folder = self.settings.value("folderInput").toString()
+        input_folder = self.settings.value("folderinput").toString()
 
         if self.settings.value("indexing").toString() == 'HTML':
             filename = str(self.settings.value("folderoutput").toString() + '/' + self.settings.value("zipfile").toString())

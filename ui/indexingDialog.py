@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'indexingDialog.ui'
 #
-# Created: Thu May  9 16:01:20 2013
-#      by: PyQt4 UI code generator 4.9.1
+# Created: Sun Nov  3 14:53:28 2013
+#      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -21,7 +21,7 @@ class Ui_indexDialog(object):
         indexDialog.setMinimumSize(QtCore.QSize(472, 207))
         indexDialog.setMaximumSize(QtCore.QSize(472, 207))
         self.buttonBox = QtGui.QDialogButtonBox(indexDialog)
-        self.buttonBox.setGeometry(QtCore.QRect(340, 170, 120, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(89, 170, 371, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
