@@ -46,6 +46,8 @@ There are video tutorials covering the basic features ``hl2mt``
 
 `Tutorial 5 - Indexes <http://www.youtube.com/watch?v=nY3VXWjtM2U>`_
 
+`Tutorial 6 - Using Dropbox to host indexes <https://www.youtube.com/watch?v=cGpZb1Fp7Vo>`_
+
 
 Usage
 -----
