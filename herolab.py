@@ -7,11 +7,16 @@ import glob
 from token import Pathfinder
 from PyQt4.QtCore import *
 import StringIO
+import hashlib
 
 
 class HeroLab:
 
     def __init__(self, input_folder, subdir, source, filename):
+        input_folder = str(input_folder)
+        subdir = str(subdir)
+        source = str(source)
+        filename = str(filename)
         self.html = ''
         self.text = ''
         self.xml = ''
@@ -20,10 +25,9 @@ class HeroLab:
         self.source = source
         self.input_folder = input_folder
         self.values = []
-        filename = str(filename)
         self.html_filename = ''
 
-        lab_file = input_folder + subdir + '/' + source
+        lab_file = os.path.join(input_folder, subdir[1:], source)
 
         minion_num = 0
         txt_search = ''
@@ -45,7 +49,7 @@ class HeroLab:
             html_search = '^' + filename + '\.htm$'
             xml_search = '^' + filename + '\.xml$'
 
-        lab_zip = zipfile.ZipFile(str(lab_file.toAscii()), 'r')
+        lab_zip = zipfile.ZipFile(lab_file, 'r')
         index_xml = lab_zip.open('index.xml')
         tree = ET.parse(index_xml)
         index_xml.close()
@@ -87,10 +91,9 @@ class HeroLab:
         token.values = self.values
         token.settings = self.settings
 
-        full_dir = str(self.settings.value("folderoutput").toString() + self.subdir)
-        self.html_filename = string.replace(str(filename), full_dir + '/', '')
-        self.html_filename = re.sub(r'\.rptok$', '.html', self.html_filename)
-        self.html_filename = str(self.subdir)[1:] + '_' + self.html_filename
+        full_dir = os.path.join(str(self.settings.value("folderoutput").toString()), self.subdir[1:])
+
+        self.html_filename = hashlib.sha224(self.html).hexdigest() + '.html'
 
         token.html_filename = self.html_filename
         token.parse()
@@ -147,6 +150,7 @@ class HeroLabIndex:
                 subdir = string.replace(dirpath, self.input_folder, '')
                 try:
                     lab_zip = zipfile.ZipFile(lab_file, 'r')
+                    print "working on ", lab_file
                     index_xml = lab_zip.open('index.xml')
                     tree = ET.parse(index_xml)
                     index_xml.close()
@@ -211,6 +215,7 @@ class HeroLabIndex:
                             pog_file = self._search_file(self.pog_folder, subdir, name)
                             portrait_file = self._search_file(self.portrait_folder, subdir, name)
                             token = self._token_name(subdir, name)
+
                             yield {"name": name, "summary": summary, "cr": cr, "source": filename,
                                    "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
                                    "portrait": portrait_file, "token": token}
@@ -222,7 +227,15 @@ class HeroLabIndex:
 # TODO Look into the scan only grabbing image files for portraits and pogs
     def _search_file(self, search_dir, subdir, char_name):
 
-        paths = [search_dir + subdir + '/', search_dir + '/']
+        full_subdir = os.path.join(search_dir, subdir[1:])
+
+        if not search_dir.endswith(os.path.sep):
+            search_dir += os.path.sep
+
+        if not full_subdir.endswith(os.path.sep):
+            full_subdir += os.path.sep
+
+        paths = [full_subdir, search_dir]
 
         for path in paths:
            # Full name search: Orc Chief
@@ -260,12 +273,18 @@ class HeroLabIndex:
                 return filename
 
         # Fall through, grab *
-        path = search_dir + '/'
-        filename = self._find_image_file(glob.glob(path + '*'))
+        filename = self._find_image_file(glob.glob(search_dir + '*'))
+        if filename:
+            return filename
+
+        filename = self._find_image_file(glob.glob(full_subdir + '*'))
+        if filename:
+            return filename
+        else:
+            return "Could not find any files!"
 
         # TODO On fall through if still no image found, maybe use an internally generated default one
 
-        return filename
 
 # TODO Possibly check to make sure we find a valid image
     @staticmethod
@@ -279,12 +298,12 @@ class HeroLabIndex:
 
     def _token_name(self, subdir, name):
 
-        full_dir = self.token_folder + subdir
+        full_dir = os.path.join(self.token_folder, subdir[1:])
 
-        filename = full_dir + '/' + self.clean_name(name) + '.rptok'
+        filename = os.path.join(full_dir, self.clean_name(name) + '.rptok')
         num = 1
         while filename in self.filenames:
-            filename = full_dir + '/' + name + str(num) + '.rptok'
+            filename = os.path.join(full_dir, self.clean_name(name) + str(num) + '.rptok')
             num += 1
 
         self.filenames.append(filename)

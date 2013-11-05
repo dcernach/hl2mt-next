@@ -1,5 +1,5 @@
 __appname__ = "hl2mt"
-__version__ = "0.6"
+__version__ = "0.65"
 __module__ = "main"
 
 import sys
@@ -957,7 +957,7 @@ class CreateThread(QThread):
 
     def create_filename(self, name):
 
-        return hashlib.md5(name.encode('utf-8')).hexdigest() + '.html'
+        return hashlib.sha224(name.encode('utf-8')).hexdigest() + '.html'
 
 
 def main():
