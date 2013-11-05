@@ -1233,4 +1233,4 @@ class Pathfinder:
         if not value in self.values:
             self.values.append(value)
 
-        return hashlib.md5(value.encode('utf-8')).hexdigest() + '.html'
+        return hashlib.sha224(value.encode('utf-8')).hexdigest() + '.html'
