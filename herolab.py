@@ -150,7 +150,6 @@ class HeroLabIndex:
                 subdir = string.replace(dirpath, self.input_folder, '')
                 try:
                     lab_zip = zipfile.ZipFile(lab_file, 'r')
-                    print "working on ", lab_file
                     index_xml = lab_zip.open('index.xml')
                     tree = ET.parse(index_xml)
                     index_xml.close()
