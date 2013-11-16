@@ -30,6 +30,7 @@ class Pathfinder:
         self.cr = ''
         self.mr = ''
         self.weapons = []
+        self.weapon_sort = 0
         self.items = []
         self.specials = {}
         self.itempowers = {}
@@ -1089,25 +1090,33 @@ class Pathfinder:
 
         font = self.settings.value("colors/attacksf").toString()
         background = self.settings.value("colors/attacksb").toString()
+        full_font = self.settings.value("colors/fullf").toString()
+        full_background = self.settings.value("colors/fullb").toString()
+
         group = 'Attacks'
         width = '100'
 
-        found = re.search('(\+?\-?\d+)', attack)
-        if found:
-            attack = int(found.group(1))
-        else:
-            attack = 0
+        regex = re.compile('([\+\-]\d+)')
+        results = []
+        # Check to see if we have something like +8 or -2 or +8/+4
+        if regex.match(attack):
+            results = regex.findall(attack)
 
-        if attack > 0:
-            roll = 'd20 + ' + str(attack)
-        elif attack < 0:
-            roll = 'd20 - ' + str(attack * -1)
+        # First we create a normal to-hit macro using the first number in the +8/+4 results
+        if len(results) > 0:
+            mod = results[0]
+            mod = int(mod)
+            if mod > 0:
+                roll = "d20 + " + str(mod)
+            elif mod < 0:
+                roll = "d20 - " + str(mod)
+            else:
+                roll = "d20"
         else:
-            roll = 'd20'
-
-        # Check to make sure damage is a xdy format
+            roll = "d20 "
 
         self.num_macros += 1
+        self.weapon_sort += 1
 
         xml = '        <entry>\n'
         xml += '         <int>' + str(self.num_macros) + '</int>\n'
@@ -1123,6 +1132,7 @@ class Pathfinder:
         tmp += "<td><span style='color:" + font + "'><b>" + name + "(" + crit + ")</b></span></td>\n"
         tmp += "<td><span style='color:" + font + "'><b>Damage</b></span></td>\n"
         tmp += "</tr>\n"
+
         tmp += "<tr>\n"
         tmp += "<td>[e:" + roll + "]</td>\n"
         if re.search('\d*d\d+', damage):
@@ -1130,6 +1140,7 @@ class Pathfinder:
         else:
             tmp += "<td>" + damage + "</td>\n"
         tmp += "</tr>\n"
+
         tmp += "</table>\n"
 
         xml += cgi.escape(tmp)
@@ -1137,7 +1148,7 @@ class Pathfinder:
         xml += '</command>\n'
         xml += '           <label>' + name + '</label>\n'
         xml += '           <group>' + group + '</group>\n'
-        xml += '           <sortby>6</sortby>\n'
+        xml += '           <sortby>' + str(self.weapon_sort) + '</sortby>\n'
         xml += '           <autoExecute>true</autoExecute>\n'
         xml += '           <includeLabel>false</includeLabel>\n'
         xml += '           <applyToTokens>true</applyToTokens>\n'
@@ -1146,7 +1157,7 @@ class Pathfinder:
         xml += '           <minWidth>' + width + '</minWidth>\n'
         xml += '           <maxWidth>' + width + '</maxWidth>\n'
         xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
-        xml += '           <toolTip></toolTip>\n'
+        xml += '           <toolTip>Single Attack</toolTip>\n'
         xml += '           <commonMacro>false</commonMacro>\n'
         xml += '           <compareGroup>true</compareGroup>\n'
         xml += '           <compareIncludeLabel>true</compareIncludeLabel>\n'
@@ -1154,6 +1165,69 @@ class Pathfinder:
         xml += '           <compareApplyToSelectedTokens>true</compareApplyToSelectedTokens>\n'
         xml += '         </net.rptools.maptool.model.MacroButtonProperties>\n'
         xml += '       </entry>\n'
+
+        # Next, if we have multiple attacks, create a full attack macro
+        if len(results) > 1:
+
+            self.weapon_sort += 1
+            self.num_macros += 1
+
+            xml += '        <entry>\n'
+            xml += '         <int>' + str(self.num_macros) + '</int>\n'
+            xml += '         <net.rptools.maptool.model.MacroButtonProperties>\n'
+            xml += '           <saveLocation></saveLocation>\n'
+            xml += '           <index>' + str(self.num_macros) + '</index>\n'
+            xml += '           <colorKey>' + full_background + '</colorKey>\n'
+            xml += '           <hotKey>None</hotKey>\n'
+            xml += '           <command>'
+
+            tmp = "<table border='1' cellpadding='0' cellspacing='0' style='width:200px'>\n"
+            tmp += "<tr bgcolor='" + full_background + "'>\n"
+            tmp += "<td><span style='color:" + full_font + "'><b>" + name + "(" + crit + ")</b></span></td>\n"
+            tmp += "<td><span style='color:" + full_font + "'><b>Damage</b></span></td>\n"
+            tmp += "</tr>\n"
+
+            for mod in results:
+                mod = int(mod)
+                if mod > 0:
+                    roll = "d20 + " + str(mod)
+                elif mod < 0:
+                    roll = "d20 - " + str(mod)
+                else:
+                    roll = "d20"
+
+                tmp += "<tr>\n"
+                tmp += "<td>[e:" + roll + "]</td>\n"
+                if re.search('\d*d\d+', damage):
+                    tmp += "<td>[e:" + damage + "]</td>\n"
+                else:
+                    tmp += "<td>" + damage + "</td>\n"
+                tmp += "</tr>\n"
+
+            tmp += "</table>\n"
+
+            xml += cgi.escape(tmp)
+
+            xml += '</command>\n'
+            xml += '           <label>' + name + '</label>\n'
+            xml += '           <group>' + group + '</group>\n'
+            xml += '           <sortby>' + str(self.weapon_sort) + '</sortby>\n'
+            xml += '           <autoExecute>true</autoExecute>\n'
+            xml += '           <includeLabel>false</includeLabel>\n'
+            xml += '           <applyToTokens>true</applyToTokens>\n'
+            xml += '           <fontColorKey>' + full_font + '</fontColorKey>\n'
+            xml += '           <fontSize>1.00em</fontSize>\n'
+            xml += '           <minWidth>' + width + '</minWidth>\n'
+            xml += '           <maxWidth>' + width + '</maxWidth>\n'
+            xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
+            xml += '           <toolTip>Full Attack</toolTip>\n'
+            xml += '           <commonMacro>false</commonMacro>\n'
+            xml += '           <compareGroup>true</compareGroup>\n'
+            xml += '           <compareIncludeLabel>true</compareIncludeLabel>\n'
+            xml += '           <compareAutoExecute>true</compareAutoExecute>\n'
+            xml += '           <compareApplyToSelectedTokens>true</compareApplyToSelectedTokens>\n'
+            xml += '         </net.rptools.maptool.model.MacroButtonProperties>\n'
+            xml += '       </entry>\n'
 
         return xml
 

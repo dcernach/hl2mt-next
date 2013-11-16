@@ -48,6 +48,8 @@ There are video tutorials covering the basic features ``hl2mt``
 
 `Tutorial 6 - Using Dropbox to host indexes <https://www.youtube.com/watch?v=cGpZb1Fp7Vo>`_
 
+`Tutorial 7 - The Community Bestiary <http://www.youtube.com/watch?v=_Eeq6XTIMaE>`_
+
 
 Usage
 -----
@@ -158,6 +160,11 @@ thrown.
 These are just macros for basic die rolls: d4, d6, d8, d10, d12 and d20
 
 They can be useful if you have newer players who aren't using to typing die rolls into chat.
+
+**Ability Check Macros**
+
+These are d20 dice roll macros that add in the ability check modifier. They can be useful for things like strength
+checks.
 
 **Items Macro**
 

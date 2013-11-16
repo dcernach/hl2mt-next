@@ -119,7 +119,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
                 self.settings.setValue(opt, "black")
 
         for opt in ['colors/initf', 'colors/attacksf', 'colors/specialsf', 'colors/basicf', 'colors/savesf',
-                    'colors/subf', 'colors/abilityf']:
+                    'colors/subf', 'colors/abilityf', 'colors/fullf']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, "white")
 
@@ -143,6 +143,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue('colors/specialsb', "navy")
         if not self.settings.contains('colors/abilityb'):
             self.settings.setValue('colors/abilityb', "purple")
+        if not self.settings.contains('colors/fullb'):
+            self.settings.setValue('colors/fullb', "maroon")
 
     def closeEvent(self, event):
 
@@ -214,6 +216,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("colors/subb", dialog.comboSubB.currentText())
             self.settings.setValue("colors/abilityf", dialog.comboAbilityF.currentText())
             self.settings.setValue("colors/abilityb", dialog.comboAbilityB.currentText())
+            self.settings.setValue("colors/fullf", dialog.comboFullF.currentText())
+            self.settings.setValue("colors/fullb", dialog.comboFullB.currentText())
 
     def action_indexing_triggered(self):
         dialog = IndexingDialog(self, self.settings)
@@ -492,6 +496,11 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         html += "These are just macros for basic die rolls: d4, d6, d8, d10, d12 and d20"
         html += "<br><br>"
         html += "They can be useful if you have newer players who aren't using to typing die rolls into chat."
+
+        html += "<h4>Ability Check Macros</h4>"
+
+        html += "These are d20 dice roll macros that add in the ability check modifier. They can be useful for things "
+        html += "like strength checks."
 
         html += "<h4>Items Macro</h4>"
 
@@ -825,6 +834,8 @@ class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
         self.comboSubB.setCurrentIndex(self.comboSubB.findText(self.settings.value("colors/subb").toString()))
         self.comboAbilityF.setCurrentIndex(self.comboAbilityF.findText(self.settings.value("colors/abilityf").toString()))
         self.comboAbilityB.setCurrentIndex(self.comboAbilityB.findText(self.settings.value("colors/abilityb").toString()))
+        self.comboFullF.setCurrentIndex(self.comboFullF.findText(self.settings.value("colors/fullf").toString()))
+        self.comboFullB.setCurrentIndex(self.comboFullB.findText(self.settings.value("colors/fullb").toString()))
 
 
 class IndexingDialog(QDialog, indexingDialog.Ui_indexDialog):
