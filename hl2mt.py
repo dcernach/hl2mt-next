@@ -1,5 +1,5 @@
 __appname__ = "hl2mt"
-__version__ = "0.66"
+__version__ = "0.70"
 __module__ = "main"
 
 import sys
@@ -81,7 +81,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, False)
 
-        for opt in ['weapons', 'skills', 'hp', 'basicdice', 'items']:
+        for opt in ['weapons', 'skills', 'hp', 'basicdice', 'items', 'ability']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, True)
 
@@ -119,7 +119,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
                 self.settings.setValue(opt, "black")
 
         for opt in ['colors/initf', 'colors/attacksf', 'colors/specialsf', 'colors/basicf', 'colors/savesf',
-                    'colors/subf']:
+                    'colors/subf', 'colors/abilityf']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, "white")
 
@@ -141,6 +141,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue('colors/savesb', "green")
         if not self.settings.contains('colors/specialsb'):
             self.settings.setValue('colors/specialsb', "navy")
+        if not self.settings.contains('colors/abilityb'):
+            self.settings.setValue('colors/abilityb', "purple")
 
     def closeEvent(self, event):
 
@@ -210,6 +212,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("colors/specialsb", dialog.comboSpecialsB.currentText())
             self.settings.setValue("colors/subf", dialog.comboSubF.currentText())
             self.settings.setValue("colors/subb", dialog.comboSubB.currentText())
+            self.settings.setValue("colors/abilityf", dialog.comboAbilityF.currentText())
+            self.settings.setValue("colors/abilityb", dialog.comboAbilityB.currentText())
 
     def action_indexing_triggered(self):
         dialog = IndexingDialog(self, self.settings)
@@ -229,6 +233,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("items", dialog.checkItems.isChecked())
             self.settings.setValue("maneuvers", dialog.checkMan.isChecked())
             self.settings.setValue("skills", dialog.checkSkill.isChecked())
+            self.settings.setValue("ability", dialog.checkAbility.isChecked())
 
     def action_import_triggered(self):
         filename = QFileDialog.getOpenFileName(self, __appname__ + ": Import Config", os.getcwd(),
@@ -818,6 +823,8 @@ class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
         self.comboSpecialsB.setCurrentIndex(self.comboSpecialsB.findText(self.settings.value("colors/specialsb").toString()))
         self.comboSubF.setCurrentIndex(self.comboSubF.findText(self.settings.value("colors/subf").toString()))
         self.comboSubB.setCurrentIndex(self.comboSubB.findText(self.settings.value("colors/subb").toString()))
+        self.comboAbilityF.setCurrentIndex(self.comboAbilityF.findText(self.settings.value("colors/abilityf").toString()))
+        self.comboAbilityB.setCurrentIndex(self.comboAbilityB.findText(self.settings.value("colors/abilityb").toString()))
 
 
 class IndexingDialog(QDialog, indexingDialog.Ui_indexDialog):
@@ -864,6 +871,7 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
         self.checkItems.setChecked(self.settings.value("items").toBool())
         self.checkMan.setChecked(self.settings.value("maneuvers").toBool())
         self.checkSkill.setChecked(self.settings.value("skills").toBool())
+        self.checkAbility.setChecked(self.settings.value("ability").toBool())
 
 
 class SearchThread(QThread):

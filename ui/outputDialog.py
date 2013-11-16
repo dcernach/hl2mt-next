@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'outputDialog.ui'
 #
-# Created: Thu May  9 16:01:57 2013
-#      by: PyQt4 UI code generator 4.9.1
+# Created: Fri Nov 15 20:49:14 2013
+#      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,14 +17,14 @@ except AttributeError:
 class Ui_outputDialog(object):
     def setupUi(self, outputDialog):
         outputDialog.setObjectName(_fromUtf8("outputDialog"))
-        outputDialog.resize(295, 279)
+        outputDialog.resize(326, 340)
         self.buttonBox = QtGui.QDialogButtonBox(outputDialog)
-        self.buttonBox.setGeometry(QtCore.QRect(-60, 240, 341, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(-20, 290, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.layoutWidget = QtGui.QWidget(outputDialog)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 272, 227))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 272, 261))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_2.setMargin(0)
@@ -43,6 +43,9 @@ class Ui_outputDialog(object):
         self.checkSkill = QtGui.QCheckBox(self.layoutWidget)
         self.checkSkill.setObjectName(_fromUtf8("checkSkill"))
         self.verticalLayout.addWidget(self.checkSkill)
+        self.checkAbility = QtGui.QCheckBox(self.layoutWidget)
+        self.checkAbility.setObjectName(_fromUtf8("checkAbility"))
+        self.verticalLayout.addWidget(self.checkAbility)
         self.checkHP = QtGui.QCheckBox(self.layoutWidget)
         self.checkHP.setObjectName(_fromUtf8("checkHP"))
         self.verticalLayout.addWidget(self.checkHP)
@@ -65,6 +68,7 @@ class Ui_outputDialog(object):
         self.checkMan.setText(QtGui.QApplication.translate("outputDialog", "Create Individual Maneuver Macros", None, QtGui.QApplication.UnicodeUTF8))
         self.checkAttack.setText(QtGui.QApplication.translate("outputDialog", "Create Weapon Macros", None, QtGui.QApplication.UnicodeUTF8))
         self.checkSkill.setText(QtGui.QApplication.translate("outputDialog", "Create Skill Macros", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkAbility.setText(QtGui.QApplication.translate("outputDialog", "Create Ability Check Macros", None, QtGui.QApplication.UnicodeUTF8))
         self.checkHP.setText(QtGui.QApplication.translate("outputDialog", "Create HP Change Macro", None, QtGui.QApplication.UnicodeUTF8))
         self.checkItems.setText(QtGui.QApplication.translate("outputDialog", "Create Items Macro", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBasic.setText(QtGui.QApplication.translate("outputDialog", "Create Basic Die Roll Macros", None, QtGui.QApplication.UnicodeUTF8))

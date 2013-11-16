@@ -378,6 +378,22 @@ class Pathfinder:
             xml += self.basic_die_macro_xml('d12')
             xml += self.basic_die_macro_xml('d20')
 
+        if self.settings.value("ability").toBool():
+            colorf = self.settings.value("colors/abilityf").toString()
+            colorb = self.settings.value("colors/abilityb").toString()
+            xml += self.roll_macro_xml('Str', self.attrib_bonuses['Strength'], 'Strength Check',
+                                       'Basic Ability Checks', '25', colorb, colorf, '1')
+            xml += self.roll_macro_xml('Dex', self.attrib_bonuses['Dexterity'], 'Dexterity Check',
+                                       'Basic Ability Checks', '25', colorb, colorf, '2')
+            xml += self.roll_macro_xml('Con', self.attrib_bonuses['Constitution'], 'Constitution Check',
+                                       'Basic Ability Checks', '25', colorb, colorf, '3')
+            xml += self.roll_macro_xml('Int', self.attrib_bonuses['Intelligence'], 'Intelligence Check',
+                                       'Basic Ability Checks', '25', colorb, colorf, '4')
+            xml += self.roll_macro_xml('Wis', self.attrib_bonuses['Wisdom'], 'Wisdom Check',
+                                       'Basic Ability Checks', '25', colorb, colorf, '5')
+            xml += self.roll_macro_xml('Cha', self.attrib_bonuses['Charisma'], 'Charisma Check',
+                                       'Basic Ability Checks', '25', colorb, colorf, '6')
+
         if self.settings.value("skills").toBool():
             for k, v in self.skills.items():
                 xml += self.roll_macro_xml(k, v, k, 'Skills', '75', self.settings.value("colors/skillsb").toString(),

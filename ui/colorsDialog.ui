@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>484</width>
-    <height>518</height>
+    <height>539</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>484</width>
-    <height>518</height>
+    <height>10000</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>480</y>
+     <y>490</y>
      <width>431</width>
      <height>32</height>
     </rect>
@@ -47,7 +47,7 @@
      <x>10</x>
      <y>10</y>
      <width>461</width>
-     <height>461</height>
+     <height>464</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -3266,6 +3266,310 @@
       </item>
       <item>
        <widget class="QComboBox" name="comboSubB">
+        <item>
+         <property name="text">
+          <string>aqua</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>black</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>blue</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>cyan</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>darkgray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>fuchsia</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>gray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>gray25</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>gray50</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>gray75</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>green</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>lightgray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>lime</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>magenta</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>maroon</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>navy</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>olive</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>orange</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>pink</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>purple</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>red</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>silver</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>teal</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>white</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>yellow</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_23">
+      <item>
+       <widget class="QLabel" name="labelAbility">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Ability Checks</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelAbilityF">
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Font</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboAbilityF">
+        <item>
+         <property name="text">
+          <string>aqua</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>black</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>blue</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>cyan</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>darkgray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>fuchsia</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>gray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>gray25</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>gray50</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>gray75</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>green</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>lightgray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>lime</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>magenta</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>maroon</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>navy</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>olive</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>orange</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>pink</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>purple</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>red</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>silver</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>teal</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>white</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>yellow</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelAbilityB">
+        <property name="maximumSize">
+         <size>
+          <width>80</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Background</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboAbilityB">
         <item>
          <property name="text">
           <string>aqua</string>
