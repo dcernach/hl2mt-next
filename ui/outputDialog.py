@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'outputDialog.ui'
 #
-# Created: Fri Nov 15 20:49:14 2013
+# Created: Sat Nov 16 00:19:40 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,6 +18,8 @@ class Ui_outputDialog(object):
     def setupUi(self, outputDialog):
         outputDialog.setObjectName(_fromUtf8("outputDialog"))
         outputDialog.resize(326, 340)
+        outputDialog.setMinimumSize(QtCore.QSize(326, 340))
+        outputDialog.setMaximumSize(QtCore.QSize(326, 340))
         self.buttonBox = QtGui.QDialogButtonBox(outputDialog)
         self.buttonBox.setGeometry(QtCore.QRect(-20, 290, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)

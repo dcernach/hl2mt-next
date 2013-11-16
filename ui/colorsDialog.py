@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'colorsDialog.ui'
 #
-# Created: Fri Nov 15 23:31:30 2013
+# Created: Sat Nov 16 00:19:29 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,8 +18,8 @@ class Ui_colorsDialog(object):
     def setupUi(self, colorsDialog):
         colorsDialog.setObjectName(_fromUtf8("colorsDialog"))
         colorsDialog.resize(579, 574)
-        colorsDialog.setMinimumSize(QtCore.QSize(484, 518))
-        colorsDialog.setMaximumSize(QtCore.QSize(10000, 10000))
+        colorsDialog.setMinimumSize(QtCore.QSize(579, 574))
+        colorsDialog.setMaximumSize(QtCore.QSize(579, 574))
         self.buttonBox = QtGui.QDialogButtonBox(colorsDialog)
         self.buttonBox.setGeometry(QtCore.QRect(140, 530, 431, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
