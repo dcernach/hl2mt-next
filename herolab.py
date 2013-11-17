@@ -227,6 +227,8 @@ class HeroLabIndex:
     def _search_file(self, search_dir, subdir, char_name):
 
         full_subdir = os.path.join(search_dir, subdir[1:])
+        char_name = self.clean_name(char_name)
+        char_name = string.replace(char_name, '_', ' ')
 
         if not search_dir.endswith(os.path.sep):
             search_dir += os.path.sep

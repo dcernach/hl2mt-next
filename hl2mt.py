@@ -1,5 +1,5 @@
 __appname__ = "hl2mt"
-__version__ = "0.70"
+__version__ = "0.71"
 __module__ = "main"
 
 import sys
