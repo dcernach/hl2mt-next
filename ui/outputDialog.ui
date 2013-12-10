@@ -109,6 +109,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="checkGM">
+        <property name="text">
+         <string>Create GM Macros</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>

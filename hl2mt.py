@@ -77,7 +77,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, os.getcwd())
 
-        for opt in ['vision', 'maneuvers']:
+        for opt in ['vision', 'maneuvers', 'gm']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, False)
 
@@ -114,12 +114,12 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
                 self.settings.setValue("properties/" + opt, opt.title())
 
         for opt in ['colors/sheetf', 'colors/skillsf', 'colors/hpf', 'colors/cmbf', 'colors/basicb',
-                    'colors/maneuversf', 'colors/subb']:
+                    'colors/maneuversf', 'colors/subb', 'colors/gmf']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, "black")
 
         for opt in ['colors/initf', 'colors/attacksf', 'colors/specialsf', 'colors/basicf', 'colors/savesf',
-                    'colors/subf', 'colors/abilityf', 'colors/fullf']:
+                    'colors/subf', 'colors/abilityf', 'colors/fullf', 'colors/gmb']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, "white")
 
@@ -218,6 +218,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("colors/abilityb", dialog.comboAbilityB.currentText())
             self.settings.setValue("colors/fullf", dialog.comboFullF.currentText())
             self.settings.setValue("colors/fullb", dialog.comboFullB.currentText())
+            self.settings.setValue("colors/gmf", dialog.comboGMF.currentText())
+            self.settings.setValue("colors/gmb", dialog.comboGMB.currentText())
 
     def action_indexing_triggered(self):
         dialog = IndexingDialog(self, self.settings)
@@ -238,6 +240,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("maneuvers", dialog.checkMan.isChecked())
             self.settings.setValue("skills", dialog.checkSkill.isChecked())
             self.settings.setValue("ability", dialog.checkAbility.isChecked())
+            self.settings.setValue("gm", dialog.checkGM.isChecked())
 
     def action_import_triggered(self):
         filename = QFileDialog.getOpenFileName(self, __appname__ + ": Import Config", os.getcwd(),
@@ -502,17 +505,21 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         html += "These are d20 dice roll macros that add in the ability check modifier. They can be useful for things "
         html += "like strength checks."
 
-        html += "<h4>Items Macro</h4>"
+        html += "<h4>Items Macros</h4>"
 
         html += "This is a simple list of every item carried by the creature. Unfortunately it's not editable as "
         html += "that requires forms which would necessitate the use of library tokens."
 
-        html += "<h4>HP Change Macro</h4>"
+        html += "<h4>HP Change Macros</h4>"
 
         html += "This will create a very simple hit point change macro. If your token properties includes both "
         html += "current and max hp fields then hl2mt will work with both and create a macro that uses a health bar "
         html += "over your tokens. If you only have max hp on your framework then hl2mt will create a simpler macro "
         html += "which only works with that."
+
+        html += "<h4>GM Macros</h4>"
+
+        html += "These are some simple GM macros that allow you to change the displayed token name. "
 
         html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
         html += "<br><br><br>"
@@ -836,6 +843,8 @@ class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
         self.comboAbilityB.setCurrentIndex(self.comboAbilityB.findText(self.settings.value("colors/abilityb").toString()))
         self.comboFullF.setCurrentIndex(self.comboFullF.findText(self.settings.value("colors/fullf").toString()))
         self.comboFullB.setCurrentIndex(self.comboFullB.findText(self.settings.value("colors/fullb").toString()))
+        self.comboGMF.setCurrentIndex(self.comboGMF.findText(self.settings.value("colors/gmf").toString()))
+        self.comboGMB.setCurrentIndex(self.comboGMB.findText(self.settings.value("colors/gmb").toString()))
 
 
 class IndexingDialog(QDialog, indexingDialog.Ui_indexDialog):
@@ -883,6 +892,7 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
         self.checkMan.setChecked(self.settings.value("maneuvers").toBool())
         self.checkSkill.setChecked(self.settings.value("skills").toBool())
         self.checkAbility.setChecked(self.settings.value("ability").toBool())
+        self.checkGM.setChecked(self.settings.value("gm").toBool())
 
 
 class SearchThread(QThread):

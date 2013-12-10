@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'outputDialog.ui'
 #
-# Created: Sat Nov 16 00:19:40 2013
+# Created: Tue Dec 10 13:28:04 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,6 +57,9 @@ class Ui_outputDialog(object):
         self.checkBasic = QtGui.QCheckBox(self.layoutWidget)
         self.checkBasic.setObjectName(_fromUtf8("checkBasic"))
         self.verticalLayout.addWidget(self.checkBasic)
+        self.checkGM = QtGui.QCheckBox(self.layoutWidget)
+        self.checkGM.setObjectName(_fromUtf8("checkGM"))
+        self.verticalLayout.addWidget(self.checkGM)
         self.verticalLayout_2.addLayout(self.verticalLayout)
 
         self.retranslateUi(outputDialog)
@@ -74,4 +77,5 @@ class Ui_outputDialog(object):
         self.checkHP.setText(QtGui.QApplication.translate("outputDialog", "Create HP Change Macro", None, QtGui.QApplication.UnicodeUTF8))
         self.checkItems.setText(QtGui.QApplication.translate("outputDialog", "Create Items Macro", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBasic.setText(QtGui.QApplication.translate("outputDialog", "Create Basic Die Roll Macros", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkGM.setText(QtGui.QApplication.translate("outputDialog", "Create GM Macros", None, QtGui.QApplication.UnicodeUTF8))
 

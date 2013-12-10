@@ -371,6 +371,11 @@ class Pathfinder:
                                    colorb, colorf, '2')
         xml += self.init_macro_xml()
 
+        if self.settings.value("gm").toBool():
+            xml += self.gm_macro_xml('Name:Clr', '[h: setName("Unknown")]')
+            xml += self.gm_macro_xml('Name:Set', '[h: setName(getProperty("Name"))]')
+            xml += self.gm_macro_xml('Name:Num', '[h: setName(getProperty("Name") + " " + 1d100)]')
+
         if self.settings.value("basicdice").toBool():
             xml += self.basic_die_macro_xml('d4')
             xml += self.basic_die_macro_xml('d6')
@@ -934,6 +939,50 @@ class Pathfinder:
         tmp += '}]\n'
 
         xml += cgi.escape(tmp)
+
+        xml += '</command>\n'
+        xml += '           <label>' + label + '</label>\n'
+        xml += '           <group>' + group + '</group>\n'
+        xml += '           <sortby>6</sortby>\n'
+        xml += '           <autoExecute>true</autoExecute>\n'
+        xml += '           <includeLabel>false</includeLabel>\n'
+        xml += '           <applyToTokens>true</applyToTokens>\n'
+        xml += '           <fontColorKey>' + font + '</fontColorKey>\n'
+        xml += '           <fontSize>1.00em</fontSize>\n'
+        xml += '           <minWidth>' + width + '</minWidth>\n'
+        xml += '           <maxWidth>' + width + '</maxWidth>\n'
+        xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
+        xml += '           <toolTip></toolTip>\n'
+        xml += '           <commonMacro>false</commonMacro>\n'
+        xml += '           <compareGroup>true</compareGroup>\n'
+        xml += '           <compareIncludeLabel>true</compareIncludeLabel>\n'
+        xml += '           <compareAutoExecute>true</compareAutoExecute>\n'
+        xml += '           <compareApplyToSelectedTokens>true</compareApplyToSelectedTokens>\n'
+        xml += '         </net.rptools.maptool.model.MacroButtonProperties>\n'
+        xml += '       </entry>\n'
+
+        return xml
+
+    def gm_macro_xml(self, label, macro):
+
+        font = self.settings.value("colors/gmf").toString()
+        background = self.settings.value("colors/gmb").toString()
+        group = 'GM'
+        label = label
+        width = '70'
+
+        self.num_macros += 1
+
+        xml = '        <entry>\n'
+        xml += '         <int>' + str(self.num_macros) + '</int>\n'
+        xml += '         <net.rptools.maptool.model.MacroButtonProperties>\n'
+        xml += '           <saveLocation></saveLocation>\n'
+        xml += '           <index>' + str(self.num_macros) + '</index>\n'
+        xml += '           <colorKey>' + background + '</colorKey>\n'
+        xml += '           <hotKey>None</hotKey>\n'
+        xml += '           <command>'
+
+        xml += cgi.escape(macro)
 
         xml += '</command>\n'
         xml += '           <label>' + label + '</label>\n'
