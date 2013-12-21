@@ -330,6 +330,7 @@ class Pathfinder:
         xml += self.property_xml(self.settings.value("properties/player").toString(), self.player)
         xml += self.property_xml(self.settings.value("properties/hp").toString(), self.hpc)
         xml += self.property_xml(self.settings.value("properties/hpmax").toString(), self.hpm)
+        xml += self.property_xml("HPT", "0")
         xml += self.property_xml(self.settings.value("properties/speed").toString(), self.movement)
         xml += self.property_xml(self.settings.value("properties/reach").toString(), self.reach)
         xml += self.property_xml(self.settings.value("properties/ac").toString(), self.ac)
@@ -487,21 +488,77 @@ class Pathfinder:
         if hpc and hpm:
 
             tmp += '[h:status = input(\n'
-            tmp += '"hpChange|0|Number of Hit Points",\n'
-            tmp += '"dmgOrHealing|Damage,Healing|Is the character taking damage or being healed?|RADIO|SELECT=0")]\n'
+            tmp += '"dmgOrHealing|Normal Damage,Normal Healing,Temp Damage,Temp Healing,Temp Bonus,Heal Both,Reset '
+            tmp += 'HP|Is the character taking damage or being healed?|LIST|SELECT=0",\n'
+            tmp += '"hpChange|0|Number of Hit Points")]\n'
             tmp += '[h:abort(status)]\n'
-            tmp += '[if(dmgOrHealing == 0),CODE:\n'
-            tmp += '{\n'
-            tmp += '[h:' + hpc + ' = ' + hpc + ' - hpChange]\n'
-            tmp += '[h:bar.Health = ' + hpc + ' / ' + hpm + ']\n'
-            tmp += '[r:token.name] loses [r:hpChange] hit points.\n'
+            tmp += '\n'
+            tmp += '[switch(dmgOrHealing),CODE:\n'
+            tmp += 'case 0: {\n'
+            tmp += '  [h:HPC = HPC - hpChange]\n'
+            tmp += '  [h:HPTotal = HPC + HPT]\n'
+            tmp += '  [h:bar.Health = HPTotal / HPM]\n'
+            tmp += '  [r:token.name] loses [r:hpChange] hit points.\n'
             tmp += '};\n'
-            tmp += '{\n'
-
-            tmp += '[h:' + hpc + ' = ' + hpc + ' + hpChange]\n'
-            tmp += '[h:bar.Health = ' + hpc + ' / ' + hpm + ']\n'
-            tmp += '[r:token.name] is healed and gains  [r:hpChange] hit points.\n'
-            tmp += '};]\n'
+            tmp += 'case 1: {\n'
+            tmp += '  [h:HPC = HPC + hpChange]\n'
+            tmp += '  [h,if(HPC > HPM), CODE:\n'
+            tmp += '  {\n'
+            tmp += '    [h:HPC = HPM]\n'
+            tmp += '  }\n;'
+            tmp += '  {}]\n'
+            tmp += '  [h:HPTotal = HPC + HPT]\n'
+            tmp += '  [h:bar.Health = HPTotal / HPM]\n'
+            tmp += '  [r:token.name] is healed and gains  [r:hpChange] hit points.\n'
+            tmp += '};\n'
+            tmp += 'case 2: {\n'
+            tmp += '  [h:HPT = HPT - hpChange]\n'
+            tmp += '  [h:HPTotal = HPC + HPT]\n'
+            tmp += '  [h:bar.Health = HPTotal / HPM]\n'
+            tmp += '  [r:token.name] loses [r:hpChange] temp hit points.\n'
+            tmp += '};\n'
+            tmp += 'case 3: {\n'
+            tmp += '  [h:HPT = HPT + hpChange]\n'
+            tmp += '  [h,if(HPT > 0), CODE:\n'
+            tmp += '  {\n'
+            tmp += '    [h:HPT = 0]\n'
+            tmp += '  };\n'
+            tmp += '  {}]\n'
+            tmp += '  [h:HPTotal = HPC + HPT]\n'
+            tmp += '  [h:bar.Health = HPTotal / HPM]\n'
+            tmp += '  [r:token.name] is healed  [r:hpChange] temp hit points.\n'
+            tmp += '};\n'
+            tmp += 'case 4: {\n'
+            tmp += '  [h:HPT = HPT + hpChange]\n'
+            tmp += '  [h:HPTotal = HPC + HPT]\n'
+            tmp += '  [h:bar.Health = HPTotal / HPM]\n'
+            tmp += '  [r:token.name] gains  [r:hpChange] temp hit points.\n'
+            tmp += '};\n'
+            tmp += 'case 5: {\n'
+            tmp += '  [h:HPT = HPT + hpChange]\n'
+            tmp += '  [h,if(HPT > 0), CODE:\n'
+            tmp += '  {\n'
+            tmp += '    [h:HPT = 0]\n'
+            tmp += '  };\n'
+            tmp += '  {}]\n'
+            tmp += '  [h:HPC = HPC + hpChange]\n'
+            tmp += '  [h,if(HPC > HPM), CODE:\n'
+            tmp += '  {\n'
+            tmp += '    [h:HPC = HPM]\n'
+            tmp += '  };\n'
+            tmp += '  {}]\n'
+            tmp += '  [h:HPTotal = HPC + HPT]\n'
+            tmp += '  [h:bar.Health = HPTotal / HPM]\n'
+            tmp += '  [r:token.name] is healed  [r:hpChange] normal and temp hit points.\n'
+            tmp += '};\n'
+            tmp += 'case 6: {\n'
+            tmp += '  [h:HPC = HPM]\n'
+            tmp += '  [h:HPT = 0]\n'
+            tmp += '  [h:HPTotal = HPC + HPT]\n'
+            tmp += '  [h:bar.Health = HPTotal / HPM]\n'
+            tmp += '  [r:token.name] has been reset and is at  [r:HPC] hit points.\n'
+            tmp += '};\n'
+            tmp += 'default: { Unknown action}]\n'
         elif hpm:
             tmp += '[h:status = input(\n'
             tmp += '"hpChange|0|Number of Hit Points",\n'
@@ -703,7 +760,7 @@ class Pathfinder:
 
         xml += '&lt;br&gt;&#xd;\n'
         # <h1><u>Character Name name </u></h1>
-        xml += '&lt;h1&gt;&lt;u&gt;' + self.name + ' ' + name + ' &lt;/u&gt;&lt;/h1&gt;&#xd;\n'
+        xml += '&lt;h1&gt;&lt;u&gt;' + self.clean_name(self.name) + ' ' + name + ' &lt;/u&gt;&lt;/h1&gt;&#xd;\n'
         # <br>
         xml += '&lt;br&gt;&#xd;\n'
 
@@ -843,7 +900,7 @@ class Pathfinder:
 
         xml += '&lt;br&gt;&#xd;\n'
         # <h1><u>Character Name name </u></h1>
-        xml += '&lt;h1&gt;&lt;u&gt;' + self.name + ' ' + name + ' &lt;/u&gt;&lt;/h1&gt;&#xd;\n'
+        xml += '&lt;h1&gt;&lt;u&gt;' + self.clean_name(self.name) + ' ' + name + ' &lt;/u&gt;&lt;/h1&gt;&#xd;\n'
         # <br>
         xml += '&lt;br&gt;&#xd;\n'
 
@@ -919,7 +976,7 @@ class Pathfinder:
         tmp += '</head>\n'
         tmp += '<body>\n'
         tmp += '<br>\n'
-        tmp += '<h1><u>' + self.name + ' Items </u></h1>\n'
+        tmp += '<h1><u>' + self.clean_name(self.name) + ' Items </u></h1>\n'
         tmp += '<br>\n'
 
         for item in self.items:
@@ -1373,3 +1430,15 @@ class Pathfinder:
             self.values.append(value)
 
         return hashlib.sha224(value.encode('utf-8')).hexdigest() + '.html'
+
+    @staticmethod
+    def clean_name(name):
+
+        name = string.replace(str(name), " (combat trained) ", "")
+        name = string.replace(name, " (combat trained)", "")
+        name = string.replace(name, "(combat trained)", "")
+        name = re.sub(r'([^\s\w]|_)+', '', name)
+        name = string.replace(name, "  ", " ")
+
+        return name
+
