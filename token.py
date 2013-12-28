@@ -1434,7 +1434,7 @@ class Pathfinder:
     @staticmethod
     def clean_name(name):
 
-        name = string.replace(str(name), " (combat trained) ", "")
+        name = string.replace(str(name.toUtf8()), " (combat trained) ", "")
         name = string.replace(name, " (combat trained)", "")
         name = string.replace(name, "(combat trained)", "")
         name = re.sub(r'([^\s\w]|_)+', '', name)
