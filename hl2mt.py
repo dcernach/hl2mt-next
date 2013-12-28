@@ -1,12 +1,12 @@
 __appname__ = "hl2mt"
-__version__ = "0.76"
+__version__ = "0.80"
 __module__ = "main"
 
 import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDialog, propertiesDialog, htmlDialog
-from ui import aboutDialog, helpDialog
+from ui import aboutDialog, helpDialog, macrosDialog
 import os
 import ConfigParser
 from herolab import HeroLabIndex, HeroLab
@@ -44,6 +44,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.actionSave.triggered.connect(self.action_save_triggered)
         self.actionHelp.triggered.connect(self.action_help_triggered)
         self.actionAbout.triggered.connect(self.action_about_triggered)
+        self.actionMacros.triggered.connect(self.action_macros_triggered)
 
         self.processButton.clicked.connect(self.process_button_clicked)
         self.createButton.clicked.connect(self.create_button_clicked)
@@ -99,6 +100,12 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
         if not self.settings.contains("properties/charactername"):
             self.settings.setValue("properties/charactername", "Name")
+
+        if not self.settings.contains("properties/hptemp"):
+            self.settings.setValue("properties/charactername", "HPT")
+
+        if not self.settings.contains("properties/items"):
+            self.settings.setValue("properties/charactername", "Items")
 
         if not self.settings.contains("properties/hpmax"):
             self.settings.setValue("properties/hpmax", "HP")
@@ -161,6 +168,17 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         if dialog.exec_():
             self.settings = dialog.settings
 
+    def action_macros_triggered(self):
+        dialog = MacrosDialog(self, self.settings)
+        if dialog.exec_():
+            for row in xrange(0, dialog.tableWidget.rowCount()):
+                if dialog.tableWidget.item(row, 0) is not None:
+                    self.settings.setValue("cm_name_" + str(row), dialog.tableWidget.item(row, 0).text())
+                    self.settings.setValue("cm_group_" + str(row), dialog.tableWidget.item(row, 1).text())
+                    self.settings.setValue("cm_font_" + str(row), dialog.tableWidget.item(row, 2).text())
+                    self.settings.setValue("cm_background_" + str(row), dialog.tableWidget.item(row, 3).text())
+                    self.settings.setValue("cm_value_" + str(row), dialog.tableWidget.item(row, 4).text())
+
     def action_properties_triggered(self):
         dialog = PropertiesDialog(self, self.settings)
         if dialog.exec_():
@@ -187,7 +205,9 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("properties/name", dialog.editName.text())
             self.settings.setValue("properties/propname", dialog.editPropName.text())
             self.settings.setValue("properties/hp", dialog.editHP.text())
+            self.settings.setValue("properties/hptemp", dialog.editHPTemp.text())
             self.settings.setValue("properties/hpmax", dialog.editHPMax.text())
+            self.settings.setValue("properties/items", dialog.editItems.text())
 
     def action_colors_triggered(self):
         dialog = ColorsDialog(self, self.settings)
@@ -804,6 +824,8 @@ class PropertiesDialog(QDialog, propertiesDialog.Ui_propertiesDialog):
         self.editPropName.setText(self.settings.value("properties/propname").toString())
         self.editHP.setText(self.settings.value("properties/hp").toString())
         self.editHPMax.setText(self.settings.value("properties/hpmax").toString())
+        self.editHPTemp.setText(self.settings.value("properties/hptemp").toString())
+        self.editItems.setText(self.settings.value("properties/items").toString())
 
 
 class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
@@ -893,6 +915,35 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
         self.checkSkill.setChecked(self.settings.value("skills").toBool())
         self.checkAbility.setChecked(self.settings.value("ability").toBool())
         self.checkGM.setChecked(self.settings.value("gm").toBool())
+
+
+class MacrosDialog(QDialog, macrosDialog.Ui_macrosDialog):
+
+    def __init__(self, parent, settings):
+        super(MacrosDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle(__appname__ + ": Custom Macros")
+        self.settings = settings
+        self.load_settings()
+
+    def load_settings(self):
+
+        self.tableWidget.setRowCount(50)
+
+        # Set up the rows based on the custom macro values
+        # cm_name_x
+        # cm_group_x
+        # cm_font_x
+        # cm_background_x
+        # cm_value_x
+        for row in xrange(0, self.tableWidget.rowCount()):
+
+            if self.settings.contains("cm_name_" + str(row)):
+                self.tableWidget.setItem(row, 0, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_name_" + str(row)).toString())))
+                self.tableWidget.setItem(row, 1, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_group_" + str(row)).toString())))
+                self.tableWidget.setItem(row, 2, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_font_" + str(row)).toString())))
+                self.tableWidget.setItem(row, 3, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_background_" + str(row)).toString())))
+                self.tableWidget.setItem(row, 4, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_value_" + str(row)).toString())))
 
 
 class SearchThread(QThread):
@@ -1002,3 +1053,8 @@ def main():
 
 if __module__ == "main":
     main()
+
+# TODO Add in a Library token GUI tab to support Lib tokens
+# TODO Possibly add in support for user macro files
+# TODO Maybe move GM macros to a macro file
+# TODO Lib tokens: Gear text box(form). Party sheet token(loot box, exp pool)

@@ -13,5 +13,6 @@
     <file>icons/database_add.png</file>
     <file>icons/colors.png</file>
     <file>icons/info.png</file>
+    <file>icons/gears.png</file>
   </qresource>
 </RCC>

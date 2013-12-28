@@ -95,7 +95,7 @@
      <x>0</x>
      <y>0</y>
      <width>1067</width>
-     <height>29</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuConfig">
@@ -116,6 +116,7 @@
     <addaction name="actionColors"/>
     <addaction name="actionIndexing"/>
     <addaction name="actionOutput"/>
+    <addaction name="actionMacros"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -149,6 +150,7 @@
    <addaction name="actionColors"/>
    <addaction name="actionIndexing"/>
    <addaction name="actionOutput"/>
+   <addaction name="actionMacros"/>
    <addaction name="separator"/>
    <addaction name="actionHelp"/>
   </widget>
@@ -305,6 +307,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionMacros">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/gears.png</normaloff>:/icons/gears.png</iconset>
+   </property>
+   <property name="text">
+    <string>Custom Macros</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>

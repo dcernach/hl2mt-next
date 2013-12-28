@@ -191,7 +191,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="pageBasic">
       <widget class="Line" name="line">
@@ -573,30 +573,29 @@
         <item row="2" column="2">
          <widget class="QLineEdit" name="editAlignment"/>
         </item>
-        <item row="1" column="2">
-         <widget class="QLineEdit" name="editSpeed"/>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QLabel" name="labelSpeed">
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelItems">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text">
-           <string>Speed</string>
+           <string>Items</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="5">
-         <widget class="QLineEdit" name="editReach"/>
+        <item row="3" column="2">
+         <widget class="QLineEdit" name="editItems"/>
         </item>
-        <item row="2" column="5">
-         <widget class="QLineEdit" name="editRace"/>
-        </item>
-        <item row="1" column="3" colspan="2">
-         <widget class="QLabel" name="labelReach">
-          <property name="text">
-           <string>Reach</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3" colspan="2">
+        <item row="3" column="3">
          <widget class="QLabel" name="labelRace">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -608,6 +607,39 @@
            <string>Race</string>
           </property>
          </widget>
+        </item>
+        <item row="3" column="5">
+         <widget class="QLineEdit" name="editRace"/>
+        </item>
+        <item row="2" column="5">
+         <widget class="QLineEdit" name="editReach"/>
+        </item>
+        <item row="2" column="3">
+         <widget class="QLabel" name="labelReach">
+          <property name="text">
+           <string>Reach</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="5">
+         <widget class="QLineEdit" name="editSpeed"/>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="labelSpeed">
+          <property name="text">
+           <string>Speed</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelHPTemp">
+          <property name="text">
+           <string>HP Temp</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLineEdit" name="editHPTemp"/>
         </item>
        </layout>
       </widget>
@@ -646,8 +678,6 @@
   <tabstop>editCMDFlat</tabstop>
   <tabstop>editHP</tabstop>
   <tabstop>editHPMax</tabstop>
-  <tabstop>editSpeed</tabstop>
-  <tabstop>editReach</tabstop>
   <tabstop>defenseButton</tabstop>
   <tabstop>basicButton</tabstop>
   <tabstop>offenseButton</tabstop>

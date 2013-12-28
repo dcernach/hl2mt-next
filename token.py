@@ -86,6 +86,10 @@ class Pathfinder:
         self.atk_ranged = self.xml.find('attack').get('rangedattack')
         self.bab = self.xml.find('attack').get('baseattack')
         self.gender = self.xml.find('personal').get('gender')
+        self.pp = self.xml.find('money').get('pp')
+        self.gp = self.xml.find('money').get('gp')
+        self.sp = self.xml.find('money').get('sp')
+        self.cp = self.xml.find('money').get('cp')
 
     def parse_languages(self):
         for language in self.xml.find('languages').iter('language'):
@@ -342,6 +346,30 @@ class Pathfinder:
         xml += self.property_xml(self.settings.value("properties/melee").toString(), self.atk_melee)
         xml += self.property_xml(self.settings.value("properties/ranged").toString(), self.atk_ranged)
 
+        if self.settings.contains("properties/items"):
+            tmp = ''
+            for item in self.items:
+                name = item['name']
+                name = string.replace(name, "'", "")
+                name = string.replace(name, "[", "")
+                name = string.replace(name, "]", "")
+                tmp += name
+                if int(item['num']) > 1:
+                    tmp += ' (x' + item['num'] + ')'
+                tmp += '\n'
+            if len(tmp) > 0:
+                tmp += '\n'
+            if int(self.pp) > 0:
+                tmp += self.pp + 'pp '
+            if int(self.gp) > 0:
+                tmp += self.gp + 'gp '
+            if int(self.sp) > 0:
+                tmp += self.sp + 'sp '
+            if int(self.cp) > 0:
+                tmp += self.cp + 'cp '
+            tmp = cgi.escape(tmp)
+            xml += self.property_xml(self.settings.value("properties/items").toString(), tmp)
+
         xml += '      </store>\n'
         xml += '    </propertyMapCI>\n'
 
@@ -442,6 +470,16 @@ class Pathfinder:
 
         if self.items and self.settings.value("items").toBool():
             xml += self.items_macro_xml()
+
+        for row in xrange(0, 50):
+            if self.settings.contains("cm_name_" + str(row)) and len(self.settings.value("cm_name_" + str(row)).toString()) > 0:
+                name = self.settings.value("cm_name_" + str(row)).toString()
+                group = self.settings.value("cm_group_" + str(row)).toString()
+                font = self.settings.value("cm_font_" + str(row)).toString()
+                background = self.settings.value("cm_background_" + str(row)).toString()
+                value = self.settings.value("cm_value_" + str(row)).toString()
+
+                xml += self.custom_macro_xml(name, group, font, background, value)
 
         if self.settings.value("indexing").toBool() != 'None':
             xml += self.list_show_macro_xml()
@@ -602,6 +640,46 @@ class Pathfinder:
         xml += '           <fontSize>1.00em</fontSize>\n'
         xml += '           <minWidth>30</minWidth>\n'
         xml += '           <maxWidth>30</maxWidth>\n'
+        xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
+        xml += '           <toolTip></toolTip>\n'
+        xml += '           <commonMacro>false</commonMacro>\n'
+        xml += '           <compareGroup>true</compareGroup>\n'
+        xml += '           <compareIncludeLabel>true</compareIncludeLabel>\n'
+        xml += '           <compareAutoExecute>true</compareAutoExecute>\n'
+        xml += '           <compareApplyToSelectedTokens>true</compareApplyToSelectedTokens>\n'
+        xml += '         </net.rptools.maptool.model.MacroButtonProperties>\n'
+        xml += '       </entry>\n'
+
+        return xml
+
+    def custom_macro_xml(self, name, group, font, background, value):
+
+        self.num_macros += 1
+
+        width = len(name) * 8
+
+        xml = '        <entry>\n'
+        xml += '         <int>' + str(self.num_macros) + '</int>\n'
+        xml += '         <net.rptools.maptool.model.MacroButtonProperties>\n'
+        xml += '           <saveLocation></saveLocation>\n'
+        xml += '           <index>' + str(self.num_macros) + '</index>\n'
+        xml += '           <colorKey>' + background + '</colorKey>\n'
+        xml += '           <hotKey>None</hotKey>\n'
+        xml += '           <command>'
+
+        xml += cgi.escape(value)
+
+        xml += '</command>\n'
+        xml += '           <label>' + name + '</label>\n'
+        xml += '           <group>' + group + '</group>\n'
+        xml += '           <sortby></sortby>\n'
+        xml += '           <autoExecute>true</autoExecute>\n'
+        xml += '           <includeLabel>false</includeLabel>\n'
+        xml += '           <applyToTokens>true</applyToTokens>\n'
+        xml += '           <fontColorKey>' + font + '</fontColorKey>\n'
+        xml += '           <fontSize>1.00em</fontSize>\n'
+        xml += '           <minWidth>' + str(width) + '</minWidth>\n'
+        xml += '           <maxWidth>' + str(width) + '</maxWidth>\n'
         xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
         xml += '           <toolTip></toolTip>\n'
         xml += '           <commonMacro>false</commonMacro>\n'
@@ -991,6 +1069,17 @@ class Pathfinder:
             else:
                 tmp += ' (' + item['value'] + ')'
             tmp += '<br>\n'
+
+        if len(tmp) > 0:
+            tmp += '<br>'
+        if int(self.pp) > 0:
+            tmp += self.pp + 'pp '
+        if int(self.gp) > 0:
+            tmp += self.gp + 'gp '
+        if int(self.sp) > 0:
+            tmp += self.sp + 'sp '
+        if int(self.cp) > 0:
+            tmp += self.cp + 'cp '
 
         tmp += '</body>\n'
         tmp += '</html>\n'

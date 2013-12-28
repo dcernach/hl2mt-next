@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Thu Oct 17 15:51:38 2013
+# Created: Sat Dec 28 13:41:02 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,7 +55,7 @@ class Ui_mainWindow(object):
         self.gridLayout.addWidget(self.tableWidget, 0, 0, 1, 2)
         mainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(mainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1067, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1067, 25))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuConfig = QtGui.QMenu(self.menubar)
         self.menuConfig.setObjectName(_fromUtf8("menuConfig"))
@@ -127,6 +127,12 @@ class Ui_mainWindow(object):
         self.actionHelp.setIcon(icon9)
         self.actionHelp.setIconVisibleInMenu(True)
         self.actionHelp.setObjectName(_fromUtf8("actionHelp"))
+        self.actionMacros = QtGui.QAction(mainWindow)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/gears.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionMacros.setIcon(icon10)
+        self.actionMacros.setIconVisibleInMenu(True)
+        self.actionMacros.setObjectName(_fromUtf8("actionMacros"))
         self.menuConfig.addAction(self.actionImport)
         self.menuConfig.addAction(self.actionSave)
         self.menuConfig.addSeparator()
@@ -136,6 +142,7 @@ class Ui_mainWindow(object):
         self.menuOptions.addAction(self.actionColors)
         self.menuOptions.addAction(self.actionIndexing)
         self.menuOptions.addAction(self.actionOutput)
+        self.menuOptions.addAction(self.actionMacros)
         self.menuHelp.addAction(self.actionHelp)
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuConfig.menuAction())
@@ -148,6 +155,7 @@ class Ui_mainWindow(object):
         self.toolBar.addAction(self.actionColors)
         self.toolBar.addAction(self.actionIndexing)
         self.toolBar.addAction(self.actionOutput)
+        self.toolBar.addAction(self.actionMacros)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionHelp)
 
@@ -201,5 +209,6 @@ class Ui_mainWindow(object):
         self.actionExit.setShortcut(QtGui.QApplication.translate("mainWindow", "Ctrl+X", None, QtGui.QApplication.UnicodeUTF8))
         self.actionHelp.setText(QtGui.QApplication.translate("mainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.actionHelp.setShortcut(QtGui.QApplication.translate("mainWindow", "Ctrl+H", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionMacros.setText(QtGui.QApplication.translate("mainWindow", "Custom Macros", None, QtGui.QApplication.UnicodeUTF8))
 
 import icons_rc
