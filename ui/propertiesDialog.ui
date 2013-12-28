@@ -527,10 +527,17 @@
          <x>19</x>
          <y>29</y>
          <width>571</width>
-         <height>181</height>
+         <height>201</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
+        <item row="1" column="3">
+         <widget class="QLabel" name="labelSpeed">
+          <property name="text">
+           <string>Speed</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="labelHP">
           <property name="text">
@@ -624,13 +631,6 @@
         <item row="1" column="5">
          <widget class="QLineEdit" name="editSpeed"/>
         </item>
-        <item row="1" column="3">
-         <widget class="QLabel" name="labelSpeed">
-          <property name="text">
-           <string>Speed</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="labelHPTemp">
           <property name="text">
@@ -640,6 +640,28 @@
         </item>
         <item row="1" column="2">
          <widget class="QLineEdit" name="editHPTemp"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="labelXP">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>XP Value</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLineEdit" name="editXP"/>
         </item>
        </layout>
       </widget>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'propertiesDialog.ui'
 #
-# Created: Sat Dec 28 15:01:14 2013
+# Created: Sat Dec 28 17:07:37 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -270,11 +270,14 @@ class Ui_propertiesDialog(object):
         self.pageMisc = QtGui.QWidget()
         self.pageMisc.setObjectName(_fromUtf8("pageMisc"))
         self.layoutWidget6 = QtGui.QWidget(self.pageMisc)
-        self.layoutWidget6.setGeometry(QtCore.QRect(19, 29, 571, 181))
+        self.layoutWidget6.setGeometry(QtCore.QRect(19, 29, 571, 201))
         self.layoutWidget6.setObjectName(_fromUtf8("layoutWidget6"))
         self.gridLayout_2 = QtGui.QGridLayout(self.layoutWidget6)
         self.gridLayout_2.setMargin(0)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        self.labelSpeed = QtGui.QLabel(self.layoutWidget6)
+        self.labelSpeed.setObjectName(_fromUtf8("labelSpeed"))
+        self.gridLayout_2.addWidget(self.labelSpeed, 1, 3, 1, 1)
         self.labelHP = QtGui.QLabel(self.layoutWidget6)
         self.labelHP.setObjectName(_fromUtf8("labelHP"))
         self.gridLayout_2.addWidget(self.labelHP, 0, 0, 1, 2)
@@ -331,15 +334,24 @@ class Ui_propertiesDialog(object):
         self.editSpeed = QtGui.QLineEdit(self.layoutWidget6)
         self.editSpeed.setObjectName(_fromUtf8("editSpeed"))
         self.gridLayout_2.addWidget(self.editSpeed, 1, 5, 1, 1)
-        self.labelSpeed = QtGui.QLabel(self.layoutWidget6)
-        self.labelSpeed.setObjectName(_fromUtf8("labelSpeed"))
-        self.gridLayout_2.addWidget(self.labelSpeed, 1, 3, 1, 1)
         self.labelHPTemp = QtGui.QLabel(self.layoutWidget6)
         self.labelHPTemp.setObjectName(_fromUtf8("labelHPTemp"))
         self.gridLayout_2.addWidget(self.labelHPTemp, 1, 0, 1, 1)
         self.editHPTemp = QtGui.QLineEdit(self.layoutWidget6)
         self.editHPTemp.setObjectName(_fromUtf8("editHPTemp"))
         self.gridLayout_2.addWidget(self.editHPTemp, 1, 2, 1, 1)
+        self.labelXP = QtGui.QLabel(self.layoutWidget6)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelXP.sizePolicy().hasHeightForWidth())
+        self.labelXP.setSizePolicy(sizePolicy)
+        self.labelXP.setMinimumSize(QtCore.QSize(80, 0))
+        self.labelXP.setObjectName(_fromUtf8("labelXP"))
+        self.gridLayout_2.addWidget(self.labelXP, 4, 0, 1, 1)
+        self.editXP = QtGui.QLineEdit(self.layoutWidget6)
+        self.editXP.setObjectName(_fromUtf8("editXP"))
+        self.gridLayout_2.addWidget(self.editXP, 4, 2, 1, 1)
         self.stackedWidget.addWidget(self.pageMisc)
         self.formLayout.setWidget(1, QtGui.QFormLayout.SpanningRole, self.stackedWidget)
         self.buttonBox = QtGui.QDialogButtonBox(propertiesDialog)
@@ -400,13 +412,14 @@ class Ui_propertiesDialog(object):
         self.labelAC.setText(QtGui.QApplication.translate("propertiesDialog", "AC Normal", None, QtGui.QApplication.UnicodeUTF8))
         self.labelACFlat.setText(QtGui.QApplication.translate("propertiesDialog", "AC Flatfooted", None, QtGui.QApplication.UnicodeUTF8))
         self.labelACTouch.setText(QtGui.QApplication.translate("propertiesDialog", "AC Touch", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelSpeed.setText(QtGui.QApplication.translate("propertiesDialog", "Speed", None, QtGui.QApplication.UnicodeUTF8))
         self.labelHP.setText(QtGui.QApplication.translate("propertiesDialog", "HP Current", None, QtGui.QApplication.UnicodeUTF8))
         self.labelHPMax.setText(QtGui.QApplication.translate("propertiesDialog", "HP Max", None, QtGui.QApplication.UnicodeUTF8))
         self.labelAlignment.setText(QtGui.QApplication.translate("propertiesDialog", "Alignment", None, QtGui.QApplication.UnicodeUTF8))
         self.labelItems.setText(QtGui.QApplication.translate("propertiesDialog", "Items", None, QtGui.QApplication.UnicodeUTF8))
         self.labelRace.setText(QtGui.QApplication.translate("propertiesDialog", "Race", None, QtGui.QApplication.UnicodeUTF8))
         self.labelReach.setText(QtGui.QApplication.translate("propertiesDialog", "Reach", None, QtGui.QApplication.UnicodeUTF8))
-        self.labelSpeed.setText(QtGui.QApplication.translate("propertiesDialog", "Speed", None, QtGui.QApplication.UnicodeUTF8))
         self.labelHPTemp.setText(QtGui.QApplication.translate("propertiesDialog", "HP Temp", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelXP.setText(QtGui.QApplication.translate("propertiesDialog", "XP Value", None, QtGui.QApplication.UnicodeUTF8))
 
 import icons_rc

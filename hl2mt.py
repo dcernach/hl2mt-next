@@ -78,7 +78,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, os.getcwd())
 
-        for opt in ['vision', 'maneuvers', 'gm']:
+        for opt in ['vision', 'maneuvers']:
             if not self.settings.contains(opt):
                 self.settings.setValue(opt, False)
 
@@ -112,6 +112,9 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
         if not self.settings.contains("properties/ac"):
             self.settings.setValue("properties/ac", "AC")
+
+        if not self.settings.contains("properties/xpvalue"):
+            self.settings.setValue("properties/xpvalue", "XPValue")
 
         if not self.settings.contains("properties/speed"):
             self.settings.setValue("properties/speed", "Movement")
@@ -208,6 +211,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("properties/hptemp", dialog.editHPTemp.text())
             self.settings.setValue("properties/hpmax", dialog.editHPMax.text())
             self.settings.setValue("properties/items", dialog.editItems.text())
+            self.settings.setValue("properties/xpvalue", dialog.editXP.text())
 
     def action_colors_triggered(self):
         dialog = ColorsDialog(self, self.settings)
@@ -260,7 +264,6 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("maneuvers", dialog.checkMan.isChecked())
             self.settings.setValue("skills", dialog.checkSkill.isChecked())
             self.settings.setValue("ability", dialog.checkAbility.isChecked())
-            self.settings.setValue("gm", dialog.checkGM.isChecked())
 
     def action_import_triggered(self):
         filename = QFileDialog.getOpenFileName(self, __appname__ + ": Import Config", os.getcwd(),
@@ -826,6 +829,7 @@ class PropertiesDialog(QDialog, propertiesDialog.Ui_propertiesDialog):
         self.editHPMax.setText(self.settings.value("properties/hpmax").toString())
         self.editHPTemp.setText(self.settings.value("properties/hptemp").toString())
         self.editItems.setText(self.settings.value("properties/items").toString())
+        self.editXP.setText(self.settings.value("properties/xpvalue").toString())
 
 
 class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
@@ -914,7 +918,6 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
         self.checkMan.setChecked(self.settings.value("maneuvers").toBool())
         self.checkSkill.setChecked(self.settings.value("skills").toBool())
         self.checkAbility.setChecked(self.settings.value("ability").toBool())
-        self.checkGM.setChecked(self.settings.value("gm").toBool())
 
 
 class MacrosDialog(QDialog, macrosDialog.Ui_macrosDialog):
@@ -1053,8 +1056,3 @@ def main():
 
 if __module__ == "main":
     main()
-
-# TODO Add in a Library token GUI tab to support Lib tokens
-# TODO Possibly add in support for user macro files
-# TODO Maybe move GM macros to a macro file
-# TODO Lib tokens: Gear text box(form). Party sheet token(loot box, exp pool)

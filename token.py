@@ -90,6 +90,9 @@ class Pathfinder:
         self.gp = self.xml.find('money').get('gp')
         self.sp = self.xml.find('money').get('sp')
         self.cp = self.xml.find('money').get('cp')
+        self.xpvalue = '0'
+        if self.xml.find('xpaward') is not None:
+            self.xpvalue = self.xml.find('xpaward').get('value')
 
     def parse_languages(self):
         for language in self.xml.find('languages').iter('language'):
@@ -335,7 +338,7 @@ class Pathfinder:
         xml += self.property_xml(self.settings.value("properties/player").toString(), self.player)
         xml += self.property_xml(self.settings.value("properties/hp").toString(), self.hpc)
         xml += self.property_xml(self.settings.value("properties/hpmax").toString(), self.hpm)
-        xml += self.property_xml("HPT", "0")
+        xml += self.property_xml(self.settings.value("properties/hptemp").toString(), "0")
         xml += self.property_xml(self.settings.value("properties/speed").toString(), self.movement)
         xml += self.property_xml(self.settings.value("properties/reach").toString(), self.reach)
         xml += self.property_xml(self.settings.value("properties/ac").toString(), self.ac)
@@ -345,6 +348,7 @@ class Pathfinder:
         xml += self.property_xml(self.settings.value("properties/cmdflat").toString(), self.cmd_flat)
         xml += self.property_xml(self.settings.value("properties/melee").toString(), self.atk_melee)
         xml += self.property_xml(self.settings.value("properties/ranged").toString(), self.atk_ranged)
+        xml += self.property_xml(self.settings.value("properties/xpvalue").toString(), self.xpvalue)
 
         if self.settings.contains("properties/items"):
             tmp = ''
@@ -367,6 +371,7 @@ class Pathfinder:
                 tmp += self.sp + 'sp '
             if int(self.cp) > 0:
                 tmp += self.cp + 'cp '
+            tmp += '\n'
             tmp = cgi.escape(tmp)
             xml += self.property_xml(self.settings.value("properties/items").toString(), tmp)
 
@@ -400,11 +405,6 @@ class Pathfinder:
         xml += self.roll_macro_xml('CMB', self.cmb, 'Basic CMB', 'Basic', '25',
                                    colorb, colorf, '2')
         xml += self.init_macro_xml()
-
-        if self.settings.value("gm").toBool():
-            xml += self.gm_macro_xml('Name:Clr', '[h: setName("Unknown")]')
-            xml += self.gm_macro_xml('Name:Set', '[h: setName(getProperty("Name"))]')
-            xml += self.gm_macro_xml('Name:Num', '[h: setName(getProperty("Name") + " " + 1d100)]')
 
         if self.settings.value("basicdice").toBool():
             xml += self.basic_die_macro_xml('d4')
