@@ -164,6 +164,7 @@ class Pathfinder:
     def pretty_html(self, text):
         text = string.replace(text, '\n', '<br>')
         text = string.replace(text, 'Benefit:', '<b>Benefit:</b>')
+        text = string.replace(text, 'Benefits:', '<b>Benefits:</b>')
         text = string.replace(text, 'Special:', '<b>Special:</b>')
         text = string.replace(text, 'Requirement:', '<b>Requirement:</b>')
         text = string.replace(text, 'Requirements:', '<b>Requirements:</b>')
