@@ -225,11 +225,17 @@ When adding custom macros, you have the following fields:
 **Sample Macros**
 
     Items, Basic, Black, White, [h, macro("itemsForm@Lib:Macros"): ""]
+
     Loot, Basic, White, Teal, [h, macro("lootForm@Lib:Party"): ""]
+
     AddXp, GM, Black, White, [r, macro("addXP@Lib:Party"): ""]
+
     AddLoot, GM, White, Teal, [r, macro("addLoot@Lib:Party"): ""]
+
     Name:Clr, GM, Black, Orange, [h: setName("Unknown")]
+
     Name:Num, GM, Black, Orange, [h: setName(getProperty("Name") + " " + 1d100)]
+
     Name:Set, GM, Black, Orange, [h: setName(getProperty("Name"))]
 
 
