@@ -1,5 +1,5 @@
 __appname__ = "hl2mt"
-__version__ = "0.81"
+__version__ = "0.82"
 __module__ = "main"
 
 import sys
@@ -242,8 +242,6 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("colors/abilityb", dialog.comboAbilityB.currentText())
             self.settings.setValue("colors/fullf", dialog.comboFullF.currentText())
             self.settings.setValue("colors/fullb", dialog.comboFullB.currentText())
-            self.settings.setValue("colors/gmf", dialog.comboGMF.currentText())
-            self.settings.setValue("colors/gmb", dialog.comboGMB.currentText())
 
     def action_indexing_triggered(self):
         dialog = IndexingDialog(self, self.settings)
@@ -891,8 +889,6 @@ class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
         self.comboAbilityB.setCurrentIndex(self.comboAbilityB.findText(self.settings.value("colors/abilityb").toString()))
         self.comboFullF.setCurrentIndex(self.comboFullF.findText(self.settings.value("colors/fullf").toString()))
         self.comboFullB.setCurrentIndex(self.comboFullB.findText(self.settings.value("colors/fullb").toString()))
-        self.comboGMF.setCurrentIndex(self.comboGMF.findText(self.settings.value("colors/gmf").toString()))
-        self.comboGMB.setCurrentIndex(self.comboGMB.findText(self.settings.value("colors/gmb").toString()))
 
 
 class IndexingDialog(QDialog, indexingDialog.Ui_indexDialog):
