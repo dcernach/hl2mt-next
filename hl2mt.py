@@ -1,5 +1,5 @@
 __appname__ = "hl2mt"
-__version__ = "0.80"
+__version__ = "0.81"
 __module__ = "main"
 
 import sys
@@ -294,9 +294,9 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         html += "<head><title>hl2mt Help</title></head>"
 
         html += "<body>"
+        html += "<a name=\"toc\"></a>"
         html += "<h2>" + __appname__ + " Help</h2>"
 
-        html += "<a name=\"toc\"></a>"
         html += "<ul id=\"toc\">"
         html += "<li><a href=\"#chapter1\">Chapter 1</a>: <span>Introduction</span></li>"
         html += "<li><a href=\"#chapter2\">Chapter 2</a>: <span>Basics of a Token</span></li>"
@@ -307,6 +307,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         html += "<li><a href=\"#chapter7\">Chapter 7</a>: <span>Indexing</span></li>"
         html += "<li><a href=\"#chapter8\">Chapter 8</a>: <span>Output Options</span></li>"
         html += "<li><a href=\"#chapter9\">Chapter 9</a>: <span>Importing and Exporting Configs</span></li>"
+        html += "<li><a href=\"#chapter10\">Chapter 10</a>: <span>Custom Macros</span></li>"
         html += "</ul>"
         html += "<br><br><br>"
 
@@ -560,6 +561,27 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
         html += "Simple setup hl2mt the way you want and export the config. Later you can import it to bring it "
         html += "back to that state."
+
+        html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
+
+        html += "<br><br><br>"
+
+        # Chapter 10
+        html += "<a name=\"chapter10\"></a>"
+        html += "<h3>Chapter 10: Custom Macros</h3>"
+
+        html += "With the custom macros feature you can put in simple one line macros that ``hl2mt`` will create "
+        html += "on the created tokens. "
+        html += "When adding custom macros, you have the following fields:<br>"
+
+        html += "<ul>"
+        html += "<li><b>Macro Name</b>: The macro name</li>"
+        html += "<li><b>Macro Group</b>: The group of macros this macro will be a part of"
+        html += "(can be a brand new group)</li>"
+        html += "<li><b>Font</b>: The font color of the macro button</li>"
+        html += "<li><b>Background</b>: The background color of the macro button</li>"
+        html += "<li><b>Macro Data</b>: The macro that should be ran then the macro button is clicked</li>"
+        html += "</ul>"
 
         html += "<br><br><a href=\"#toc\">Back to table of contents</a>"
 

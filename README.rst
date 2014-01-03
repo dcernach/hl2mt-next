@@ -50,6 +50,9 @@ There are video tutorials covering the basic features ``hl2mt``
 
 `Tutorial 7 - The Community Bestiary <http://www.youtube.com/watch?v=_Eeq6XTIMaE>`_
 
+`Tutorial 8 - Custom Macros <http://www.youtube.com/watch?v=nIbH-ynGkTc>`_
+
+
 
 Usage
 -----
@@ -206,6 +209,28 @@ keep it stored internally.
 
 Unlike tables these remote HTML pages are pretty safe from breaking when you re-run ``hl2mt`` and create new tokens. So
 you can upload new index zip files and unpack them without hurting existing token links to feats, spells and so on.
+
+Custom Macros
+-------------
+
+With the custom macros feature you can put in simple one line macros that ``hl2mt`` will create on the created tokens.
+When adding custom macros, you have the following fields:
+
+- Macro Name: The macro name
+- Macro Group: The group of macros this macro will be a part of(can be a brand new group)
+- Font: The font color of the macro button
+- Background: The background color of the macro button
+- Macro Data: The macro that should be ran then the macro button is clicked
+
+**Sample Macros**
+
+    Items, Basic, Black, White, [h, macro("itemsForm@Lib:Macros"): ""]
+    Loot, Basic, White, Teal, [h, macro("lootForm@Lib:Party"): ""]
+    AddXp, GM, Black, White, [r, macro("addXP@Lib:Party"): ""]
+    AddLoot, GM, White, Teal, [r, macro("addLoot@Lib:Party"): ""]
+    Name:Clr, GM, Black, Orange, [h: setName("Unknown")]
+    Name:Num, GM, Black, Orange, [h: setName(getProperty("Name") + " " + 1d100)]
+    Name:Set, GM, Black, Orange, [h: setName(getProperty("Name"))]
 
 
 License
