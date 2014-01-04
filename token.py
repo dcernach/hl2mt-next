@@ -1292,6 +1292,14 @@ class Pathfinder:
         group = 'Attacks'
         width = '100'
 
+        regex = re.search('(\d+)\s*\-\s*(\d+)', crit)
+        if regex:
+            crit_low = regex.group(1)
+            crit_high = regex.group(2)
+        else:
+            crit_low = "20"
+            crit_high = "20"
+
         regex = re.compile('([\+\-]\d+)')
         results = []
         # Check to see if we have something like +8 or -2 or +8/+4
@@ -1303,13 +1311,13 @@ class Pathfinder:
             mod = results[0]
             mod = int(mod)
             if mod > 0:
-                roll = "d20 + " + str(mod)
+                roll = " + " + str(mod)
             elif mod < 0:
-                roll = "d20 - " + str(mod)
+                roll = " - " + str(mod)
             else:
-                roll = "d20"
+                roll = ""
         else:
-            roll = "d20 "
+            roll = ""
 
         self.num_macros += 1
         self.weapon_sort += 1
@@ -1323,18 +1331,25 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        tmp = "<table border='1' cellpadding='0' cellspacing='0' style='width:200px'>\n"
+        tmp = "[h: roll = d20]\n"
+        tmp += "[h,if(roll >= " + crit_low + " && roll <= " + crit_high + "): color=\"red\";color=\"blue\"]"
+
+        tmp += "<table border='1' cellpadding='0' cellspacing='0' style='width:200px'>\n"
         tmp += "<tr bgcolor='" + background + "'>\n"
         tmp += "<td><span style='color:" + font + "'><b>" + name + "(" + crit + ")</b></span></td>\n"
         tmp += "<td><span style='color:" + font + "'><b>Damage</b></span></td>\n"
         tmp += "</tr>\n"
 
         tmp += "<tr>\n"
-        tmp += "<td>[e:" + roll + "]</td>\n"
+        tmp += "<td><font color=[r: color]>[e: roll" + roll + "]</font></td>\n"
+        tmp += "<td><font color=[r: color]>"
+
         if re.search('\d*d\d+', damage):
-            tmp += "<td>[e:" + damage + "]</td>\n"
+            tmp += "[e:" + damage + "]"
         else:
-            tmp += "<td>" + damage + "</td>\n"
+            tmp += "" + damage + ""
+
+        tmp += "</font></td>"
         tmp += "</tr>\n"
 
         tmp += "</table>\n"
@@ -1386,18 +1401,21 @@ class Pathfinder:
             for mod in results:
                 mod = int(mod)
                 if mod > 0:
-                    roll = "d20 + " + str(mod)
+                    roll = " + " + str(mod)
                 elif mod < 0:
-                    roll = "d20 - " + str(mod)
+                    roll = " - " + str(mod)
                 else:
-                    roll = "d20"
+                    roll = ""
+
+                tmp += "[h: roll = d20]\n"
+                tmp += "[h,if(roll >= " + crit_low + " && roll <= " + crit_high + "): color=\"red\";color=\"blue\"]"
 
                 tmp += "<tr>\n"
-                tmp += "<td>[e:" + roll + "]</td>\n"
+                tmp += "<td><font color=[r: color]>[e: roll" + roll + "]</font></td>\n"
                 if re.search('\d*d\d+', damage):
-                    tmp += "<td>[e:" + damage + "]</td>\n"
+                    tmp += "<td><font color=[r: color]>[e:" + damage + "]</font></td>\n"
                 else:
-                    tmp += "<td>" + damage + "</td>\n"
+                    tmp += "<td><font color=[r: color]>" + damage + "</font></td>\n"
                 tmp += "</tr>\n"
 
             tmp += "</table>\n"
