@@ -10,7 +10,6 @@ import hashlib
 import re
 
 from PyQt4.QtCore import *
-
 from PyQt4.QtGui import *
 from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDialog, propertiesDialog, htmlDialog
 from ui import aboutDialog, helpDialog, macrosDialog
@@ -696,11 +695,9 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.errors += error
 
     def token_created(self, row):
-
         self.tableWidget.setRowHidden(row, True)
 
     def create_finished(self):
-
         self.processButton.setDisabled(False)
         self.tableWidget.setSortingEnabled(True)
         QMessageBox.information(self, __appname__ + " Finished", "Tokens have been created")
