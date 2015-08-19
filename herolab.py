@@ -56,18 +56,22 @@ class HeroLab:
 
         for index_char in index_root.find('characters').iter('character'):
             for statblock in index_char.iter('statblock'):
+
                 if re.search(txt_search, statblock.get("filename")):
                     text_file = statblock.get("folder") + "/" + statblock.get("filename")
                     self.text = lab_zip.read(text_file)
+
                 if re.search(html_search, statblock.get("filename")):
                     html_file = statblock.get("folder") + "/" + statblock.get("filename")
                     self.html = lab_zip.read(html_file)
+
                 if re.search(xml_search, statblock.get("filename")):
                     xml_name = statblock.get("folder") + "/" + statblock.get("filename")
                     xml_file = lab_zip.open(xml_name)
                     xml_tree = ET.parse(xml_file)
                     xml_file.close()
                     xml_root = xml_tree.getroot()
+
                     for char in xml_root.iter('character'):
                         minions = char.find('minions')
                         if minions is not None:
@@ -152,6 +156,7 @@ class HeroLabIndex:
                     tree = ET.parse(index_xml)
                     index_xml.close()
                     index_root = tree.getroot()
+
                     for index_char in index_root.find('characters').iter('character'):
                         if index_char.find('minions') is not None:
                             minions = index_char.find('minions')
@@ -161,37 +166,52 @@ class HeroLabIndex:
                             found = re.search(' CR (\d+/?\d*)/?M?R?\s*(\d*/?\d*)$', summary)
                             cr = ''
                             mr = ''
+
                             if found is not None:
                                 cr = found.group(1)
+
                                 if found.group(2) is not None:
                                     mr = found.group(2)
+
                             char_filename = ''
+
                             for statblock in index_char.iter('statblock'):
                                 char_filename = statblock.get('filename')
                                 char_filename = re.sub(r"\.\w\w\w$", "", char_filename)
+
                             pog_file = self._search_file(self.pog_folder, subdir, name)
                             portrait_file = self._search_file(self.portrait_folder, subdir, name)
                             token = self._token_name(subdir, name)
+
                             yield {"name": name, "summary": summary, "cr": cr, "source": filename,
                                    "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
                                    "portrait": portrait_file, "token": token}
+
                             for minion in minions.iter('character'):
                                 minion_name = name + " " + minion.get('name')
+                                minion_hl_name = minion.get('name')
                                 summary = minion.get('summary')
                                 found = re.search(' CR (\d+/?\d*)/?M?R?\s*(\d*/?\d*)$', summary)
                                 cr = ''
                                 mr = ''
+
                                 if found is not None:
                                     cr = found.group(1)
                                     if found.group(2) is not None:
                                         mr = found.group(2)
+
                                 char_filename = ''
+
                                 for statblock in minion.iter('statblock'):
                                     char_filename = statblock.get('filename')
                                     char_filename = re.sub(r"\.\w\w\w$", "", char_filename)
-                                pog_file = self._search_file(self.pog_folder, subdir, minion_name)
-                                portrait_file = self._search_file(self.portrait_folder, subdir, minion_name)
+
+                                # Changed 'Minion Name' Behavior to use 'Minion Name' from Herolab instead
+                                # of 'Char Name + Minion Name' for Portrait and Pog directory.
+                                pog_file = self._search_file(self.pog_folder, subdir, minion_hl_name)
+                                portrait_file = self._search_file(self.portrait_folder, subdir, minion_hl_name)
                                 token = self._token_name(subdir, minion_name)
+
                                 yield {"name": minion_name, "summary": summary, "cr": cr, "source": filename,
                                        "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
                                        "portrait": portrait_file, "token": token}
@@ -201,14 +221,18 @@ class HeroLabIndex:
                             found = re.search(' CR (\d+/?\d*)/?M?R?\s*(\d*/?\d*)$', summary)
                             cr = ''
                             mr = ''
+
                             if found is not None:
                                 cr = found.group(1)
                                 if found.group(2) is not None:
                                     mr = found.group(2)
+
                             char_filename = ''
+
                             for statblock in index_char.iter('statblock'):
                                 char_filename = statblock.get('filename')
                                 char_filename = re.sub(r"\.\w\w\w$", "", char_filename)
+
                             pog_file = self._search_file(self.pog_folder, subdir, name)
                             portrait_file = self._search_file(self.portrait_folder, subdir, name)
                             token = self._token_name(subdir, name)
@@ -240,9 +264,12 @@ class HeroLabIndex:
         for path in paths:
             # Full name search: Orc Chief
             filename = self._find_image_file(glob.glob(path + str.replace(char_name, ' ', '?') + '.*'))
+
             if filename:
                 return filename
+
             filename = self._find_image_file(glob.glob(path + str.replace(char_name.lower(), ' ', '?') + '.*'))
+
             if filename:
                 return filename
 
