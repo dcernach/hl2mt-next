@@ -63,4 +63,4 @@ class Ui_aboutDialog(object):
         self.OKButton.setText(QtGui.QApplication.translate("aboutDialog", "Close", None, QtGui.QApplication.UnicodeUTF8))
 
 from PyQt4 import QtWebKit
-import icons_rc
+from . import icons_rc

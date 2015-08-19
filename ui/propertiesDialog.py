@@ -422,4 +422,4 @@ class Ui_propertiesDialog(object):
         self.labelHPTemp.setText(QtGui.QApplication.translate("propertiesDialog", "HP Temp", None, QtGui.QApplication.UnicodeUTF8))
         self.labelXP.setText(QtGui.QApplication.translate("propertiesDialog", "XP Value", None, QtGui.QApplication.UnicodeUTF8))
 
-import icons_rc
+from . import icons_rc

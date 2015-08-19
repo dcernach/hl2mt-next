@@ -1,17 +1,16 @@
-import xml.etree.ElementTree as ET
 import os
 import re
 import zipfile
-import string
 import glob
-from token import Pathfinder
-from PyQt4.QtCore import *
-import StringIO
+import io
 import hashlib
+import xml.etree.ElementTree as ET
+
+from mttoken import Pathfinder
+from PyQt4.QtCore import *
 
 
 class HeroLab:
-
     def __init__(self, input_folder, subdir, source, filename):
         input_folder = str(input_folder)
         subdir = str(subdir)
@@ -91,7 +90,7 @@ class HeroLab:
         token.values = self.values
         token.settings = self.settings
 
-        full_dir = os.path.join(str(self.settings.value("folderoutput").toString()), self.subdir[1:])
+        full_dir = os.path.join(str(self.settings.value("folderoutput")), self.subdir[1:])
 
         self.html_filename = hashlib.sha224(self.html).hexdigest() + '.html'
 
@@ -107,21 +106,21 @@ class HeroLab:
 
         rptok = zipfile.ZipFile(str(filename), 'w')
         rptok.writestr('properties.xml', token.properties_xml)
-        rptok.writestr('content.xml', token.content_xml.toUtf8())
+        rptok.writestr('content.xml', token.content_xml.encode())
 
-        output = StringIO.StringIO()
+        output = io.BytesIO()
         token.pog.save(output, 'png')
         rptok.writestr('assets/' + token.pog_asset, output.getvalue())
         output.close()
-        rptok.writestr('assets/' + token.pog_md5, token.pog_xml.toUtf8())
+        rptok.writestr('assets/' + token.pog_md5, token.pog_xml.encode())
 
-        output = StringIO.StringIO()
+        output = io.BytesIO()
         token.portrait.save(output, 'png')
         rptok.writestr('assets/' + token.portrait_asset, output.getvalue())
         output.close()
-        rptok.writestr('assets/' + token.portrait_md5, token.portrait_xml.toUtf8())
+        rptok.writestr('assets/' + token.portrait_md5, token.portrait_xml.encode())
 
-        output = StringIO.StringIO()
+        output = io.BytesIO()
         token.thumbnail.save(output, 'png')
         rptok.writestr('thumbnail', output.getvalue())
         output.close()
@@ -131,7 +130,6 @@ class HeroLab:
 
 
 class HeroLabIndex:
-
     def __init__(self, input_folder, pog_folder, portrait_folder, token_folder):
         self.input_folder = str(input_folder)
         self.pog_folder = str(pog_folder)
@@ -143,11 +141,11 @@ class HeroLabIndex:
     def get_creatures(self):
 
         self.bad_files = []
-       # Parse Por files
+        # Parse Por files
         for dirpath, dirnames, filenames in os.walk(self.input_folder):
             for filename in [f for f in filenames if f.endswith(".por")]:
                 lab_file = os.path.join(dirpath, filename)
-                subdir = string.replace(dirpath, self.input_folder, '')
+                subdir = str.replace(dirpath, self.input_folder, '')
                 try:
                     lab_zip = zipfile.ZipFile(lab_file, 'r')
                     index_xml = lab_zip.open('index.xml')
@@ -223,12 +221,13 @@ class HeroLabIndex:
                 except zipfile.BadZipfile:
                     self.bad_files.append(filename)
 
-# TODO Look into the scan only grabbing image files for portraits and pogs
+                    # TODO Look into the scan only grabbing image files for portraits and pogs
+
     def _search_file(self, search_dir, subdir, char_name):
 
         full_subdir = os.path.join(search_dir, subdir[1:])
         char_name = self.clean_name(char_name)
-        char_name = string.replace(char_name, '_', ' ')
+        char_name = str.replace(char_name, '_', ' ')
 
         if not search_dir.endswith(os.path.sep):
             search_dir += os.path.sep
@@ -239,16 +238,16 @@ class HeroLabIndex:
         paths = [full_subdir, search_dir]
 
         for path in paths:
-           # Full name search: Orc Chief
-            filename = self._find_image_file(glob.glob(path + string.replace(char_name, ' ', '?') + '.*'))
+            # Full name search: Orc Chief
+            filename = self._find_image_file(glob.glob(path + str.replace(char_name, ' ', '?') + '.*'))
             if filename:
                 return filename
-            filename = self._find_image_file(glob.glob(path + string.replace(char_name.lower(), ' ', '?') + '.*'))
+            filename = self._find_image_file(glob.glob(path + str.replace(char_name.lower(), ' ', '?') + '.*'))
             if filename:
                 return filename
 
             # Search for partials: Orc, Chief
-            for name in string.split(char_name, ' '):
+            for name in str.split(char_name, ' '):
                 filename = self._find_image_file(glob.glob(path + name + '.*'))
                 if filename:
                     return filename
@@ -257,7 +256,7 @@ class HeroLabIndex:
                     return filename
 
             # Search for star partials: Orc*, Chief*
-            for name in string.split(char_name, ' '):
+            for name in str.split(char_name, ' '):
                 filename = self._find_image_file(glob.glob(path + name + '*'))
                 if filename:
                     return filename
@@ -284,10 +283,11 @@ class HeroLabIndex:
         else:
             return "Could not find any files!"
 
-        # TODO On fall through if still no image found, maybe use an internally generated default one
+            # TODO On fall through if still no image found, maybe use an internally generated default one
 
 
-# TODO Possibly check to make sure we find a valid image
+            # TODO Possibly check to make sure we find a valid image
+
     @staticmethod
     def _find_image_file(files):
 
@@ -314,11 +314,11 @@ class HeroLabIndex:
     @staticmethod
     def clean_name(name):
 
-        name = string.replace(name, " (combat trained) ", "")
-        name = string.replace(name, " (combat trained)", "")
-        name = string.replace(name, "(combat trained)", "")
+        name = str.replace(name, " (combat trained) ", "")
+        name = str.replace(name, " (combat trained)", "")
+        name = str.replace(name, "(combat trained)", "")
         name = re.sub(r'([^\s\w]|_)+', '', name)
-        name = string.replace(name, "  ", "_")
-        name = string.replace(name, " ", "_")
+        name = str.replace(name, "  ", "_")
+        name = str.replace(name, " ", "_")
 
         return name

@@ -211,4 +211,4 @@ class Ui_mainWindow(object):
         self.actionHelp.setShortcut(QtGui.QApplication.translate("mainWindow", "Ctrl+H", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMacros.setText(QtGui.QApplication.translate("mainWindow", "Custom Macros", None, QtGui.QApplication.UnicodeUTF8))
 
-import icons_rc
+from . import icons_rc

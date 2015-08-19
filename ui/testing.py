@@ -18,4 +18,4 @@ NG Medium humanoid (human)<br/>
 
 html = re.sub(r"\<meta http-equiv.*?\>", '', html)
 
-print html
+print(html)

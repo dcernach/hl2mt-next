@@ -1,22 +1,23 @@
 __appname__ = "hl2mt"
-__version__ = "0.83"
+__version__ = "0.84b"
 __module__ = "main"
 
 import sys
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDialog, propertiesDialog, htmlDialog
-from ui import aboutDialog, helpDialog, macrosDialog
 import os
-import ConfigParser
-from herolab import HeroLabIndex, HeroLab
+import configparser
 import zipfile
 import hashlib
 import re
 
+from PyQt4.QtCore import *
+
+from PyQt4.QtGui import *
+from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDialog, propertiesDialog, htmlDialog
+from ui import aboutDialog, helpDialog, macrosDialog
+from herolab import HeroLabIndex, HeroLab
+
 
 class Main(QMainWindow, mainWindow.Ui_mainWindow):
-
     def __init__(self, parent=None):
         super(Main, self).__init__(parent)
         self.setupUi(self)
@@ -61,7 +62,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.tableWidget.hideColumn(2)
 
         for column in [3, 4, 5, 6]:
-            width, _ = self.settings.value("tablewidth" + str(column)).toInt()
+            # width, _ = self.settings.value("tablewidth" + str(column))
+            width = self.settings.value("tablewidth" + str(column))
             if width:
                 self.tableWidget.setColumnWidth(column, width)
             else:
@@ -69,8 +71,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
         self.createButton.setDisabled(True)
 
-        self.restoreGeometry(self.settings.value("geometry").toByteArray())
-        self.restoreState(self.settings.value("windowstate").toByteArray())
+        self.restoreGeometry(self.settings.value("geometry"))
+        self.restoreState(self.settings.value("windowstate"))
 
     def check_defaults(self):
 
@@ -174,7 +176,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
     def action_macros_triggered(self):
         dialog = MacrosDialog(self, self.settings)
         if dialog.exec_():
-            for row in xrange(0, dialog.tableWidget.rowCount()):
+            for row in range(0, dialog.tableWidget.rowCount()):
                 if dialog.tableWidget.item(row, 0) is not None:
                     self.settings.setValue("cm_name_" + str(row), dialog.tableWidget.item(row, 0).text())
                     self.settings.setValue("cm_group_" + str(row), dialog.tableWidget.item(row, 1).text())
@@ -253,7 +255,6 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
     def action_output_triggered(self):
         dialog = OutputDialog(self, self.settings)
         if dialog.exec_():
-
             self.settings.setValue("weapons", dialog.checkAttack.isChecked())
             self.settings.setValue("vision", dialog.checkDark.isChecked())
             self.settings.setValue("basicdice", dialog.checkBasic.isChecked())
@@ -267,9 +268,9 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         filename = QFileDialog.getOpenFileName(self, __appname__ + ": Import Config", os.getcwd(),
                                                filter="Conf files (*.conf)")
         if filename != '' and os.path.isfile(filename):
-            config = ConfigParser.ConfigParser()
+            config = configparser.ConfigParser()
             config.read(str(filename))
-            for name, value in config.defaults().items():
+            for name, value in list(config.defaults().items()):
                 self.settings.setValue(name, value)
 
             self.check_defaults()
@@ -278,10 +279,10 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         filename = QFileDialog.getSaveFileName(self, __appname__ + ": Save Config As...", os.getcwd(),
                                                filter="Conf files (*.conf)")
         if filename != '':
-            config = ConfigParser.ConfigParser()
+            config = configparser.ConfigParser()
             for name in self.settings.allKeys():
                 if name not in ['geometry', 'windowstate', 'tablewidth3', 'tablewidth4', 'tablewidth5', 'tablewidth6']:
-                    config.set('DEFAULT', str(name), self.settings.value(name).toString())
+                    config.set('DEFAULT', str(name), self.settings.value(name))
 
             with open(filename, 'wb') as cf:
                 config.write(cf)
@@ -608,10 +609,10 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         subdir = self.tableWidget.item(row, 0).text()
         filename = self.tableWidget.item(row, 1).text()
         source = self.tableWidget.item(row, 2).text()
-        input_folder = self.settings.value("folderinput").toString()
-        pog_folder = self.settings.value("folderpog").toString()
-        portrait_folder = self.settings.value("folderportrait").toString()
-        token_folder = self.settings.value("folderoutput").toString()
+        input_folder = self.settings.value("folderinput")
+        pog_folder = self.settings.value("folderpog")
+        portrait_folder = self.settings.value("folderportrait")
+        token_folder = self.settings.value("folderoutput")
 
         # Character name brings up HTML sheet
         if col == 3:
@@ -651,10 +652,10 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.clearContents()
         self.tableWidget.setRowCount(0)
-        self.searchThread.input_folder = self.settings.value("folderinput").toString()
-        self.searchThread.pog_folder = self.settings.value("folderpog").toString()
-        self.searchThread.portrait_folder = self.settings.value("folderportrait").toString()
-        self.searchThread.token_folder = self.settings.value("folderoutput").toString()
+        self.searchThread.input_folder = self.settings.value("folderinput")
+        self.searchThread.pog_folder = self.settings.value("folderpog")
+        self.searchThread.portrait_folder = self.settings.value("folderportrait")
+        self.searchThread.token_folder = self.settings.value("folderoutput")
         self.searchThread.start()
 
     def create_button_clicked(self):
@@ -706,7 +707,6 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
 
 class HtmlDialog(QDialog, htmlDialog.Ui_htmlDialog):
-
     def __init__(self, parent):
         super(HtmlDialog, self).__init__(parent)
         self.setupUi(self)
@@ -718,7 +718,6 @@ class HtmlDialog(QDialog, htmlDialog.Ui_htmlDialog):
 
 
 class AboutDialog(QDialog, aboutDialog.Ui_aboutDialog):
-
     def __init__(self, parent):
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
@@ -730,7 +729,6 @@ class AboutDialog(QDialog, aboutDialog.Ui_aboutDialog):
 
 
 class HelpDialog(QDialog, helpDialog.Ui_helpDialog):
-
     def __init__(self, parent):
         super(HelpDialog, self).__init__(parent)
         self.setupUi(self)
@@ -742,7 +740,6 @@ class HelpDialog(QDialog, helpDialog.Ui_helpDialog):
 
 
 class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
-
     def __init__(self, parent, settings):
         super(FoldersDialog, self).__init__(parent)
         self.setupUi(self)
@@ -757,13 +754,13 @@ class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
         self.load_settings()
 
     def load_settings(self):
-        self.editInput.setText(self.settings.value("folderinput").toString())
-        self.editPortrait.setText(self.settings.value("folderportrait").toString())
-        self.editPOG.setText(self.settings.value("folderpog").toString())
-        self.editOutput.setText(self.settings.value("folderoutput").toString())
+        self.editInput.setText(str(self.settings.value("folderinput")))
+        self.editPortrait.setText(str(self.settings.value("folderportrait")))
+        self.editPOG.setText(str(self.settings.value("folderpog")))
+        self.editOutput.setText(str(self.settings.value("folderoutput")))
 
     def button_input_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Input Folder", self.settings.value("folderinput").toString(),
+        folder = QFileDialog.getExistingDirectory(self, "Input Folder", str(self.settings.value("folderinput")),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
             self.settings.setValue("folderinput", folder)
@@ -771,21 +768,21 @@ class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
 
     def button_portrait_clicked(self):
         folder = QFileDialog.getExistingDirectory(self, "Portrait Folder",
-                                                  self.settings.value("folderportrait").toString(),
+                                                  str(self.settings.value("folderportrait")),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
             self.settings.setValue("folderportrait", folder)
             self.load_settings()
 
     def button_pog_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "POG Folder", self.settings.value("folderpog").toString(),
+        folder = QFileDialog.getExistingDirectory(self, "POG Folder", str(self.settings.value("folderpog")),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
             self.settings.setValue("folderpog", folder)
             self.load_settings()
 
     def button_output_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Output Folder", self.settings.value("folderoutput").toString(),
+        folder = QFileDialog.getExistingDirectory(self, "Output Folder", str(self.settings.value("folderoutput")),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
             self.settings.setValue("folderoutput", folder)
@@ -793,7 +790,6 @@ class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
 
 
 class PropertiesDialog(QDialog, propertiesDialog.Ui_propertiesDialog):
-
     def __init__(self, parent, settings):
         super(PropertiesDialog, self).__init__(parent)
         self.setupUi(self)
@@ -822,38 +818,36 @@ class PropertiesDialog(QDialog, propertiesDialog.Ui_propertiesDialog):
         self.stackedWidget.setCurrentIndex(3)
 
     def load_settings(self):
-
-        self.editAC.setText(self.settings.value("properties/ac").toString())
-        self.editACFlat.setText(self.settings.value("properties/acflat").toString())
-        self.editACTouch.setText(self.settings.value("properties/actouch").toString())
-        self.editAlignment.setText(self.settings.value("properties/alignment").toString())
-        self.editBAB.setText(self.settings.value("properties/bab").toString())
-        self.editStr.setText(self.settings.value("properties/strength").toString())
-        self.editDex.setText(self.settings.value("properties/dexterity").toString())
-        self.editCon.setText(self.settings.value("properties/constitution").toString())
-        self.editInt.setText(self.settings.value("properties/intelligence").toString())
-        self.editWis.setText(self.settings.value("properties/wisdom").toString())
-        self.editCha.setText(self.settings.value("properties/charisma").toString())
-        self.editCMB.setText(self.settings.value("properties/cmb").toString())
-        self.editCMD.setText(self.settings.value("properties/cmd").toString())
-        self.editCMDFlat.setText(self.settings.value("properties/cmdflat").toString())
-        self.editPlayer.setText(self.settings.value("properties/player").toString())
-        self.editRace.setText(self.settings.value("properties/race").toString())
-        self.editMelee.setText(self.settings.value("properties/melee").toString())
-        self.editRanged.setText(self.settings.value("properties/ranged").toString())
-        self.editReach.setText(self.settings.value("properties/reach").toString())
-        self.editSpeed.setText(self.settings.value("properties/speed").toString())
-        self.editName.setText(self.settings.value("properties/name").toString())
-        self.editPropName.setText(self.settings.value("properties/propname").toString())
-        self.editHP.setText(self.settings.value("properties/hp").toString())
-        self.editHPMax.setText(self.settings.value("properties/hpmax").toString())
-        self.editHPTemp.setText(self.settings.value("properties/hptemp").toString())
-        self.editItems.setText(self.settings.value("properties/items").toString())
-        self.editXP.setText(self.settings.value("properties/xpvalue").toString())
+        self.editAC.setText(self.settings.value("properties/ac"))
+        self.editACFlat.setText(self.settings.value("properties/acflat"))
+        self.editACTouch.setText(self.settings.value("properties/actouch"))
+        self.editAlignment.setText(self.settings.value("properties/alignment"))
+        self.editBAB.setText(self.settings.value("properties/bab"))
+        self.editStr.setText(self.settings.value("properties/strength"))
+        self.editDex.setText(self.settings.value("properties/dexterity"))
+        self.editCon.setText(self.settings.value("properties/constitution"))
+        self.editInt.setText(self.settings.value("properties/intelligence"))
+        self.editWis.setText(self.settings.value("properties/wisdom"))
+        self.editCha.setText(self.settings.value("properties/charisma"))
+        self.editCMB.setText(self.settings.value("properties/cmb"))
+        self.editCMD.setText(self.settings.value("properties/cmd"))
+        self.editCMDFlat.setText(self.settings.value("properties/cmdflat"))
+        self.editPlayer.setText(self.settings.value("properties/player"))
+        self.editRace.setText(self.settings.value("properties/race"))
+        self.editMelee.setText(self.settings.value("properties/melee"))
+        self.editRanged.setText(self.settings.value("properties/ranged"))
+        self.editReach.setText(self.settings.value("properties/reach"))
+        self.editSpeed.setText(self.settings.value("properties/speed"))
+        self.editName.setText(self.settings.value("properties/name"))
+        self.editPropName.setText(self.settings.value("properties/propname"))
+        self.editHP.setText(self.settings.value("properties/hp"))
+        self.editHPMax.setText(self.settings.value("properties/hpmax"))
+        self.editHPTemp.setText(self.settings.value("properties/hptemp"))
+        self.editItems.setText(self.settings.value("properties/items"))
+        self.editXP.setText(self.settings.value("properties/xpvalue"))
 
 
 class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
-
     def __init__(self, parent, settings):
         super(ColorsDialog, self).__init__(parent)
         self.setupUi(self)
@@ -862,37 +856,35 @@ class ColorsDialog(QDialog, colorsDialog.Ui_colorsDialog):
         self.load_settings()
 
     def load_settings(self):
-
-        self.comboAttacksF.setCurrentIndex(self.comboAttacksF.findText(self.settings.value("colors/attacksf").toString()))
-        self.comboAttacksB.setCurrentIndex(self.comboAttacksB.findText(self.settings.value("colors/attacksb").toString()))
-        self.comboBasicF.setCurrentIndex(self.comboBasicF.findText(self.settings.value("colors/basicf").toString()))
-        self.comboBasicB.setCurrentIndex(self.comboBasicB.findText(self.settings.value("colors/basicb").toString()))
-        self.comboCMBF.setCurrentIndex(self.comboCMBF.findText(self.settings.value("colors/cmbf").toString()))
-        self.comboCMBB.setCurrentIndex(self.comboCMBB.findText(self.settings.value("colors/cmbb").toString()))
-        self.comboHPF.setCurrentIndex(self.comboHPF.findText(self.settings.value("colors/hpf").toString()))
-        self.comboHPB.setCurrentIndex(self.comboHPB.findText(self.settings.value("colors/hpb").toString()))
-        self.comboInitF.setCurrentIndex(self.comboInitF.findText(self.settings.value("colors/initf").toString()))
-        self.comboInitB.setCurrentIndex(self.comboInitB.findText(self.settings.value("colors/initb").toString()))
-        self.comboManF.setCurrentIndex(self.comboManF.findText(self.settings.value("colors/maneuversf").toString()))
-        self.comboManB.setCurrentIndex(self.comboManB.findText(self.settings.value("colors/maneuversb").toString()))
-        self.comboSavesF.setCurrentIndex(self.comboSavesF.findText(self.settings.value("colors/savesf").toString()))
-        self.comboSavesB.setCurrentIndex(self.comboSavesB.findText(self.settings.value("colors/savesb").toString()))
-        self.comboSheetF.setCurrentIndex(self.comboSheetF.findText(self.settings.value("colors/sheetf").toString()))
-        self.comboSheetB.setCurrentIndex(self.comboSheetB.findText(self.settings.value("colors/sheetb").toString()))
-        self.comboSkillsF.setCurrentIndex(self.comboSkillsF.findText(self.settings.value("colors/skillsf").toString()))
-        self.comboSkillsB.setCurrentIndex(self.comboSkillsB.findText(self.settings.value("colors/skillsb").toString()))
-        self.comboSpecialsF.setCurrentIndex(self.comboSpecialsF.findText(self.settings.value("colors/specialsf").toString()))
-        self.comboSpecialsB.setCurrentIndex(self.comboSpecialsB.findText(self.settings.value("colors/specialsb").toString()))
-        self.comboSubF.setCurrentIndex(self.comboSubF.findText(self.settings.value("colors/subf").toString()))
-        self.comboSubB.setCurrentIndex(self.comboSubB.findText(self.settings.value("colors/subb").toString()))
-        self.comboAbilityF.setCurrentIndex(self.comboAbilityF.findText(self.settings.value("colors/abilityf").toString()))
-        self.comboAbilityB.setCurrentIndex(self.comboAbilityB.findText(self.settings.value("colors/abilityb").toString()))
-        self.comboFullF.setCurrentIndex(self.comboFullF.findText(self.settings.value("colors/fullf").toString()))
-        self.comboFullB.setCurrentIndex(self.comboFullB.findText(self.settings.value("colors/fullb").toString()))
+        self.comboAttacksF.setCurrentIndex(self.comboAttacksF.findText(self.settings.value("colors/attacksf")))
+        self.comboAttacksB.setCurrentIndex(self.comboAttacksB.findText(self.settings.value("colors/attacksb")))
+        self.comboBasicF.setCurrentIndex(self.comboBasicF.findText(self.settings.value("colors/basicf")))
+        self.comboBasicB.setCurrentIndex(self.comboBasicB.findText(self.settings.value("colors/basicb")))
+        self.comboCMBF.setCurrentIndex(self.comboCMBF.findText(self.settings.value("colors/cmbf")))
+        self.comboCMBB.setCurrentIndex(self.comboCMBB.findText(self.settings.value("colors/cmbb")))
+        self.comboHPF.setCurrentIndex(self.comboHPF.findText(self.settings.value("colors/hpf")))
+        self.comboHPB.setCurrentIndex(self.comboHPB.findText(self.settings.value("colors/hpb")))
+        self.comboInitF.setCurrentIndex(self.comboInitF.findText(self.settings.value("colors/initf")))
+        self.comboInitB.setCurrentIndex(self.comboInitB.findText(self.settings.value("colors/initb")))
+        self.comboManF.setCurrentIndex(self.comboManF.findText(self.settings.value("colors/maneuversf")))
+        self.comboManB.setCurrentIndex(self.comboManB.findText(self.settings.value("colors/maneuversb")))
+        self.comboSavesF.setCurrentIndex(self.comboSavesF.findText(self.settings.value("colors/savesf")))
+        self.comboSavesB.setCurrentIndex(self.comboSavesB.findText(self.settings.value("colors/savesb")))
+        self.comboSheetF.setCurrentIndex(self.comboSheetF.findText(self.settings.value("colors/sheetf")))
+        self.comboSheetB.setCurrentIndex(self.comboSheetB.findText(self.settings.value("colors/sheetb")))
+        self.comboSkillsF.setCurrentIndex(self.comboSkillsF.findText(self.settings.value("colors/skillsf")))
+        self.comboSkillsB.setCurrentIndex(self.comboSkillsB.findText(self.settings.value("colors/skillsb")))
+        self.comboSpecialsF.setCurrentIndex(self.comboSpecialsF.findText(self.settings.value("colors/specialsf")))
+        self.comboSpecialsB.setCurrentIndex(self.comboSpecialsB.findText(self.settings.value("colors/specialsb")))
+        self.comboSubF.setCurrentIndex(self.comboSubF.findText(self.settings.value("colors/subf")))
+        self.comboSubB.setCurrentIndex(self.comboSubB.findText(self.settings.value("colors/subb")))
+        self.comboAbilityF.setCurrentIndex(self.comboAbilityF.findText(self.settings.value("colors/abilityf")))
+        self.comboAbilityB.setCurrentIndex(self.comboAbilityB.findText(self.settings.value("colors/abilityb")))
+        self.comboFullF.setCurrentIndex(self.comboFullF.findText(self.settings.value("colors/fullf")))
+        self.comboFullB.setCurrentIndex(self.comboFullB.findText(self.settings.value("colors/fullb")))
 
 
 class IndexingDialog(QDialog, indexingDialog.Ui_indexDialog):
-
     def __init__(self, parent, settings):
         super(IndexingDialog, self).__init__(parent)
         self.setupUi(self)
@@ -903,9 +895,9 @@ class IndexingDialog(QDialog, indexingDialog.Ui_indexDialog):
 
     def load_settings(self):
 
-        self.comboIndex.setCurrentIndex(self.comboIndex.findText(self.settings.value("indexing").toString()))
-        self.editURL.setText(self.settings.value("httpbase").toString())
-        self.editZip.setText(self.settings.value("zipfile").toString())
+        self.comboIndex.setCurrentIndex(self.comboIndex.findText(self.settings.value("indexing")))
+        self.editURL.setText(self.settings.value("httpbase"))
+        self.editZip.setText(self.settings.value("zipfile"))
         self.combo_index_changed()
 
     def combo_index_changed(self):
@@ -918,7 +910,6 @@ class IndexingDialog(QDialog, indexingDialog.Ui_indexDialog):
 
 
 class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
-
     def __init__(self, parent, settings):
         super(OutputDialog, self).__init__(parent)
         self.setupUi(self)
@@ -927,19 +918,17 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
         self.load_settings()
 
     def load_settings(self):
-
-        self.checkAttack.setChecked(self.settings.value("weapons").toBool())
-        self.checkDark.setChecked(self.settings.value("vision").toBool())
-        self.checkBasic.setChecked(self.settings.value("basicdice").toBool())
-        self.checkHP.setChecked(self.settings.value("hp").toBool())
-        self.checkItems.setChecked(self.settings.value("items").toBool())
-        self.checkMan.setChecked(self.settings.value("maneuvers").toBool())
-        self.checkSkill.setChecked(self.settings.value("skills").toBool())
-        self.checkAbility.setChecked(self.settings.value("ability").toBool())
+        self.checkAttack.setChecked(bool(self.settings.value("weapons")))
+        self.checkDark.setChecked(bool(self.settings.value("vision")))
+        self.checkBasic.setChecked(bool(self.settings.value("basicdice")))
+        self.checkHP.setChecked(bool(self.settings.value("hp")))
+        self.checkItems.setChecked(bool(self.settings.value("items")))
+        self.checkMan.setChecked(bool(self.settings.value("maneuvers")))
+        self.checkSkill.setChecked(bool(self.settings.value("skills")))
+        self.checkAbility.setChecked(bool(self.settings.value("ability")))
 
 
 class MacrosDialog(QDialog, macrosDialog.Ui_macrosDialog):
-
     def __init__(self, parent, settings):
         super(MacrosDialog, self).__init__(parent)
         self.setupUi(self)
@@ -957,18 +946,22 @@ class MacrosDialog(QDialog, macrosDialog.Ui_macrosDialog):
         # cm_font_x
         # cm_background_x
         # cm_value_x
-        for row in xrange(0, self.tableWidget.rowCount()):
+        for row in range(0, self.tableWidget.rowCount()):
 
             if self.settings.contains("cm_name_" + str(row)):
-                self.tableWidget.setItem(row, 0, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_name_" + str(row)).toString())))
-                self.tableWidget.setItem(row, 1, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_group_" + str(row)).toString())))
-                self.tableWidget.setItem(row, 2, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_font_" + str(row)).toString())))
-                self.tableWidget.setItem(row, 3, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_background_" + str(row)).toString())))
-                self.tableWidget.setItem(row, 4, QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_value_" + str(row)).toString())))
+                self.tableWidget.setItem(row, 0,
+                                         QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_name_" + str(row)))))
+                self.tableWidget.setItem(row, 1, QTableWidgetItem(
+                    QTableWidgetItem(self.settings.value("cm_group_" + str(row)))))
+                self.tableWidget.setItem(row, 2,
+                                         QTableWidgetItem(QTableWidgetItem(self.settings.value("cm_font_" + str(row)))))
+                self.tableWidget.setItem(row, 3, QTableWidgetItem(
+                    QTableWidgetItem(self.settings.value("cm_background_" + str(row)))))
+                self.tableWidget.setItem(row, 4, QTableWidgetItem(
+                    QTableWidgetItem(self.settings.value("cm_value_" + str(row)))))
 
 
 class SearchThread(QThread):
-
     entryFoundSignal = pyqtSignal(str, str, str, str, str, str, str)
     searchFinishedSignal = pyqtSignal()
     searchErrorSignal = pyqtSignal(str)
@@ -992,7 +985,6 @@ class SearchThread(QThread):
 
 
 class CreateThread(QThread):
-
     tokenCreatedSignal = pyqtSignal(int)
     createFinishedSignal = pyqtSignal()
 
@@ -1006,13 +998,13 @@ class CreateThread(QThread):
     def run(self):
         """Loop through the table and create a token for each row"""
 
-        input_folder = self.settings.value("folderinput").toString()
+        input_folder = self.settings.value("folderinput")
 
-        if self.settings.value("indexing").toString() == 'HTML':
-            filename = str(self.settings.value("folderoutput").toString() + '/' + self.settings.value("zipfile").toString())
+        if self.settings.value("indexing") == 'HTML':
+            filename = str(self.settings.value("folderoutput") + '/' + self.settings.value("zipfile"))
             mtzip = zipfile.ZipFile(filename, 'w')
 
-        for row in xrange(0, self.table_widget.rowCount()):
+        for row in range(0, self.table_widget.rowCount()):
             subdir = self.table_widget.item(row, 0).text()
             filename = self.table_widget.item(row, 1).text()
             source = self.table_widget.item(row, 2).text()
@@ -1027,13 +1019,13 @@ class CreateThread(QThread):
             herolab.create_token(name, portrait, pog, token)
             self.values = herolab.values
 
-            if self.settings.value("indexing").toString() == 'HTML':
+            if self.settings.value("indexing") == 'HTML':
                 html = re.sub(r"\<meta http-equiv.*?\>", '', herolab.html)
                 mtzip.writestr(herolab.html_filename, html)
 
             self.tokenCreatedSignal.emit(row)
 
-        if self.settings.value("indexing").toString() == 'HTML':
+        if self.settings.value("indexing") == 'HTML':
             for name, contents in self.make_files():
                 mtzip.writestr(name, contents.encode('utf-8'))
             mtzip.close()
@@ -1071,6 +1063,7 @@ def main():
     program = Main()
     program.show()
     app.exec_()
+
 
 if __module__ == "main":
     main()
