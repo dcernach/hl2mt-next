@@ -11,7 +11,7 @@ class Pathfinder:
     """The Pathfinder class parses a Hero Lab character and converts it into a Maptool token"""
 
     def __init__(self, name, xml):
-        self.name = str(name.encode())
+        self.name = str(name)
         self.xml = xml
         self.html_filename = ''
         self.languages = []
@@ -311,6 +311,7 @@ class Pathfinder:
         xml += '    </charsheetImage>\n'
         xml += '    <portraitImage reference="../charsheetImage"/>\n'
         text = 'Normal'
+
         if self.vision_lowlight:
             text = 'LowLight'
         if self.vision_dark:
@@ -497,7 +498,7 @@ class Pathfinder:
         xml += '        <entry>\n'
         xml += '          <string>' + str(name).lower() + '</string>\n'
         xml += '          <net.rptools.CaseInsensitiveHashMap_-KeyValue>\n'
-        xml += '            <key>' + name + '</key>\n'
+        xml += '            <key>' + str(name) + '</key>\n'
         xml += '            <value class="string">' + value + '</value>\n'
         xml += '            <outer-class reference="../../../.."/>\n'
         xml += '          </net.rptools.CaseInsensitiveHashMap_-KeyValue>\n'
@@ -983,7 +984,7 @@ class Pathfinder:
         # <br>
         xml += '&lt;br&gt;&#xd;\n'
 
-        for k, v in list(items.items()):
+        for k, v in sorted(items.items()):
             if v is None:
                 xml += k
                 xml += '&lt;br&gt;&#xd;\n'
@@ -996,7 +997,12 @@ class Pathfinder:
                        k + '&quot;, currentToken())]'
             # No index
             else:
-                xml += k
+                if ("[" in k) or ("]" in k):
+                    k = str.replace(k, "[", "(")
+                    k = str.replace(k, "]", ")")
+                    xml += k
+                else:
+                    xml += k
             xml += '&lt;br&gt;&#xd;\n'
 
         # </body>
@@ -1543,7 +1549,7 @@ class Pathfinder:
     @staticmethod
     def clean_name(name):
 
-        name = str.replace(str(name.encode()), " (combat trained) ", "")
+        name = str.replace(str(name), " (combat trained) ", "")
         name = str.replace(name, " (combat trained)", "")
         name = str.replace(name, "(combat trained)", "")
         name = re.sub(r'([^\s\w]|_)+', '', name)
