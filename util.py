@@ -16,7 +16,7 @@ def html_sanitize(html):
     return escaped
 
 
-def replace_all(str, dic):
+def replace_all(text, dic):
     """
     Replaces all occurrences of provided dictionary 'key' by dictionary 'key value' in given str
 
@@ -45,5 +45,5 @@ def replace_all(str, dic):
     </code>
     """
     for k, v in dic.items():
-        str = str.replace(k, v)
-    return str
+        text = str.replace(text, k, v)
+    return text

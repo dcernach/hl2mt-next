@@ -2,12 +2,14 @@ import re
 import hashlib
 import io
 import cgi
+import html
 
 from PIL import Image
 from PyQt4.QtCore import *
 from util import *
 
 
+# noinspection PyCallByClass
 class Pathfinder:
     """The Pathfinder class parses a Hero Lab character and converts it into a Maptool token"""
 
@@ -39,8 +41,11 @@ class Pathfinder:
         self.spells_memorized = []
         self.spells_known = []
         self.values = []
+
+        self.custom_property_map_xml = {}
         self.properties_xml = '<map>\n  <entry>\n    <string>version</string>\n    <string>1.3.b87</string>\n' + \
                               '  </entry>\n</map>'
+
         self.settings = QSettings
         self.size_map = {'fine': 'fwABAc1lFSoBAAAAKgABAQ==', 'diminutive': 'fwABAc1lFSoCAAAAKgABAQ==',
                          'tiny': 'fwABAc5lFSoDAAAAKgABAA==', 'small': 'fwABAc5lFSoEAAAAKgABAA==',
@@ -258,11 +263,15 @@ class Pathfinder:
             self.spells_known.append(temp)
 
     def make_content_xml(self):
+        #######################################################################
+        # TODO: This method should be refactored!!!!
+        #######################################################################
         xml = '<net.rptools.maptool.model.Token>\n'
         xml += '  <id>\n'
         xml += '    <baGUID>fwABASo0c8kCAAAASQAAAA==</baGUID>\n'
         xml += '  </id>\n'
         xml += '  <beingImpersonated>false</beingImpersonated>\n'
+
         xml += '  <imageAssetMap>\n'
         xml += '    <entry>\n'
         xml += '    <null/>\n'
@@ -275,7 +284,9 @@ class Pathfinder:
         xml += '      <net.rptools.lib.MD5Key reference="../../entry/net.rptools.lib.MD5Key"/>\n'
         xml += '    </entry>\n'
         xml += '  </imageAssetMap>\n'
+
         xml += '  <currentImageAsset>' + self.name + '</currentImageAsset>\n'
+
         xml += '    <x>0</x>\n'
         xml += '    <y>0</y>\n'
         xml += '    <z>0</z>\n'
@@ -289,6 +300,7 @@ class Pathfinder:
         xml += '    <height>0</height>\n'
         xml += '    <scaleX>1.0</scaleX>\n'
         xml += '    <scaleY>1.0</scaleY>\n'
+
         xml += '    <sizeMap>\n'
         xml += '      <entry>\n'
         xml += '        <java-class>net.rptools.maptool.model.SquareGrid</java-class>\n'
@@ -297,6 +309,7 @@ class Pathfinder:
         xml += '        </net.rptools.maptool.model.GUID>\n'
         xml += '      </entry>\n'
         xml += '    </sizeMap>\n'
+
         xml += '    <snapToGrid>true</snapToGrid>\n'
         xml += '    <isVisible>true</isVisible>\n'
         xml += '    <visibleOnlyToOwner>false</visibleOnlyToOwner>\n'
@@ -307,10 +320,13 @@ class Pathfinder:
         xml += '    <propertyType>' + self.settings.value("properties/propname") + '</propertyType>\n'
         xml += '    <isFlippedX>false</isFlippedX>\n'
         xml += '    <isFlippedY>false</isFlippedY>\n'
+
         xml += '    <charsheetImage>\n'
         xml += '      <id>' + self.portrait_md5 + '</id>\n'
         xml += '    </charsheetImage>\n'
+
         xml += '    <portraitImage reference="../charsheetImage"/>\n'
+
         text = 'Normal'
 
         if self.vision_lowlight:
@@ -325,9 +341,12 @@ class Pathfinder:
         xml += '    <sightType>' + text + '</sightType>\n'
         xml += '    <hasSight>true</hasSight>\n'
         xml += '    <state/>\n'
+
         xml += '    <propertyMapCI>\n'
         xml += '      <store>\n'
-
+        # ----------------------------------------------------------------------
+        # --> Create custom token Properties
+        # ----------------------------------------------------------------------
         xml += self.property_xml(self.settings.value("properties/strength"), self.attrib_scores['Strength'])
         xml += self.property_xml(self.settings.value("properties/dexterity"), self.attrib_scores['Dexterity'])
         xml += self.property_xml(self.settings.value("properties/constitution"), self.attrib_scores['Constitution'])
@@ -376,7 +395,12 @@ class Pathfinder:
             tmp += '\n'
             tmp = cgi.escape(tmp)
             xml += self.property_xml(self.settings.value("properties/items"), tmp)
-
+        # ----------------------------------------------------------------------
+        # <-- Create token Properties
+        # ----------------------------------------------------------------------
+        xml += '\n\n'
+        xml += '        #{custom}'  # dca: replacer to add custom properties if any
+        xml += '\n\n'
         xml += '      </store>\n'
         xml += '    </propertyMapCI>\n'
 
@@ -490,6 +514,18 @@ class Pathfinder:
 
         xml += '    <speechMap/>\n'
         xml += '    </net.rptools.maptool.model.Token>\n'
+
+        # Replace placeholder '#{custom}' with added special properties
+        # TODO: Find a better way to do this without using replace (entire method refactoring)
+        if len(self.custom_property_map_xml) > 0:
+            prop_xml = ""
+
+            for k, v in self.custom_property_map_xml.items():
+                prop_xml += self.property_xml(k, v)
+
+            xml = str.replace(xml, "#{custom}", prop_xml)
+        else:
+            xml = str.replace(xml, "#{custom}", "")
 
         self.content_xml = xml
 
@@ -847,12 +883,16 @@ class Pathfinder:
 
         spells_by_level = sorted(spells, key=lambda k: k['level'])
         current = -1
+        list_macro_count = 0
+
         for spell in spells_by_level:
             if int(spell['level']) > current:
                 current = int(spell['level'])
                 xml += '&lt;h2&gt;&lt;u&gt;Level ' + str(spell['level']) + ' Spells &lt;/u&gt;&lt;/h2&gt;&#xd;\n'
 
             sname = spell['name']
+
+            # With Indexing
             if self.settings.value("indexing") == 'HTML':
                 xml += '[r: macrolink(&quot;' + sname + \
                        '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;url=' + \
@@ -866,6 +906,18 @@ class Pathfinder:
                     xml += ' (CL:' + spell['casterlevel'] + ')'
 
                 xml += '&lt;br&gt;&#xd;\n'
+
+            # With Description
+            if bool(self.settings.value("description")):
+                # Put entire decription in custom property
+                key = "hl2mt_Spells_%03i" % list_macro_count
+
+                self.custom_property_map_xml[key] = html.escape(self.spell_html(spell))
+                self.custom_property_map_xml[key] += html_sanitize("<br>")
+
+                xml += html.escape('[r:getProperty("' + key + '")]\n', True)
+                list_macro_count += 1
+
             # No indexing
             else:
                 xml += spell['name']
@@ -907,49 +959,77 @@ class Pathfinder:
 
     @staticmethod
     def spell_html(spell):
+        str_html = "<h2>" + spell['name']
+
+        if spell['save'].lower() != 'none':
+            str_html += '<small> (CL:' + spell['casterlevel'] + ' / DC:' + spell['dc'] + ') </small>'
+        else:
+            str_html += '<small> (CL:' + spell['casterlevel'] + ') </small>'
+
+        str_html += "</h2>"
 
         # <b>School</b>
-        html = '<b>School</b> ' + spell['schooltext']
-        # <h3>Casting</h3>
-        html += '<h3>Casting</h3>\n'
-        # <hr>
-        html += '<hr>\n'
+        str_html += '<b>School</b> ' + spell['schooltext']
+
+        # # <h3>Casting</h3>
+        # str_html += '<h3>Casting</h3>\n'
+        #
+        # # <hr>
+        # str_html += '<hr>\n'
+
         # <b>Casting Time</b> <br>
-        html += '<b>Casting Time</b> ' + spell['casttime'] + '<br>'
+        str_html += '<br>'
+        str_html += '<b>Casting Time</b> ' + spell['casttime']
+
         # <b>Components</b>
-        html += '<b>Components</b> ' + spell['componenttext']
-        # <h3>Effect</h3>
-        html += '<h3>Effect</h3>\n'
-        # <hr>
-        html += '<hr>\n'
+        str_html += '<br>'
+        str_html += '<b>Components</b> ' + spell['componenttext']
+
+        # # <h3>Effect</h3>
+        # str_html += '<h3>Effect</h3>\n'
+        #
+        # # <hr>
+        # str_html += '<hr>\n'
+
         # <b>Range</b>
         if spell['range']:
-            html += '<b>Range</b> ' + spell['range'] + '<br>'
+            str_html += '<b>Range</b> ' + spell['range'] + '<br>'
+
         # <b>Area</b>
         if spell['area']:
-            html += '<b>Area</b> ' + spell['area'] + '<br>'
+            str_html += '<b>Area</b> ' + spell['area'] + '<br>'
+
         # <b>Target</b>
         if spell['target']:
-            html += '<b>Target</b> ' + spell['target'] + '<br>'
+            str_html += '<b>Target</b> ' + spell['target'] + '<br>'
+
         # <b>Duration</b>
         if spell['duration']:
-            html += '<b>Duration</b> ' + spell['duration'] + '<br>'
+            str_html += '<b>Duration</b> ' + spell['duration'] + '<br>'
+
         # <b>Effect</b>
         if spell['effect']:
-            html += '<b>Effect</b> ' + spell['effect'] + '<br>'
-        # <b>Saving Throw</b> <b>Spell Resistance</b>
-        html += '<b>Saving Throw</b> ' + spell['save']
-        html += ' <b>Spell Resistance</b> ' + spell['resist']
-        # <h3>Description</h3>
-        html += '<h3>Description</h3>\n'
-        # <hr>
-        html += '<hr>\n'
-        html += str.replace(spell['description'], '\n', '<br>')
+            str_html += '<b>Effect</b> ' + spell['effect'] + '<br>'
 
-        return html
+        # <b>Saving Throw</b> <b>Spell Resistance</b>
+        str_html += '<b>Saving Throw</b> ' + spell['save']
+        str_html += '<br>\n'
+        str_html += '<b>Spell Resistance</b> ' + spell['resist']
+
+        # # <h3>Description</h3>
+        # str_html += '<h3>Description</h3>\n'
+        #
+        # # <hr>
+        # str_html += '<hr>\n'
+        str_html += '<br>\n'
+
+        str_html += str.replace(spell['description'], '\n', '<br>')
+
+        str_html += '<hr>\n'
+
+        return str_html
 
     def list_macro_xml(self, name, items, width):
-
         font = self.settings.value("colors/specialsf")
         background = self.settings.value("colors/specialsb")
         group = 'Special'
@@ -984,6 +1064,8 @@ class Pathfinder:
         # <br>
         xml += '&lt;br&gt;&#xd;\n'
 
+        list_macro_count = 0
+
         for k, v in sorted(items.items()):
             k = str.replace(k, "[", "(")
             k = str.replace(k, "]", ")")
@@ -1003,13 +1085,24 @@ class Pathfinder:
 
             # With Description
             if bool(self.settings.value("description")):
+                # Put entire decription in custom property
+                key = "hl2mt_%s_%03i" % (name, list_macro_count)
+
+                self.custom_property_map_xml[key] = html_sanitize("<h2>" + k + "</h2>") + "\n"
+                self.custom_property_map_xml[key] += html_sanitize(self.pretty_html(v))
+                self.custom_property_map_xml[key] += html_sanitize("<br>")
+
+                xml += html.escape('[r:getProperty("' + key + '")]', True)
+                list_macro_count += 1
+
+                """
                 xml += "\n"
                 xml += html_sanitize("<h2>" + k + "</h2>") + "\n"
                 xml += html_sanitize(v)
                 xml += html_sanitize("<br>")
                 xml += "\n"
-
-            # No index
+                """
+            # No indexing
             else:
                 xml += k
 
