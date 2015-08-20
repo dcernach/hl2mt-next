@@ -5,6 +5,7 @@ import cgi
 
 from PIL import Image
 from PyQt4.QtCore import *
+from util import *
 
 
 class Pathfinder:
@@ -976,33 +977,42 @@ class Pathfinder:
         # </head>
         xml += '&lt;/head&gt;&#xd;\n'
         # <body>
-        xml += '&lt;body&gt;&#xd;\n'
+        xml += '&lt;body style="padding:10px;" &gt;&#xd;\n'
 
-        xml += '&lt;br&gt;&#xd;\n'
-        # <h1><u>Character Name name </u></h1>
-        xml += '&lt;h1&gt;&lt;u&gt;' + self.clean_name(self.name) + ' ' + name + ' &lt;/u&gt;&lt;/h1&gt;&#xd;\n'
+        # <h1><u>Character Name name</u></h1>
+        xml += '&lt;h1&gt;&lt;u&gt;' + self.clean_name(self.name) + ' ' + name + '&lt;/u&gt;&lt;/h1&gt;&#xd;\n'
         # <br>
         xml += '&lt;br&gt;&#xd;\n'
 
         for k, v in sorted(items.items()):
+            k = str.replace(k, "[", "(")
+            k = str.replace(k, "]", ")")
+            k = str.replace(k, "'", "&#x00b4;")  # dca: Safe Name
+
             if v is None:
                 xml += k
                 xml += '&lt;br&gt;&#xd;\n'
                 continue
-            # Indexing
+
+            # With Indexing
             if self.settings.value("indexing") == 'HTML':
                 # [r: macroLink("k", "lshow@token", "none", "url=url;lname=k", currentToken())
                 xml += '[r: macrolink(&quot;' + k + '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;url=' + \
                        self.settings.value("httpbase") + self.index_append(self.pretty_html(v)) + ';lname=' + \
                        k + '&quot;, currentToken())]'
+
+            # With Description
+            if bool(self.settings.value("description")) == True:
+                xml += "\n"
+                xml += html_sanitize("<h2>" + k + "</h2>") + "\n"
+                xml += html_sanitize(v)
+                xml += html_sanitize("<br>")
+                xml += "\n"
+
             # No index
             else:
-                if ("[" in k) or ("]" in k):
-                    k = str.replace(k, "[", "(")
-                    k = str.replace(k, "]", ")")
-                    xml += k
-                else:
-                    xml += k
+                xml += k
+
             xml += '&lt;br&gt;&#xd;\n'
 
         # </body>

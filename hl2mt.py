@@ -53,7 +53,9 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
     def load_initial_settings(self):
         """Setup the initial values"""
-        self.settings = QSettings(QSettings.NativeFormat, QSettings.UserScope, "Tarsis", "hl2mt")
+        # self.settings = QSettings(QSettings.NativeFormat, QSettings.UserScope, "Tarsis", "hl2mt")
+        self.settings = QSettings("hl2mt.ini", QSettings.IniFormat)
+        self.settings.setFallbacksEnabled(False)
 
         self.tableWidget.setColumnCount(7)
         self.tableWidget.hideColumn(0)
@@ -64,14 +66,19 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             # width, _ = self.settings.value("tablewidth" + str(column))
             width = self.settings.value("tablewidth" + str(column))
             if width:
-                self.tableWidget.setColumnWidth(column, width)
+                self.tableWidget.setColumnWidth(column, int(width))
             else:
                 self.tableWidget.setColumnWidth(column, 200)
 
         self.createButton.setDisabled(True)
 
-        self.restoreGeometry(self.settings.value("geometry"))
-        self.restoreState(self.settings.value("windowstate"))
+        geometry = self.settings.value("geometry")
+        windowstate = self.settings.value("windowstate")
+
+        if geometry:
+            self.restoreGeometry(geometry)
+        if windowstate:
+            self.restoreState(windowstate)
 
     def check_defaults(self):
 
@@ -262,6 +269,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
             self.settings.setValue("maneuvers", dialog.checkMan.isChecked())
             self.settings.setValue("skills", dialog.checkSkill.isChecked())
             self.settings.setValue("ability", dialog.checkAbility.isChecked())
+            self.settings.setValue("description", dialog.checkDesc.isChecked())
+            self.settings.setValue("statblock", dialog.checkStatBlock.isChecked())
 
     def action_import_triggered(self):
         filename = QFileDialog.getOpenFileName(self, __appname__ + ": Import Config", os.getcwd(),
@@ -923,6 +932,8 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
         self.checkMan.setChecked(bool(self.settings.value("maneuvers")))
         self.checkSkill.setChecked(bool(self.settings.value("skills")))
         self.checkAbility.setChecked(bool(self.settings.value("ability")))
+        self.checkDesc.setChecked(bool(self.settings.value("description")))
+        self.checkStatBlock.setChecked(bool(self.settings.value("statblock")))
 
 
 class MacrosDialog(QDialog, macrosDialog.Ui_macrosDialog):
