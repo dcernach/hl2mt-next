@@ -848,8 +848,8 @@ class Pathfinder:
         spells_by_level = sorted(spells, key=lambda k: k['level'])
         current = -1
         for spell in spells_by_level:
-            if spell['level'] > current:
-                current = spell['level']
+            if int(spell['level']) > current:
+                current = int(spell['level'])
                 xml += '&lt;h2&gt;&lt;u&gt;Level ' + str(spell['level']) + ' Spells &lt;/u&gt;&lt;/h2&gt;&#xd;\n'
 
             sname = spell['name']
@@ -1002,7 +1002,7 @@ class Pathfinder:
                        k + '&quot;, currentToken())]'
 
             # With Description
-            if bool(self.settings.value("description")) == True:
+            if bool(self.settings.value("description")):
                 xml += "\n"
                 xml += html_sanitize("<h2>" + k + "</h2>") + "\n"
                 xml += html_sanitize(v)
