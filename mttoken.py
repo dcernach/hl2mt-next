@@ -6,6 +6,7 @@ import html
 
 from PIL import Image
 from PyQt4.QtCore import *
+from macros.special import *
 from util import *
 
 
@@ -52,6 +53,8 @@ class Pathfinder:
                          'medium': 'fwABAc9lFSoFAAAAKgABAQ==', 'large': 'fwABAdBlFSoGAAAAKgABAA==',
                          'huge': 'fwABAdBlFSoHAAAAKgABAA==', 'gargantuan': 'fwABAdFlFSoIAAAAKgABAQ==',
                          'colossal': 'fwABAeFlFSoJAAAAKgABAQ=='}
+
+        self.specialMacros = SpecialMacros()
 
     def parse(self):
         self.parse_base()
@@ -510,6 +513,11 @@ class Pathfinder:
         if bool(self.settings.value("indexing")) != 'None':
             xml += self.list_show_macro_xml()
 
+        if bool(self.settings.value("description")):
+            # xml += self.fn_detail_macro_xml()
+            self.num_macros += 1
+            xml += self.specialMacros.fn_detail_macro_xml(self.num_macros)
+
         xml += '    </macroPropertiesMap>\n'
 
         xml += '    <speechMap/>\n'
@@ -863,32 +871,23 @@ class Pathfinder:
         xml += '           <command>'
 
         # [frame("name"): {
-        xml += '[frame(&quot;' + name + '&quot;): {&#xd;\n'
-        # <html>
-        xml += '&lt;html&gt;&#xd;\n'
-        # <head>
-        xml += '&lt;head&gt;&#xd;\n'
-        # <title>name</title>
-        xml += '&lt;title&gt;' + name + '&lt;/title&gt;&#xd;\n'
-        # </head>
-        xml += '&lt;/head&gt;&#xd;\n'
-        # <body>
-        xml += '&lt;body&gt;&#xd;\n'
-
-        xml += '&lt;br&gt;&#xd;\n'
-        # <h1><u>Character Name name </u></h1>
-        xml += '&lt;h1&gt;&lt;u&gt;' + self.clean_name(self.name) + ' ' + name + ' &lt;/u&gt;&lt;/h1&gt;&#xd;\n'
-        # <br>
-        xml += '&lt;br&gt;&#xd;\n'
+        xml += html.escape('[frame("' + name + '"): {\n', True)
+        xml += html.escape('<html>\n')
+        xml += html.escape('<head>\n')
+        xml += html.escape('  <title>' + name + ' ([r:token.name])</title>\n')
+        xml += html.escape('</head>\n')
+        xml += html.escape('<body style="padding:0 10px 10px 10px ">\n')
+        xml += html.escape('  <h1><u>' + self.clean_name(self.name) + ' (' + name + ')</u></h1>\n')
+        xml += html.escape('  <br>\n')
 
         spells_by_level = sorted(spells, key=lambda k: k['level'])
         current = -1
-        list_macro_count = 0
+        spell_macro_count = 0
 
         for spell in spells_by_level:
             if int(spell['level']) > current:
                 current = int(spell['level'])
-                xml += '&lt;h2&gt;&lt;u&gt;Level ' + str(spell['level']) + ' Spells &lt;/u&gt;&lt;/h2&gt;&#xd;\n'
+                xml += html.escape('<h2><u>Level ' + str(spell['level']) + ' Spells</u></h2>\n')
 
             sname = spell['name']
 
@@ -905,18 +904,33 @@ class Pathfinder:
                 else:
                     xml += ' (CL:' + spell['casterlevel'] + ')'
 
-                xml += '&lt;br&gt;&#xd;\n'
+                xml += html.escape('<br>\n')
 
             # With Description
             if bool(self.settings.value("description")):
                 # Put entire decription in custom property
-                key = "hl2mt_Spells_%03i" % list_macro_count
+                spell_key = "hl2mt_Spells_%03i" % spell_macro_count
+                self.custom_property_map_xml[spell_key] = html.escape('<div style="padding:0 10px 0 10px">')
+                self.custom_property_map_xml[spell_key] += html.escape(self.spell_html(spell))
+                self.custom_property_map_xml[spell_key] += html.escape("<br>")
+                self.custom_property_map_xml[spell_key] += html.escape('</div style="padding:10px">')
+                # xml += html.escape('[r:getProperty("' + key + '")]\n', True)
+                if spell['save'].lower() != 'none':
+                    spell_save = ' (CL:' + spell['casterlevel'] + ' / DC:' + spell['dc'] + ')'
+                else:
+                    spell_save = ' (CL:' + spell['casterlevel'] + ')'
 
-                self.custom_property_map_xml[key] = html.escape(self.spell_html(spell))
-                self.custom_property_map_xml[key] += html_sanitize("<br>")
+                str_macro = '<span>' \
+                            '    [r: macroLink("%(spell)s", "fn_detail@token", "none", ' \
+                            '       "title=%(title)s&keys=%(keys)s", currentToken())]' \
+                            '    <small>%(saves)s</small>\n' \
+                            '</span>\n' \
+                            % {"spell": sname, "title": sname,
+                               "keys": spell_key, "saves": spell_save}
 
-                xml += html.escape('[r:getProperty("' + key + '")]\n', True)
-                list_macro_count += 1
+                xml += html.escape(str_macro)
+
+                spell_macro_count += 1
 
             # No indexing
             else:
@@ -966,30 +980,19 @@ class Pathfinder:
         else:
             str_html += '<small> (CL:' + spell['casterlevel'] + ') </small>'
 
-        str_html += "</h2>"
+        str_html += '</h2><hr style="margin: 0px 0 10px 0">'
 
         # <b>School</b>
-        str_html += '<b>School</b> ' + spell['schooltext']
+        str_html += '<b>Level</b> ' + spell['level'] + '<br>'
 
-        # # <h3>Casting</h3>
-        # str_html += '<h3>Casting</h3>\n'
-        #
-        # # <hr>
-        # str_html += '<hr>\n'
+        # <b>School</b>
+        str_html += '<b>School</b> ' + spell['schooltext'] + '<br>'
 
         # <b>Casting Time</b> <br>
-        str_html += '<br>'
-        str_html += '<b>Casting Time</b> ' + spell['casttime']
+        str_html += '<b>Casting Time</b> ' + spell['casttime'] + '<br>'
 
         # <b>Components</b>
-        str_html += '<br>'
-        str_html += '<b>Components</b> ' + spell['componenttext']
-
-        # # <h3>Effect</h3>
-        # str_html += '<h3>Effect</h3>\n'
-        #
-        # # <hr>
-        # str_html += '<hr>\n'
+        str_html += '<b>Components</b> ' + spell['componenttext'] + '<br>'
 
         # <b>Range</b>
         if spell['range']:
@@ -1011,21 +1014,21 @@ class Pathfinder:
         if spell['effect']:
             str_html += '<b>Effect</b> ' + spell['effect'] + '<br>'
 
-        # <b>Saving Throw</b> <b>Spell Resistance</b>
-        str_html += '<b>Saving Throw</b> ' + spell['save']
-        str_html += '<br>\n'
-        str_html += '<b>Spell Resistance</b> ' + spell['resist']
+        # <b>Saving Throw</b>
+        str_html += '<b>Saving Throw</b> ' + spell['save'] + '<br>'
 
-        # # <h3>Description</h3>
-        # str_html += '<h3>Description</h3>\n'
-        #
-        # # <hr>
-        # str_html += '<hr>\n'
-        str_html += '<br>\n'
+        # <b>Spell Resistance</b>
+        str_html += '<b>Spell Resistance</b> ' + spell['resist'] + '<br>'
+
+        # description
+        # str_html += '<br>\n'
 
         str_html += str.replace(spell['description'], '\n', '<br>')
 
-        str_html += '<hr>\n'
+        # str_html += '<br>\n'
+        # str_html += '<br>\n'
+        # str_html += '<br>\n'
+        # str_html += '<hr>\n'
 
         return str_html
 
@@ -1606,7 +1609,7 @@ class Pathfinder:
     def make_pog(self, image_name):
 
         im = Image.open(str(image_name))
-        size = (128, 128)
+        size = (128, 128)   # TODO: Fix-it to use existing image resolution.
         im.thumbnail(size, Image.ANTIALIAS)
 
         output = io.BytesIO()
@@ -1623,7 +1626,7 @@ class Pathfinder:
     def make_portrait(self, image_name):
 
         im = Image.open(str(image_name))
-        size = (200, 200)
+        size = (200, 200)   # TODO: Fix-it to use existing image resolution.
         im.thumbnail(size, Image.ANTIALIAS)
 
         output = io.BytesIO()
@@ -1637,7 +1640,7 @@ class Pathfinder:
         self.portrait = im
 
     def make_thumbnail(self):
-        size = 50, 50
+        size = 50, 50   # TODO: Fix-it to use existing image resolution.
         im = self.pog.copy()
         im.thumbnail(size, Image.ANTIALIAS)
         self.thumbnail = im
