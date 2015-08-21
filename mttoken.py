@@ -1,7 +1,6 @@
 import re
 import hashlib
 import io
-import cgi
 import html
 
 from PIL import Image
@@ -396,7 +395,7 @@ class Pathfinder:
             if int(self.cp) > 0:
                 tmp += self.cp + 'cp '
             tmp += '\n'
-            tmp = cgi.escape(tmp)
+            tmp = html.escape(tmp)
             xml += self.property_xml(self.settings.value("properties/items"), tmp)
         # ----------------------------------------------------------------------
         # <-- Create token Properties
@@ -673,7 +672,7 @@ class Pathfinder:
             tmp += '[r:token.name] is gains  [r:hpChange] hit points.\n'
             tmp += '};]\n'
 
-        xml += cgi.escape(tmp)
+        xml += html.escape(tmp)
 
         xml += '</command>\n'
         xml += '           <label>HP</label>\n'
@@ -713,7 +712,7 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        xml += cgi.escape(value)
+        xml += html.escape(value)
 
         xml += '</command>\n'
         xml += '           <label>' + name + '</label>\n'
@@ -772,7 +771,7 @@ class Pathfinder:
         tmp += "</tr>\n"
         tmp += "</table>\n"
 
-        xml += cgi.escape(tmp)
+        xml += html.escape(tmp)
 
         xml += '</command>\n'
         xml += '           <label>' + label + '</label>\n'
@@ -826,7 +825,7 @@ class Pathfinder:
         tmp += "</tr>\n"
         tmp += "</table>\n"
 
-        xml += cgi.escape(tmp)
+        xml += html.escape(tmp)
 
         xml += '</command>\n'
         xml += '           <label>' + label + '</label>\n'
@@ -920,11 +919,11 @@ class Pathfinder:
                 else:
                     spell_save = ' (CL:' + spell['casterlevel'] + ')'
 
-                str_macro = '<span>' \
+                str_macro = '<div>' \
                             '    [r: macroLink("%(spell)s", "fn_detail@token", "none", ' \
                             '       "title=%(title)s&keys=%(keys)s", currentToken())]' \
                             '    <small>%(saves)s</small>\n' \
-                            '</span>\n' \
+                            '</div>\n' \
                             % {"spell": sname, "title": sname,
                                "keys": spell_key, "saves": spell_save}
 
@@ -1197,7 +1196,7 @@ class Pathfinder:
         tmp += '</html>\n'
         tmp += '}]\n'
 
-        xml += cgi.escape(tmp)
+        xml += html.escape(tmp)
 
         xml += '</command>\n'
         xml += '           <label>' + label + '</label>\n'
@@ -1241,7 +1240,7 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        xml += cgi.escape(macro)
+        xml += html.escape(macro)
 
         xml += '</command>\n'
         xml += '           <label>' + label + '</label>\n'
@@ -1368,7 +1367,7 @@ class Pathfinder:
         tmp += "</tr>\n"
         tmp += "</table>\n"
 
-        xml += cgi.escape(tmp)
+        xml += html.escape(tmp)
 
         xml += '[h: setInitiative(InitRoll)]\n'
         xml += '</command>\n'
@@ -1466,7 +1465,7 @@ class Pathfinder:
 
         tmp += "</table>\n"
 
-        xml += cgi.escape(tmp)
+        xml += html.escape(tmp)
 
         xml += '</command>\n'
         xml += '           <label>' + name + '</label>\n'
@@ -1532,7 +1531,7 @@ class Pathfinder:
 
             tmp += "</table>\n"
 
-            xml += cgi.escape(tmp)
+            xml += html.escape(tmp)
 
             xml += '</command>\n'
             xml += '           <label>' + name + '</label>\n'
@@ -1581,7 +1580,7 @@ class Pathfinder:
         tmp += '[r: requestURL("' + url + self.html_filename + '")]\n'
         tmp += '}]\n'
 
-        xml += cgi.escape(tmp)
+        xml += html.escape(tmp)
 
         xml += '</command>\n'
         xml += '           <label>' + label + '</label>\n'

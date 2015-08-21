@@ -1,0 +1,4 @@
+syntax: glob
+*.rptok
+./dist*
+dist
