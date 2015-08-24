@@ -7,6 +7,7 @@ from PIL import Image
 from PyQt4.QtCore import *
 from macros.special import *
 from util import *
+import templates.spell as spellTmpl
 
 
 # noinspection PyCallByClass
@@ -909,11 +910,15 @@ class Pathfinder:
             if bool(self.settings.value("description")):
                 # Put entire decription in custom property
                 spell_key = "hl2mt_Spells_%03i" % spell_macro_count
-                self.custom_property_map_xml[spell_key] = html.escape('<div style="padding:0 10px 0 10px">')
-                self.custom_property_map_xml[spell_key] += html.escape(self.spell_html(spell))
-                self.custom_property_map_xml[spell_key] += html.escape("<br>")
-                self.custom_property_map_xml[spell_key] += html.escape('</div style="padding:10px">')
+                # self.custom_property_map_xml[spell_key] = html.escape('<div style="padding:0 10px 0 10px">')
+                # self.custom_property_map_xml[spell_key] += html.escape(self.spell_html(spell))
+
+                self.custom_property_map_xml[spell_key] = spellTmpl.gen_spell_detail(spell)
+
+                # self.custom_property_map_xml[spell_key] += html.escape('<br>')
+                # self.custom_property_map_xml[spell_key] += html.escape('</div>')
                 # xml += html.escape('[r:getProperty("' + key + '")]\n', True)
+
                 if spell['save'].lower() != 'none':
                     spell_save = ' (CL:' + spell['casterlevel'] + ' / DC:' + spell['dc'] + ')'
                 else:
@@ -972,6 +977,9 @@ class Pathfinder:
 
     @staticmethod
     def spell_html(spell):
+
+
+
         str_html = "<h2>" + spell['name']
 
         if spell['save'].lower() != 'none':
