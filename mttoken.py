@@ -865,9 +865,13 @@ class Pathfinder:
         xml += html.escape('<head>\n')
         xml += html.escape('  <title>' + name + ' ([r:token.name])</title>\n')
         xml += html.escape('</head>\n')
-        xml += html.escape('<body style="padding:0 10px 10px 10px ">\n')
-        xml += html.escape('  <h1><u>' + util.clean_name(self.name) + ' (' + name + ')</u></h1>\n')
-        xml += html.escape('  <br>\n')
+        xml += html.escape('<body style="padding:0 10px 0px 10px ">\n')
+        xml += html.escape('<h1>')
+        xml += html.escape('   <span>%s</span><br>') % name
+        xml += html.escape('   <small><b>%s</b></small>') % util.clean_name(self.name)
+        xml += html.escape('</h1>')
+
+        # xml += html.escape('  <h1>' + util.clean_name(self.name) + ' (' + name + ')</h1>\n')
 
         spells_by_level = sorted(spells, key=lambda k: k['level'])
         current = -1
@@ -876,7 +880,7 @@ class Pathfinder:
         for spell in spells_by_level:
             if int(spell['level']) > current:
                 current = int(spell['level'])
-                xml += html.escape('<h2><u>Level ' + str(spell['level']) + ' Spells</u></h2>\n')
+                xml += html.escape('<h2>Level ' + str(spell['level']) + ' Spells</h2>\n')
 
             sname = spell['name']
 
@@ -1042,7 +1046,11 @@ class Pathfinder:
         xml += html.escape('\n          <title>%s</title>' % name)
         xml += html.escape('\n      </head>')
         xml += html.escape('\n      <body style="padding:0 10px 0 10px">')
-        xml += html.escape('\n          <h1>%s %s</h1>' % (util.clean_name(self.name), name))
+        xml += html.escape('\n          <h1>')
+        xml += html.escape('\n              <span>%s</span><br>') % name
+        xml += html.escape('\n              <small><b>%s</b></small>') % util.clean_name(self.name)
+        xml += html.escape('\n          </h1>')
+        # xml += html.escape('\n          <h1>%s %s</h1>' % (util.clean_name(self.name), name))
 
         list_macro_count = 0
 
@@ -1069,10 +1077,13 @@ class Pathfinder:
                 any_key = "hl2mt_%s_%03i" % (name, list_macro_count)
 
                 # Detail Template
-                detail_tmpl = '\n <div style="padding: 0 10px 0 10px;">'
-                detail_tmpl += '\n    <h2>%s (%s)</h2>' % (k, self.name)
-                detail_tmpl += '\n    <span>\n%s\n</span>' % util.pretty_html(v)
-                detail_tmpl += '\n </div>'
+                detail_tmpl = '\n<div style="padding: 0 10px 0 10px;">'
+                detail_tmpl += '\n  <h2>'
+                detail_tmpl += '\n      <span>%s</span><br>' % k
+                detail_tmpl += '\n      <small><b>%s</b></small>' % self.name
+                detail_tmpl += '\n  </h2>'
+                detail_tmpl += '\n  <span>\n%s\n</span>' % util.pretty_html(v)
+                detail_tmpl += '\n</div>'
 
                 self.custom_property_map_xml[any_key] = html.escape(detail_tmpl)  # spellTmpl.gen_spell_detail(spell)
 
@@ -1140,42 +1151,48 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        tmp = '[frame("Items"): {\n'
-        tmp += '<html>\n'
-        tmp += '<head>\n'
-        tmp += '<title>Items</title>\n'
-        tmp += '</head>\n'
-        tmp += '<body>\n'
-        tmp += '<br>\n'
-        tmp += '<h1><u>' + util.clean_name(self.name) + ' Items </u></h1>\n'
-        tmp += '<br>\n'
+        tmp = '\n[frame("Items"): {'
+        tmp += '\n    <html>'
+        tmp += '\n    <head>'
+        tmp += '\n        <title>Items</title>'
+        tmp += '\n    </head>'
+        tmp += '\n    <body style="padding:0 10px 0 10px">'
+        tmp += '\n        <h1>%s Items</h1>' % util.clean_name(self.name)
 
-        for item in self.items:
+        for item in sorted(self.items, key=lambda k: k['name']):
             name = item['name']
             name = str.replace(name, "'", "")
             name = str.replace(name, "[", "")
             name = str.replace(name, "]", "")
+
+            tmp += '<div>'
             tmp += name
+
+            if len(item['value']) == 0:
+                item['value'] = '0 gp'
+
             if int(item['num']) > 1:
                 tmp += ' (x' + item['num'] + ', ' + item['value'] + ')'
             else:
                 tmp += ' (' + item['value'] + ')'
-            tmp += '<br>\n'
+
+            tmp += '</div>'
 
         if len(tmp) > 0:
-            tmp += '<br>'
+            tmp += '    <div><b>Money: </b>&nbsp;'
         if int(self.pp) > 0:
-            tmp += self.pp + 'pp '
+            tmp += self.pp + 'pp &nbsp;'
         if int(self.gp) > 0:
-            tmp += self.gp + 'gp '
+            tmp += self.gp + 'gp &nbsp;'
         if int(self.sp) > 0:
-            tmp += self.sp + 'sp '
+            tmp += self.sp + 'sp &nbsp;'
         if int(self.cp) > 0:
-            tmp += self.cp + 'cp '
+            tmp += self.cp + 'cp'
 
-        tmp += '</body>\n'
-        tmp += '</html>\n'
-        tmp += '}]\n'
+        tmp += '        </div>'
+        tmp += '    </body>\n'
+        tmp += '    </html>\n'
+        tmp += '}]'
 
         xml += html.escape(tmp)
 
@@ -1541,7 +1558,7 @@ class Pathfinder:
 
         font = self.settings.value("colors/sheetf")
         background = self.settings.value("colors/sheetb")
-        group = 'Basic'
+        group = 'Special'
         label = 'Sheet'
         width = '40'
         url = self.settings.value("httpbase")
@@ -1557,7 +1574,8 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        tmp = ''
+        tmp = '\n'
+
         if self.settings.value("indexing") == 'HTML':
             tmp += '            [frame("Character Sheet"): {\n'
             tmp += '                [r: requestURL("' + url + self.html_filename + '")]\n'
@@ -1565,8 +1583,9 @@ class Pathfinder:
 
         elif self.settings.value("description") == 'True':
             hl2mt_statblock = re.sub(r"<meta http-equiv.*?>", '', self.html_statblock.decode())
-            hl2mt_statblock = hl2mt_statblock.replace('[', '((')
-            hl2mt_statblock = hl2mt_statblock.replace(']', '))')
+            hl2mt_statblock = hl2mt_statblock.replace('[', '(')
+            hl2mt_statblock = hl2mt_statblock.replace(']', ')')
+            hl2mt_statblock = hl2mt_statblock.replace('<body>', '<body style="padding:10px">')
 
             self.custom_property_map_xml["hl2mt_statblock"] = html.escape(hl2mt_statblock)
 

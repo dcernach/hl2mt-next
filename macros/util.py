@@ -28,7 +28,7 @@ def create_entry(label, group, command, auto_execute=True, width=None, font_colo
     entry += '\n        <label>%s</label>' % (label)
     entry += '\n        <group>%s</group>' % (group)
     entry += '\n        <sortby>1</sortby>'
-    entry += '\n        <autoExecute>true</autoExecute>'
+    entry += '\n        <autoExecute>%s</autoExecute>' % (str(auto_execute).lower())
     entry += '\n        <includeLabel>false</includeLabel>'
     entry += '\n        <applyToTokens>true</applyToTokens>'
     entry += '\n        <fontColorKey>%s</fontColorKey>' % (font_color)
