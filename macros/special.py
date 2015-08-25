@@ -2,6 +2,7 @@ __author__ = 'dandrade'
 
 from PyQt4.QtCore import QSettings
 from html import escape
+import macros.util as MU
 
 
 class SpecialMacros:

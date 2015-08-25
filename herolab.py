@@ -97,7 +97,7 @@ class HeroLab:
         full_dir = os.path.join(str(self.settings.value("folderoutput")), self.subdir[1:])
 
         self.html_filename = hashlib.sha224(self.html).hexdigest() + '.html'
-
+        token.html_statblock = self.html
         token.html_filename = self.html_filename
         token.parse()
         token.make_pog(pog)
@@ -206,13 +206,13 @@ class HeroLabIndex:
                                     char_filename = statblock.get('filename')
                                     char_filename = re.sub(r"\.\w\w\w$", "", char_filename)
 
-                                # Changed 'Minion Name' Behavior to use 'Minion Name' from Herolab instead
+                                # dca: Changed 'Minion Name' Behavior to use 'Minion Name' from Herolab instead
                                 # of 'Char Name + Minion Name' for Portrait and Pog directory.
                                 pog_file = self._search_file(self.pog_folder, subdir, minion_hl_name)
                                 portrait_file = self._search_file(self.portrait_folder, subdir, minion_hl_name)
                                 token = self._token_name(subdir, minion_name)
 
-                                yield {"name": minion_name, "summary": summary, "cr": cr, "source": filename,
+                                yield {"name": minion_hl_name, "summary": summary, "cr": cr, "source": filename,
                                        "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
                                        "portrait": portrait_file, "token": token}
                         else:

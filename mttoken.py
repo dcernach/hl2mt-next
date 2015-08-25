@@ -1,12 +1,13 @@
 import re
+# from PyQt4.QtCore import *
+
 import hashlib
 import io
 import html
 
 from PIL import Image
-from PyQt4.QtCore import *
 from macros.special import *
-from util import *
+import util
 import templates.spell as spellTmpl
 
 
@@ -17,6 +18,7 @@ class Pathfinder:
     def __init__(self, name, xml):
         self.name = str(name)
         self.xml = xml
+        self.html_statblock = ''
         self.html_filename = ''
         self.languages = []
         self.attrib_scores = {}
@@ -177,18 +179,6 @@ class Pathfinder:
                     'dam': weapon.get('damage'), 'crit': weapon.get('crit')}
             self.weapons.append(temp)
 
-    def pretty_html(self, text):
-        text = str.replace(text, '\n', '<br>')
-        text = str.replace(text, 'Benefit:', '<b>Benefit:</b>')
-        text = str.replace(text, 'Benefits:', '<b>Benefits:</b>')
-        text = str.replace(text, 'Special:', '<b>Special:</b>')
-        text = str.replace(text, 'Requirement:', '<b>Requirement:</b>')
-        text = str.replace(text, 'Requirements:', '<b>Requirements:</b>')
-        text = str.replace(text, 'Prerequisite:', '<b>Prerequisite:</b>')
-        text = str.replace(text, 'Prerequisites:', '<b>Prerequisites:</b>')
-        text = str.replace(text, 'Normal:', '<b>Normal:</b>')
-        return text
-
     def parse_items(self):
         for item in self.xml.find('gear').iter('item'):
             temp = {'name': item.get('name'), 'num': item.get('quantity'), 'value': item.find('cost').get('text')}
@@ -336,9 +326,9 @@ class Pathfinder:
             text = 'LowLight'
         if self.vision_dark:
             text = 'Darkvision'
-        if self.vision_dark and bool(self.settings.value("vision")):
+        if self.vision_dark and self.settings.value("vision") == 'True':
             text = 'Darkvision' + str(self.vision_dark)
-        if self.vision_dark and bool(self.settings.value("vision")) and self.vision_lowlight:
+        if self.vision_dark and self.settings.value("vision") == 'True' and self.vision_lowlight:
             text += ' and Lowlight'
 
         xml += '    <sightType>' + text + '</sightType>\n'
@@ -402,17 +392,17 @@ class Pathfinder:
         # <-- Create token Properties
         # ----------------------------------------------------------------------
         xml += '\n\n'
-        xml += '        #{custom}'  # dca: replacer to add custom properties if any
+        xml += '        #{custom}'  # dca: replace to add custom properties if any
         xml += '\n\n'
         xml += '      </store>\n'
         xml += '    </propertyMapCI>\n'
 
         xml += '    <macroPropertiesMap>\n'
 
-        if self.settings.value("indexing") == 'HTML':
+        if self.settings.value("indexing") == 'HTML' or self.settings.value("description") == 'True':
             xml += self.charsheet_macro_xml()
 
-        if bool(self.settings.value("hp")):
+        if self.settings.value("hp") == 'True':
             xml += self.hp_macro_xml()
 
         colorf = self.settings.value("colors/savesf")
@@ -435,7 +425,7 @@ class Pathfinder:
                                    colorb, colorf, '2')
         xml += self.init_macro_xml()
 
-        if bool(self.settings.value("basicdice")):
+        if self.settings.value("basicdice") == 'True':
             xml += self.basic_die_macro_xml('d4')
             xml += self.basic_die_macro_xml('d6')
             xml += self.basic_die_macro_xml('d8')
@@ -443,7 +433,7 @@ class Pathfinder:
             xml += self.basic_die_macro_xml('d12')
             xml += self.basic_die_macro_xml('d20')
 
-        if bool(self.settings.value("ability")):
+        if self.settings.value("ability") == 'True':
             colorf = self.settings.value("colors/abilityf")
             colorb = self.settings.value("colors/abilityb")
             xml += self.roll_macro_xml('Str', self.attrib_bonuses['Strength'], 'Strength Check',
@@ -459,16 +449,16 @@ class Pathfinder:
             xml += self.roll_macro_xml('Cha', self.attrib_bonuses['Charisma'], 'Charisma Check',
                                        'Basic Ability Checks', '25', colorb, colorf, '6')
 
-        if bool(self.settings.value("skills")):
+        if self.settings.value("skills") == 'True':
             for k, v in list(self.skills.items()):
                 xml += self.roll_macro_xml(k, v, k, 'Skills', '75', self.settings.value("colors/skillsb"),
                                            self.settings.value("colors/skillsf"), '1')
 
-        if bool(self.settings.value("weapons")):
+        if self.settings.value("weapons") == 'True':
             for weapon in self.weapons:
                 xml += self.weapon_macro_xml(weapon['name'], weapon['atk'], weapon['dam'], weapon['crit'])
 
-        if bool(self.settings.value("maneuvers")):
+        if self.settings.value("maneuvers") == 'True':
             for k, v in list(self.maneuvers.items()):
                 xml += self.roll_macro_xml(k, v, k, 'Maneuvers', '75', self.settings.value("colors/maneuversb"),
                                            self.settings.value("colors/maneuversf"), '1')
@@ -497,7 +487,7 @@ class Pathfinder:
         if self.spells_known:
             xml += self.spell_list_macro_xml('Spells Known', self.spells_known, '80')
 
-        if self.items and bool(self.settings.value("items")):
+        if self.items and self.settings.value("items") == 'True':
             xml += self.items_macro_xml()
 
         for row in range(0, 50):
@@ -510,11 +500,10 @@ class Pathfinder:
 
                 xml += self.custom_macro_xml(name, group, font, background, value)
 
-        if bool(self.settings.value("indexing")) != 'None':
+        if self.settings.value("indexing") == 'HTML':
             xml += self.list_show_macro_xml()
 
-        if bool(self.settings.value("description")):
-            # xml += self.fn_detail_macro_xml()
+        if self.settings.value("description") == 'True':
             self.num_macros += 1
             xml += self.specialMacros.fn_detail_macro_xml(self.num_macros)
 
@@ -877,7 +866,7 @@ class Pathfinder:
         xml += html.escape('  <title>' + name + ' ([r:token.name])</title>\n')
         xml += html.escape('</head>\n')
         xml += html.escape('<body style="padding:0 10px 10px 10px ">\n')
-        xml += html.escape('  <h1><u>' + self.clean_name(self.name) + ' (' + name + ')</u></h1>\n')
+        xml += html.escape('  <h1><u>' + util.clean_name(self.name) + ' (' + name + ')</u></h1>\n')
         xml += html.escape('  <br>\n')
 
         spells_by_level = sorted(spells, key=lambda k: k['level'])
@@ -891,46 +880,36 @@ class Pathfinder:
 
             sname = spell['name']
 
+            if spell['save'].lower() != 'none':
+                spell_save = ' (CL:' + spell['casterlevel'] + ' / DC:' + spell['dc'] + ')'
+            else:
+                spell_save = ' (CL:' + spell['casterlevel'] + ')'
+
             # With Indexing
             if self.settings.value("indexing") == 'HTML':
-                xml += '[r: macrolink(&quot;' + sname + \
-                       '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;url=' + \
-                       self.settings.value("httpbase") + \
-                       self.index_append(self.spell_html(spell)) + \
-                       ';lname=' + sname + '&quot;, currentToken())]'
+                str_macro = '[r: macrolink("%(sname)s", "lshow@token", "none", "url=%(httpbase)s%(index)s;lname=%(sname)s", ' \
+                            'currentToken())]'
 
-                if spell['save'].lower() != 'none':
-                    xml += ' (CL:' + spell['casterlevel'] + ' / DC:' + spell['dc'] + ')'
-                else:
-                    xml += ' (CL:' + spell['casterlevel'] + ')'
+                str_macro = str_macro % {'sname': sname,
+                                         'httpbase': self.settings.value("httpbase"),
+                                         'index': self.index_append(self.spell_html(spell))}
 
+                xml += html.escape(str_macro)
+                xml += html.escape(spell_save)
                 xml += html.escape('<br>\n')
 
             # With Description
-            if bool(self.settings.value("description")):
-                # Put entire decription in custom property
+            elif self.settings.value("description") == 'True':
+                # Put entire decription in custom property to avoid StackOverflow
                 spell_key = "hl2mt_Spells_%03i" % spell_macro_count
-                # self.custom_property_map_xml[spell_key] = html.escape('<div style="padding:0 10px 0 10px">')
-                # self.custom_property_map_xml[spell_key] += html.escape(self.spell_html(spell))
-
                 self.custom_property_map_xml[spell_key] = spellTmpl.gen_spell_detail(spell)
 
-                # self.custom_property_map_xml[spell_key] += html.escape('<br>')
-                # self.custom_property_map_xml[spell_key] += html.escape('</div>')
-                # xml += html.escape('[r:getProperty("' + key + '")]\n', True)
-
-                if spell['save'].lower() != 'none':
-                    spell_save = ' (CL:' + spell['casterlevel'] + ' / DC:' + spell['dc'] + ')'
-                else:
-                    spell_save = ' (CL:' + spell['casterlevel'] + ')'
-
-                str_macro = '<div>' \
-                            '    [r: macroLink("%(spell)s", "fn_detail@token", "none", ' \
-                            '       "title=%(title)s&keys=%(keys)s", currentToken())]' \
-                            '    <small>%(saves)s</small>\n' \
-                            '</div>\n' \
-                            % {"spell": sname, "title": sname,
-                               "keys": spell_key, "saves": spell_save}
+                str_macro = '<div>'
+                str_macro += '    [r: macroLink("%(spell)s", "fn_detail@token", "none", '
+                str_macro += '       "title=%(title)s&keys=%(keys)s", currentToken())]'
+                str_macro += '    <small>%(saves)s</small>\n'
+                str_macro += '</div>\n'
+                str_macro = str_macro % {"spell": sname, "title": sname, "keys": spell_key, "saves": spell_save}
 
                 xml += html.escape(str_macro)
 
@@ -977,8 +956,6 @@ class Pathfinder:
 
     @staticmethod
     def spell_html(spell):
-
-
 
         str_html = "<h2>" + spell['name']
 
@@ -1056,23 +1033,16 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        # [frame("name"): {
-        xml += '[frame(&quot;' + name + '&quot;): {&#xd;\n'
-        # <html>
-        xml += '&lt;html&gt;&#xd;\n'
-        # <head>
-        xml += '&lt;head&gt;&#xd;\n'
-        # <title>name</title>
-        xml += '&lt;title&gt;' + name + '&lt;/title&gt;&#xd;\n'
-        # </head>
-        xml += '&lt;/head&gt;&#xd;\n'
-        # <body>
-        xml += '&lt;body style="padding:10px;" &gt;&#xd;\n'
-
-        # <h1><u>Character Name name</u></h1>
-        xml += '&lt;h1&gt;&lt;u&gt;' + self.clean_name(self.name) + ' ' + name + '&lt;/u&gt;&lt;/h1&gt;&#xd;\n'
-        # <br>
-        xml += '&lt;br&gt;&#xd;\n'
+        # #############################################################
+        # Create specific macro
+        # #############################################################
+        xml += html.escape('\n[frame("' + name + '"): {')
+        xml += html.escape('\n  <html>')
+        xml += html.escape('\n      <head>')
+        xml += html.escape('\n          <title>%s</title>' % name)
+        xml += html.escape('\n      </head>')
+        xml += html.escape('\n      <body style="padding:0 10px 0 10px">')
+        xml += html.escape('\n          <h1>%s %s</h1>' % (util.clean_name(self.name), name))
 
         list_macro_count = 0
 
@@ -1083,47 +1053,50 @@ class Pathfinder:
 
             if v is None:
                 xml += k
-                xml += '&lt;br&gt;&#xd;\n'
+                xml += '<br>'
                 continue
 
             # With Indexing
             if self.settings.value("indexing") == 'HTML':
                 # [r: macroLink("k", "lshow@token", "none", "url=url;lname=k", currentToken())
                 xml += '[r: macrolink(&quot;' + k + '&quot;, &quot;lshow@token&quot;, &quot;none&quot;, &quot;url=' + \
-                       self.settings.value("httpbase") + self.index_append(self.pretty_html(v)) + ';lname=' + \
+                       self.settings.value("httpbase") + self.index_append(util.pretty_html(v)) + ';lname=' + \
                        k + '&quot;, currentToken())]'
 
             # With Description
-            if bool(self.settings.value("description")):
+            elif self.settings.value("description") == 'True':
                 # Put entire decription in custom property
-                key = "hl2mt_%s_%03i" % (name, list_macro_count)
+                any_key = "hl2mt_%s_%03i" % (name, list_macro_count)
 
-                self.custom_property_map_xml[key] = html_sanitize("<h2>" + k + "</h2>") + "\n"
-                self.custom_property_map_xml[key] += html_sanitize(self.pretty_html(v))
-                self.custom_property_map_xml[key] += html_sanitize("<br>")
+                # Detail Template
+                detail_tmpl = '\n <div style="padding: 0 10px 0 10px;">'
+                detail_tmpl += '\n    <h2>%s (%s)</h2>' % (k, self.name)
+                detail_tmpl += '\n    <span>\n%s\n</span>' % util.pretty_html(v)
+                detail_tmpl += '\n </div>'
 
-                xml += html.escape('[r:getProperty("' + key + '")]', True)
+                self.custom_property_map_xml[any_key] = html.escape(detail_tmpl)  # spellTmpl.gen_spell_detail(spell)
+
+                macro_link = '<div>'
+                macro_link += '    [r: macroLink("%(name)s", "fn_detail@token", "none", '
+                macro_link += '       "title=%(title)s&keys=%(keys)s", currentToken())]'
+                macro_link += '</div>\n'
+                macro_link = macro_link % {"name": k, "title": k, "keys": any_key}
+
+                xml += html.escape(macro_link)
+
                 list_macro_count += 1
 
-                """
-                xml += "\n"
-                xml += html_sanitize("<h2>" + k + "</h2>") + "\n"
-                xml += html_sanitize(v)
-                xml += html_sanitize("<br>")
-                xml += "\n"
-                """
             # No indexing
             else:
                 xml += k
 
-            xml += '&lt;br&gt;&#xd;\n'
+        xml += html.escape('\n      </body>')
+        xml += html.escape('\n  </html>')
+        xml += html.escape('\n}]\n')
 
-        # </body>
-        xml += '&lt;/body&gt;&#xd;\n'
-        # </html>
-        xml += '&lt;/html&gt;&#xd;\n'
-        # }]
-        xml += '}]&#xd;\n'
+        # #############################################################
+        #
+        # #############################################################
 
         xml += '</command>\n'
         xml += '           <label>' + label + '</label>\n'
@@ -1174,7 +1147,7 @@ class Pathfinder:
         tmp += '</head>\n'
         tmp += '<body>\n'
         tmp += '<br>\n'
-        tmp += '<h1><u>' + self.clean_name(self.name) + ' Items </u></h1>\n'
+        tmp += '<h1><u>' + util.clean_name(self.name) + ' Items </u></h1>\n'
         tmp += '<br>\n'
 
         for item in self.items:
@@ -1584,39 +1557,53 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        tmp = '[frame("Character Sheet"): {\n'
-        tmp += '[r: requestURL("' + url + self.html_filename + '")]\n'
-        tmp += '}]\n'
+        tmp = ''
+        if self.settings.value("indexing") == 'HTML':
+            tmp += '            [frame("Character Sheet"): {\n'
+            tmp += '                [r: requestURL("' + url + self.html_filename + '")]\n'
+            tmp += '            }]\n'
+
+        elif self.settings.value("description") == 'True':
+            hl2mt_statblock = re.sub(r"<meta http-equiv.*?>", '', self.html_statblock.decode())
+            hl2mt_statblock = hl2mt_statblock.replace('[', '((')
+            hl2mt_statblock = hl2mt_statblock.replace(']', '))')
+
+            self.custom_property_map_xml["hl2mt_statblock"] = html.escape(hl2mt_statblock)
+
+            tmp += '            [frame("Statblock"): {\n'
+            tmp += '                [r: getProperty("hl2mt_statblock")]\n'  # dca: HL Statblock
+            tmp += '            }]\n'
 
         xml += html.escape(tmp)
 
-        xml += '</command>\n'
-        xml += '           <label>' + label + '</label>\n'
-        xml += '           <group>' + group + '</group>\n'
-        xml += '           <sortby>1</sortby>\n'
-        xml += '           <autoExecute>true</autoExecute>\n'
-        xml += '           <includeLabel>false</includeLabel>\n'
-        xml += '           <applyToTokens>true</applyToTokens>\n'
-        xml += '           <fontColorKey>' + font + '</fontColorKey>\n'
-        xml += '           <fontSize>1.00em</fontSize>\n'
-        xml += '           <minWidth>' + width + '</minWidth>\n'
-        xml += '           <maxWidth>' + width + '</maxWidth>\n'
-        xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
-        xml += '           <toolTip></toolTip>\n'
-        xml += '           <commonMacro>false</commonMacro>\n'
-        xml += '           <compareGroup>true</compareGroup>\n'
-        xml += '           <compareIncludeLabel>true</compareIncludeLabel>\n'
-        xml += '           <compareAutoExecute>true</compareAutoExecute>\n'
-        xml += '           <compareApplyToSelectedTokens>true</compareApplyToSelectedTokens>\n'
-        xml += '         </net.rptools.maptool.model.MacroButtonProperties>\n'
-        xml += '       </entry>\n'
+        xml += '            </command>\n'
+
+        xml += '            <label>' + label + '</label>\n'
+        xml += '            <group>' + group + '</group>\n'
+        xml += '            <sortby>1</sortby>\n'
+        xml += '            <autoExecute>true</autoExecute>\n'
+        xml += '            <includeLabel>false</includeLabel>\n'
+        xml += '            <applyToTokens>true</applyToTokens>\n'
+        xml += '            <fontColorKey>' + font + '</fontColorKey>\n'
+        xml += '            <fontSize>1.00em</fontSize>\n'
+        xml += '            <minWidth>' + width + '</minWidth>\n'
+        xml += '            <maxWidth>' + width + '</maxWidth>\n'
+        xml += '            <allowPlayerEdits>true</allowPlayerEdits>\n'
+        xml += '            <toolTip></toolTip>\n'
+        xml += '            <commonMacro>false</commonMacro>\n'
+        xml += '            <compareGroup>true</compareGroup>\n'
+        xml += '            <compareIncludeLabel>true</compareIncludeLabel>\n'
+        xml += '            <compareAutoExecute>true</compareAutoExecute>\n'
+        xml += '            <compareApplyToSelectedTokens>true</compareApplyToSelectedTokens>\n'
+        xml += '        </net.rptools.maptool.model.MacroButtonProperties>\n'
+        xml += '    </entry>\n'
 
         return xml
 
     def make_pog(self, image_name):
 
         im = Image.open(str(image_name))
-        size = (128, 128)   # TODO: Fix-it to use existing image resolution.
+        size = (128, 128)  # TODO: Fix-it to use existing image resolution.
         im.thumbnail(size, Image.ANTIALIAS)
 
         output = io.BytesIO()
@@ -1633,7 +1620,7 @@ class Pathfinder:
     def make_portrait(self, image_name):
 
         im = Image.open(str(image_name))
-        size = (200, 200)   # TODO: Fix-it to use existing image resolution.
+        size = (200, 200)  # TODO: Fix-it to use existing image resolution.
         im.thumbnail(size, Image.ANTIALIAS)
 
         output = io.BytesIO()
@@ -1647,7 +1634,7 @@ class Pathfinder:
         self.portrait = im
 
     def make_thumbnail(self):
-        size = 50, 50   # TODO: Fix-it to use existing image resolution.
+        size = 50, 50  # TODO: Fix-it to use existing image resolution.
         im = self.pog.copy()
         im.thumbnail(size, Image.ANTIALIAS)
         self.thumbnail = im
@@ -1658,14 +1645,3 @@ class Pathfinder:
             self.values.append(value)
 
         return hashlib.sha224(value.encode('utf-8')).hexdigest() + '.html'
-
-    @staticmethod
-    def clean_name(name):
-
-        name = str.replace(str(name), " (combat trained) ", "")
-        name = str.replace(name, " (combat trained)", "")
-        name = str.replace(name, "(combat trained)", "")
-        name = re.sub(r'([^\s\w]|_)+', '', name)
-        name = str.replace(name, "  ", " ")
-
-        return name

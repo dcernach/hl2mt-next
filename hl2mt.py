@@ -65,6 +65,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         for column in [3, 4, 5, 6]:
             # width, _ = self.settings.value("tablewidth" + str(column))
             width = self.settings.value("tablewidth" + str(column))
+
             if width:
                 self.tableWidget.setColumnWidth(column, int(width))
             else:
@@ -74,9 +75,13 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
 
         geometry = self.settings.value("geometry")
         windowstate = self.settings.value("windowstate")
+        indexing = not self.settings.value("description") == 'True'
+
+        self.actionIndexing.setEnabled(indexing)
 
         if geometry:
             self.restoreGeometry(geometry)
+
         if windowstate:
             self.restoreState(windowstate)
 
@@ -261,16 +266,16 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
     def action_output_triggered(self):
         dialog = OutputDialog(self, self.settings)
         if dialog.exec_():
-            self.settings.setValue("weapons", dialog.checkAttack.isChecked())
-            self.settings.setValue("vision", dialog.checkDark.isChecked())
-            self.settings.setValue("basicdice", dialog.checkBasic.isChecked())
-            self.settings.setValue("hp", dialog.checkHP.isChecked())
-            self.settings.setValue("items", dialog.checkItems.isChecked())
-            self.settings.setValue("maneuvers", dialog.checkMan.isChecked())
-            self.settings.setValue("skills", dialog.checkSkill.isChecked())
-            self.settings.setValue("ability", dialog.checkAbility.isChecked())
-            self.settings.setValue("description", dialog.checkDesc.isChecked())
-            self.settings.setValue("statblock", dialog.checkStatBlock.isChecked())
+            self.settings.setValue("weapons", str(dialog.checkAttack.isChecked()))
+            self.settings.setValue("vision", str(dialog.checkDark.isChecked()))
+            self.settings.setValue("basicdice", str(dialog.checkBasic.isChecked()))
+            self.settings.setValue("hp", str(dialog.checkHP.isChecked()))
+            self.settings.setValue("items", str(dialog.checkItems.isChecked()))
+            self.settings.setValue("maneuvers", str(dialog.checkMan.isChecked()))
+            self.settings.setValue("skills", str(dialog.checkSkill.isChecked()))
+            self.settings.setValue("ability", str(dialog.checkAbility.isChecked()))
+            self.settings.setValue("description", str(dialog.checkDesc.isChecked()))
+            self.settings.setValue("statblock", str(dialog.checkStatBlock.isChecked()))
 
     def action_import_triggered(self):
         filename = QFileDialog.getOpenFileName(self, __appname__ + ": Import Config", os.getcwd(),
@@ -921,19 +926,29 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
         self.setupUi(self)
         self.setWindowTitle(__appname__ + ": Token Output Options")
         self.settings = settings
+        self.parent = parent
         self.load_settings()
+        self.checkDesc.stateChanged.connect(self.check_desc_state_changed)
+
+    def check_desc_state_changed(self, checked):
+        indexing = not bool(checked)
+        self.parent.actionIndexing.setEnabled(indexing)
+        self.settings.setValue("indexing", str(indexing))
+
 
     def load_settings(self):
-        self.checkAttack.setChecked(bool(self.settings.value("weapons")))
-        self.checkDark.setChecked(bool(self.settings.value("vision")))
-        self.checkBasic.setChecked(bool(self.settings.value("basicdice")))
-        self.checkHP.setChecked(bool(self.settings.value("hp")))
-        self.checkItems.setChecked(bool(self.settings.value("items")))
-        self.checkMan.setChecked(bool(self.settings.value("maneuvers")))
-        self.checkSkill.setChecked(bool(self.settings.value("skills")))
-        self.checkAbility.setChecked(bool(self.settings.value("ability")))
-        self.checkDesc.setChecked(bool(self.settings.value("description")))
-        self.checkStatBlock.setChecked(bool(self.settings.value("statblock")))
+        self.checkAttack.setChecked(self.settings.value("weapons") == 'True')
+        self.checkDark.setChecked(self.settings.value("vision") == 'True')
+        self.checkBasic.setChecked(self.settings.value("basicdice") == 'True')
+        self.checkHP.setChecked(self.settings.value("hp") == 'True')
+        self.checkItems.setChecked(self.settings.value("items") == 'True')
+        self.checkMan.setChecked(self.settings.value("maneuvers") == 'True')
+        self.checkSkill.setChecked(self.settings.value("skills") == 'True')
+        self.checkAbility.setChecked(self.settings.value("ability") == 'True')
+        self.checkDesc.setChecked(self.settings.value("description") == 'True')
+        self.checkStatBlock.setChecked(self.settings.value("statblock") == 'True')
+
+        self.parent.actionIndexing.setEnabled(not self.settings.value("description") == 'True')
 
 
 class MacrosDialog(QDialog, macrosDialog.Ui_macrosDialog):
@@ -1028,7 +1043,7 @@ class CreateThread(QThread):
             self.values = herolab.values
 
             if self.settings.value("indexing") == 'HTML':
-                html = re.sub(r"\<meta http-equiv.*?\>", '', herolab.html)
+                html = re.sub(r"<meta http-equiv.*?>", '', str(herolab.html))
                 mtzip.writestr(herolab.html_filename, html)
 
             self.tokenCreatedSignal.emit(row)

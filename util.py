@@ -1,9 +1,33 @@
 __author__ = 'dandrade'
+import re
+
+
+def clean_name(name):
+    name = str.replace(str(name), " (combat trained) ", "")
+    name = str.replace(name, " (combat trained)", "")
+    name = str.replace(name, "(combat trained)", "")
+    name = re.sub(r'([^\s\w]|_)+', '', name)
+    name = str.replace(name, "  ", " ")
+
+    return name
+
+
+def pretty_html(text):
+    text = str.replace(text, '\n', '<br>')
+    text = str.replace(text, 'Benefit:', '<b>Benefit:</b>')
+    text = str.replace(text, 'Benefits:', '<b>Benefits:</b>')
+    text = str.replace(text, 'Special:', '<b>Special:</b>')
+    text = str.replace(text, 'Requirement:', '<b>Requirement:</b>')
+    text = str.replace(text, 'Requirements:', '<b>Requirements:</b>')
+    text = str.replace(text, 'Prerequisite:', '<b>Prerequisite:</b>')
+    text = str.replace(text, 'Prerequisites:', '<b>Prerequisites:</b>')
+    text = str.replace(text, 'Normal:', '<b>Normal:</b>')
+    return text
 
 
 def html_sanitize(html):
     """
-    Replaces all special characters, which are known to cause problems on a web  with maptool. This function replaces
+    Replaces all special characters, which are known to cause problems with maptool. This function replaces
     special characters with the correct 'escaped html' entity.
 
     Thanks to http://www.htmlescape.net/htmlescape_tool.html website
@@ -11,7 +35,7 @@ def html_sanitize(html):
     :param html: html string to be escaped
     :return: 'escaped html' entity for given 'html' string
     """
-    map = {"<": "&lt;", ">": "&gt;", "\&": "&amp;", "\"": "&quot;", "'": "&#x00b4;", "\n": "&lt;br&gt;\n"}
+    map = {"\&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#x00b4;", "\n": "&lt;br&gt;\n"}
     escaped = replace_all(html, map)
     return escaped
 

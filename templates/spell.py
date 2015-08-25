@@ -20,12 +20,12 @@ def gen_spell_detail(spell):
     # html += '\n <head>'
     # html += '\n     <title>Spell: %s</title>' % spell['name']
     # html += '\n </head>'
-    html  = '\n <div style="padding: 0 10px 0 10px">'
-    html += '\n     <h2>%s <small>%s</small></h2>' % (spell['name'], spell['cldc'])
-    html += '\n     <table cellpadding="2px" border="1" style="width:360px">'
+    html = '\n <div style="padding: 0 10px 0 10px;">'
+    html += '\n     <h2>%s <span>%s</span></h2>' % (spell['name'], spell['cldc'])
+    html += '\n     <table cellpadding="2px" border="1" style="width:350px">'
     html += '\n         <tr>'
-    html += '\n             <td style="width:60px"><b>Level</b></td>'
-    html += '\n             <td style="width:300px">%s</td>' % spell['level']
+    html += '\n             <td style="width:110px"><b>Level</b></td>'
+    html += '\n             <td style="width:240px">%s</td>' % spell['level']
     html += '\n         </tr>'
     html += '\n         <tr>'
     html += '\n             <td><b>School</b></td> <td>%s</td></tr>' % spell['schooltext']
@@ -70,12 +70,20 @@ def gen_spell_detail(spell):
     html += '\n             <td><b>Spell Resistance</b></td> <td>%s</td>' % spell['resist']
     html += '\n         </tr>'
 
-    # html += '\n         <tr>'
-    # html += '\n             <td colspan="2">%s</td>' % spell['description']
-    # html += '\n         </tr>'
+    html += '\n         <tr>'
+    html += '\n             <td style="width:350px; text-align:justify" colspan="2">%s</td>' % spell['description']
+    html += '\n         </tr>'
 
     html += '\n     </table>'
     html += '\n </div>'
     # html += '\n </html>'
 
     return escape(html)
+
+
+def gen_spell_list(spells):
+    spells_by_level = sorted(spells, key=lambda k: k['level'])
+    current = -1
+    spell_macro_count = 0
+
+    pass
