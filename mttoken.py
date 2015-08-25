@@ -405,25 +405,31 @@ class Pathfinder:
         if self.settings.value("hp") == 'True':
             xml += self.hp_macro_xml()
 
+        ###############################################################
+        # Basic Saving-Throw Macros
+        ###############################################################
         colorf = self.settings.value("colors/savesf")
         colorb = self.settings.value("colors/savesb")
-        xml += self.roll_macro_xml('Ref', self.saves['Ref'], 'Reflex Save', 'Basic', '25',
-                                   colorb, colorf, '3')
-        xml += self.roll_macro_xml('Will', self.saves['Will'], 'Willpower Save', 'Basic', '25',
-                                   colorb, colorf, '3')
-        xml += self.roll_macro_xml('Fort', self.saves['Fort'], 'Fortitude Save', 'Basic', '25',
-                                   colorb, colorf, '3')
+        xml += self.roll_macro_xml('Ref', self.saves['Ref'], 'Reflex Save', 'Basic', '53', colorb, colorf, '3')
+        xml += self.roll_macro_xml('Will', self.saves['Will'], 'Willpower Save', 'Basic', '53', colorb, colorf, '3')
+        xml += self.roll_macro_xml('Fort', self.saves['Fort'], 'Fortitude Save', 'Basic', '53', colorb, colorf, '3')
+
+        ###############################################################
+        # Basic Attack Macros
+        ###############################################################
         colorf = self.settings.value("colors/attacksf")
         colorb = self.settings.value("colors/attacksb")
-        xml += self.roll_macro_xml('Melee', self.atk_melee, 'Basic Melee', 'Basic', '35',
+        xml += self.roll_macro_xml('Melee', self.atk_melee, 'Basic Melee', 'Basic', '53',
                                    colorb, colorf, '2')
-        xml += self.roll_macro_xml('Ranged', self.atk_ranged, 'Basic Ranged', 'Basic', '45',
+        xml += self.roll_macro_xml('Ranged', self.atk_ranged, 'Basic Ranged', 'Basic', '53',
                                    colorb, colorf, '2')
+
         colorf = self.settings.value("colors/cmbf")
         colorb = self.settings.value("colors/cmbb")
-        xml += self.roll_macro_xml('CMB', self.cmb, 'Basic CMB', 'Basic', '25',
+        xml += self.roll_macro_xml('CMB', self.cmb, 'Basic CMB', 'Basic', '53',
                                    colorb, colorf, '2')
         xml += self.init_macro_xml()
+        xml += self.init_macro_xml(False)
 
         if self.settings.value("basicdice") == 'True':
             xml += self.basic_die_macro_xml('d4')
@@ -437,17 +443,22 @@ class Pathfinder:
             colorf = self.settings.value("colors/abilityf")
             colorb = self.settings.value("colors/abilityb")
             xml += self.roll_macro_xml('Str', self.attrib_bonuses['Strength'], 'Strength Check',
-                                       'Basic Ability Checks', '25', colorb, colorf, '1')
+                                       'Basic Ability Checks', '31', colorb, colorf, '1')
+
             xml += self.roll_macro_xml('Dex', self.attrib_bonuses['Dexterity'], 'Dexterity Check',
-                                       'Basic Ability Checks', '25', colorb, colorf, '2')
+                                       'Basic Ability Checks', '31', colorb, colorf, '2')
+
             xml += self.roll_macro_xml('Con', self.attrib_bonuses['Constitution'], 'Constitution Check',
-                                       'Basic Ability Checks', '25', colorb, colorf, '3')
+                                       'Basic Ability Checks', '31', colorb, colorf, '3')
+
             xml += self.roll_macro_xml('Int', self.attrib_bonuses['Intelligence'], 'Intelligence Check',
-                                       'Basic Ability Checks', '25', colorb, colorf, '4')
+                                       'Basic Ability Checks', '31', colorb, colorf, '4')
+
             xml += self.roll_macro_xml('Wis', self.attrib_bonuses['Wisdom'], 'Wisdom Check',
-                                       'Basic Ability Checks', '25', colorb, colorf, '5')
+                                       'Basic Ability Checks', '31', colorb, colorf, '5')
+
             xml += self.roll_macro_xml('Cha', self.attrib_bonuses['Charisma'], 'Charisma Check',
-                                       'Basic Ability Checks', '25', colorb, colorf, '6')
+                                       'Basic Ability Checks', '31', colorb, colorf, '6')
 
         if self.settings.value("skills") == 'True':
             for k, v in list(self.skills.items()):
@@ -464,28 +475,28 @@ class Pathfinder:
                                            self.settings.value("colors/maneuversf"), '1')
 
         if self.feats:
-            xml += self.list_macro_xml('Feats', self.feats, '35')
+            xml += self.list_macro_xml('Feats', self.feats, '75')
 
         if self.traits:
-            xml += self.list_macro_xml('Traits', self.traits, '35')
+            xml += self.list_macro_xml('Traits', self.traits, '75')
 
         if self.specials:
-            xml += self.list_macro_xml('Specials', self.specials, '50')
+            xml += self.list_macro_xml('Specials', self.specials, '75')
 
         if self.itempowers:
-            xml += self.list_macro_xml('Item Powers', self.itempowers, '60')
+            xml += self.list_macro_xml('Item Powers', self.itempowers, '75')
 
         if self.resists:
-            xml += self.list_macro_xml('Resists', self.resists, '50')
+            xml += self.list_macro_xml('Resists', self.resists, '75')
 
         if self.spells:
-            xml += self.spell_list_macro_xml('Spellbook', self.spells, '60')
+            xml += self.spell_list_macro_xml('Spellbook', self.spells, '75')
 
         if self.spells_memorized:
-            xml += self.spell_list_macro_xml('Memorized', self.spells_memorized, '65')
+            xml += self.spell_list_macro_xml('Memorized', self.spells_memorized, '75')
 
         if self.spells_known:
-            xml += self.spell_list_macro_xml('Spells Known', self.spells_known, '80')
+            xml += self.spell_list_macro_xml('Spells Known', self.spells_known, '75')
 
         if self.items and self.settings.value("items") == 'True':
             xml += self.items_macro_xml()
@@ -673,8 +684,8 @@ class Pathfinder:
         xml += '           <applyToTokens>true</applyToTokens>\n'
         xml += '           <fontColorKey>' + colorf + '</fontColorKey>\n'
         xml += '           <fontSize>1.00em</fontSize>\n'
-        xml += '           <minWidth>30</minWidth>\n'
-        xml += '           <maxWidth>30</maxWidth>\n'
+        xml += '           <minWidth>53</minWidth>\n'
+        xml += '           <maxWidth>53</maxWidth>\n'
         xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
         xml += '           <toolTip></toolTip>\n'
         xml += '           <commonMacro>false</commonMacro>\n'
@@ -790,7 +801,7 @@ class Pathfinder:
 
         label = die
         name = die
-        width = '30'
+        width = '31'
         group = 'Basic Dice'
         font = self.settings.value("colors/basicf")
         background = self.settings.value("colors/basicb")
@@ -1137,8 +1148,8 @@ class Pathfinder:
         font = self.settings.value("colors/specialsf")
         background = self.settings.value("colors/specialsb")
         group = 'Special'
-        label = 'Items'
-        width = '40'
+        label = 'Inventory'
+        width = '75'
 
         self.num_macros += 1
 
@@ -1151,13 +1162,16 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        tmp = '\n[frame("Items"): {'
-        tmp += '\n    <html>'
-        tmp += '\n    <head>'
-        tmp += '\n        <title>Items</title>'
-        tmp += '\n    </head>'
-        tmp += '\n    <body style="padding:0 10px 0 10px">'
-        tmp += '\n        <h1>%s Items</h1>' % util.clean_name(self.name)
+        tmp = '\n[frame("Inventory"): {'
+        tmp += '\n  <html>'
+        tmp += '\n  <head>'
+        tmp += '\n      <title>Inventory</title>'
+        tmp += '\n  </head>'
+        tmp += '\n  <body style="padding:0 10px 0 10px">'
+        tmp += '\n      <h1>'
+        tmp += '\n          <span>Inventory</span><br>'
+        tmp += '\n          <small><b>%s</b></small>' % util.clean_name(self.name)
+        tmp += '\n      </h1>'
 
         for item in sorted(self.items, key=lambda k: k['name']):
             name = item['name']
@@ -1179,7 +1193,8 @@ class Pathfinder:
             tmp += '</div>'
 
         if len(tmp) > 0:
-            tmp += '    <div><b>Money: </b>&nbsp;'
+            tmp += '    <div><br><b>Money: </b>&nbsp;'
+
         if int(self.pp) > 0:
             tmp += self.pp + 'pp &nbsp;'
         if int(self.gp) > 0:
@@ -1189,9 +1204,9 @@ class Pathfinder:
         if int(self.cp) > 0:
             tmp += self.cp + 'cp'
 
-        tmp += '        </div>'
-        tmp += '    </body>\n'
-        tmp += '    </html>\n'
+        tmp += '\n      </div>'
+        tmp += '\n      </body>\n'
+        tmp += '\n  </html>\n'
         tmp += '}]'
 
         xml += html.escape(tmp)
@@ -1334,60 +1349,75 @@ class Pathfinder:
 
         return xml
 
-    def init_macro_xml(self):
+    def init_macro_xml(self, roll=True):
 
         font = self.settings.value("colors/initf")
         background = self.settings.value("colors/initb")
-        group = 'Basic'
-        width = '25'
+        group = ''  # 'Basic'
+        width = '255'  # '25'
         name = 'Initiative'
-        label = 'Init'
+
+        if roll:
+            label = 'Roll Init'
+        else:
+            font, background = background, font  # Swap colors
+            label = 'Add to Init'
 
         self.num_macros += 1
         bonus = str.replace(self.initiative, '+', '')
 
-        xml = '        <entry>\n'
-        xml += '         <int>' + str(self.num_macros) + '</int>\n'
-        xml += '         <net.rptools.maptool.model.MacroButtonProperties>\n'
-        xml += '           <saveLocation></saveLocation>\n'
-        xml += '           <index>' + str(self.num_macros) + '</index>\n'
-        xml += '           <colorKey>' + background + '</colorKey>\n'
-        xml += '           <hotKey>None</hotKey>\n'
-        xml += '           <command>'
-        xml += '[h: Roll = d20]\n'
+        xml = '<entry>\n'
+        xml += '    <int>' + str(self.num_macros) + '</int>\n'
+        xml += '    <net.rptools.maptool.model.MacroButtonProperties>\n'
+        xml += '        <saveLocation></saveLocation>\n'
+        xml += '        <index>' + str(self.num_macros) + '</index>\n'
+        xml += '        <colorKey>' + background + '</colorKey>\n'
+        xml += '        <hotKey>None</hotKey>\n'
+        xml += '        <command>'
 
+        # tmp = '[h: Roll = d20]\n'
         tmp = "<table border='0' cellpadding='0' cellspacing='0' style='width:200px'>\n"
-        tmp += "<tr bgcolor='" + background + "'>\n"
-        tmp += " <td><span style='color:" + font + "'><b>" + name + "</b></span></td>\n"
-        tmp += "</tr>\n"
-        tmp += "<tr>\n"
-        tmp += "<td>[r: InitRoll = Roll + " + bonus + "]</td>\n"
-        tmp += "</tr>\n"
+        tmp += "    <tr bgcolor='" + background + "'>\n"
+        tmp += "        <td><span style='color:" + font + "'><b>" + name + "</b></span></td>\n"
+        tmp += "    </tr>\n"
+        tmp += "    <tr>\n"
+
+        if (roll):
+            tmp += "    <td>[e: InitRoll = d20 + " + bonus + "]</td>\n"
+        else:
+            tmp += "    <td>[r: InitRoll = TotalRoll]</td>\n"
+
+        tmp += "    </tr>\n"
         tmp += "</table>\n"
+
+        tmp += '[h: addToInitiative()]\n'
+        tmp += '[h: setInitiative(InitRoll)]\n'
+        tmp += '[h: sortInitiative()]\n'
 
         xml += html.escape(tmp)
 
-        xml += '[h: setInitiative(InitRoll)]\n'
-        xml += '</command>\n'
-        xml += '           <label>' + label + '</label>\n'
-        xml += '           <group>' + group + '</group>\n'
-        xml += '           <sortby>6</sortby>\n'
-        xml += '           <autoExecute>true</autoExecute>\n'
-        xml += '           <includeLabel>false</includeLabel>\n'
-        xml += '           <applyToTokens>true</applyToTokens>\n'
-        xml += '           <fontColorKey>' + font + '</fontColorKey>\n'
-        xml += '           <fontSize>1.00em</fontSize>\n'
-        xml += '           <minWidth>' + width + '</minWidth>\n'
-        xml += '           <maxWidth>' + width + '</maxWidth>\n'
-        xml += '           <allowPlayerEdits>true</allowPlayerEdits>\n'
-        xml += '           <toolTip>' + bonus + '</toolTip>\n'
-        xml += '           <commonMacro>false</commonMacro>\n'
-        xml += '           <compareGroup>true</compareGroup>\n'
-        xml += '           <compareIncludeLabel>true</compareIncludeLabel>\n'
-        xml += '           <compareAutoExecute>true</compareAutoExecute>\n'
-        xml += '           <compareApplyToSelectedTokens>true</compareApplyToSelectedTokens>\n'
-        xml += '         </net.rptools.maptool.model.MacroButtonProperties>\n'
-        xml += '       </entry>\n'
+        xml += '        </command>\n'
+
+        xml += '        <label>' + label + '</label>\n'
+        xml += '        <group>' + group + '</group>\n'
+        # xml += '        <sortby>6</sortby>\n'
+        xml += '        <sortby>%i</sortby>\n' % self.num_macros
+        xml += '        <autoExecute>true</autoExecute>\n'
+        xml += '        <includeLabel>false</includeLabel>\n'
+        xml += '        <applyToTokens>true</applyToTokens>\n'
+        xml += '        <fontColorKey>' + font + '</fontColorKey>\n'
+        xml += '        <fontSize>1.00em</fontSize>\n'
+        xml += '        <minWidth>' + width + '</minWidth>\n'
+        xml += '        <maxWidth>' + width + '</maxWidth>\n'
+        xml += '        <allowPlayerEdits>true</allowPlayerEdits>\n'
+        xml += '        <toolTip>' + bonus + '</toolTip>\n'
+        xml += '        <commonMacro>false</commonMacro>\n'
+        xml += '        <compareGroup>true</compareGroup>\n'
+        xml += '        <compareIncludeLabel>true</compareIncludeLabel>\n'
+        xml += '        <compareAutoExecute>true</compareAutoExecute>\n'
+        xml += '        <compareApplyToSelectedTokens>true</compareApplyToSelectedTokens>\n'
+        xml += '    </net.rptools.maptool.model.MacroButtonProperties>\n'
+        xml += '</entry>\n'
 
         return xml
 
@@ -1399,7 +1429,7 @@ class Pathfinder:
         full_background = self.settings.value("colors/fullb")
 
         group = 'Attacks'
-        width = '100'
+        width = '120'
 
         regex = re.search('(\d+)\s*\-\s*(\d+)', crit)
         if regex:
@@ -1441,27 +1471,32 @@ class Pathfinder:
         xml += '           <command>'
 
         tmp = "[h: roll = d20]\n"
-        tmp += "[h,if(roll >= " + crit_low + " && roll <= " + crit_high + "): color=\"red\";color=\"blue\"]"
+        tmp += "[h,if(roll >= " + crit_low + " && roll <= " + crit_high + "): color=\"red\";color=\"blue\"]\n"
 
-        tmp += "<table border='1' cellpadding='0' cellspacing='0' style='width:200px'>\n"
-        tmp += "<tr bgcolor='" + background + "'>\n"
-        tmp += "<td><span style='color:" + font + "'><b>" + name + "(" + crit + ")</b></span></td>\n"
-        tmp += "<td><span style='color:" + font + "'><b>Damage</b></span></td>\n"
-        tmp += "</tr>\n"
-
-        tmp += "<tr>\n"
-        tmp += "<td><font color=[r: color]>[e: roll" + roll + "]</font></td>\n"
-        tmp += "<td><font color=[r: color]>"
-
+        tmp += "\n<table border='1' cellpadding='0' cellspacing='0' style='width:200px'>"
+        tmp += "\n  <tr bgcolor='" + background + "'>"
+        tmp += "\n      <td><span style='color:" + font + "'><b>" + name + "(" + crit + ")</b></span></td>"
+        tmp += "\n      <td><span style='color:" + font + "'><b>Damage</b></span></td>"
+        tmp += "\n  </tr>"
+        tmp += "\n  <tr>"
+        tmp += "\n      <td>"
+        tmp += "\n          <font color=[r: color]>"
+        tmp += "\n              [e: roll" + roll + "]"
+        tmp += "\n              [r, if(roll >= " + crit_low + " && roll <= " + crit_high + "): \"<b>Critical!</b>\"]"
+        tmp += "\n          </font>"
+        tmp += "\n      </td>"
+        tmp += "\n      <td>"
+        tmp += "\n          <font color=[r: color]>"
+        # #############################################################
         if re.search('\d*d\d+', damage):
             tmp += "[e:" + damage + "]"
         else:
             tmp += "" + damage + ""
-
-        tmp += "</font></td>"
-        tmp += "</tr>\n"
-
-        tmp += "</table>\n"
+        # #############################################################
+        tmp += "\n            </font>"
+        tmp += "\n        </td>"
+        tmp += "\n    </tr>"
+        tmp += "\n</table>\n"
 
         xml += html.escape(tmp)
 
@@ -1519,12 +1554,19 @@ class Pathfinder:
                 tmp += "[h: roll = d20]\n"
                 tmp += "[h,if(roll >= " + crit_low + " && roll <= " + crit_high + "): color=\"red\";color=\"blue\"]"
 
-                tmp += "<tr>\n"
-                tmp += "<td><font color=[r: color]>[e: roll" + roll + "]</font></td>\n"
+                tmp += "\n<tr>"
+                tmp += "\n  <td>"
+                tmp += "\n      <font color=[r: color]>"
+                tmp += "\n         [e: roll" + roll + "]"
+                tmp += "\n         [r, if(roll >= " + crit_low + " && roll <= " + crit_high + "): \"<b>Critical!</b>\"]"
+                tmp += "\n      </font>"
+                tmp += "\n</td>"
+
                 if re.search('\d*d\d+', damage):
                     tmp += "<td><font color=[r: color]>[e:" + damage + "]</font></td>\n"
                 else:
                     tmp += "<td><font color=[r: color]>" + damage + "</font></td>\n"
+
                 tmp += "</tr>\n"
 
             tmp += "</table>\n"
@@ -1560,7 +1602,7 @@ class Pathfinder:
         background = self.settings.value("colors/sheetb")
         group = 'Special'
         label = 'Sheet'
-        width = '40'
+        width = '75'
         url = self.settings.value("httpbase")
 
         self.num_macros += 1
