@@ -4,11 +4,14 @@ import re
 import hashlib
 import io
 import html
-
-from PIL import Image
-from macros.special import *
+import macros.health
 import util
 import templates.spell as spellTmpl
+
+from macros.special import *
+from macros.initiative import *
+
+from PIL import Image
 
 
 # noinspection PyCallByClass
@@ -57,6 +60,7 @@ class Pathfinder:
                          'colossal': 'fwABAeFlFSoJAAAAKgABAQ=='}
 
         self.specialMacros = SpecialMacros()
+        self.initMacros = InitMacros()
 
     def parse(self):
         self.parse_base()
@@ -428,8 +432,12 @@ class Pathfinder:
         colorb = self.settings.value("colors/cmbb")
         xml += self.roll_macro_xml('CMB', self.cmb, 'Basic CMB', 'Basic', '53',
                                    colorb, colorf, '2')
+
         xml += self.init_macro_xml()
         xml += self.init_macro_xml(False)
+
+        self.num_macros += 1
+        xml += self.initMacros.gen_remove_init(self.num_macros)
 
         if self.settings.value("basicdice") == 'True':
             xml += self.basic_die_macro_xml('d4')
@@ -576,6 +584,7 @@ class Pathfinder:
             tmp += '"dmgOrHealing|Normal Damage,Normal Healing,Temp Damage,Temp Healing,Temp Bonus,Heal Both,Reset '
             tmp += 'HP|Is the character taking damage or being healed?|LIST|SELECT=0",\n'
             tmp += '"hpChange|0|Number of Hit Points")]\n'
+
             tmp += '[h:abort(status)]\n'
             tmp += '\n'
             tmp += '[switch(dmgOrHealing),CODE:\n'
@@ -643,7 +652,10 @@ class Pathfinder:
             tmp += '  [h:bar.Health = HPTotal / HPM]\n'
             tmp += '  [r:token.name] has been reset and is at  [r:HPC] hit points.\n'
             tmp += '};\n'
-            tmp += 'default: { Unknown action}]\n'
+            tmp += 'default: { Unknown action }]\n'
+
+            tmp += macros.health.gen_status_frag(hpcurr_prop=hpc, hpmax_prop=hpm)
+
         elif hpm:
             tmp += '[h:status = input(\n'
             tmp += '"hpChange|0|Number of Hit Points",\n'
@@ -656,8 +668,9 @@ class Pathfinder:
             tmp += '};\n'
             tmp += '{\n'
             tmp += '[h:' + hpm + ' = ' + hpm + ' + hpChange]\n'
-            tmp += '[r:token.name] is gains  [r:hpChange] hit points.\n'
+            tmp += '[r:token.name] gains  [r:hpChange] hit points.\n'
             tmp += '};]\n'
+
         elif hpc:
             tmp += '[h:status = input(\n'
             tmp += '"hpChange|0|Number of Hit Points",\n'
@@ -670,7 +683,7 @@ class Pathfinder:
             tmp += '};\n'
             tmp += '{\n'
             tmp += '[h:' + hpc + ' = ' + hpc + ' + hpChange]\n'
-            tmp += '[r:token.name] is gains  [r:hpChange] hit points.\n'
+            tmp += '[r:token.name] gains  [r:hpChange] hit points.\n'
             tmp += '};]\n'
 
         xml += html.escape(tmp)
@@ -1353,8 +1366,8 @@ class Pathfinder:
 
         font = self.settings.value("colors/initf")
         background = self.settings.value("colors/initb")
-        group = ''  # 'Basic'
-        width = '255'  # '25'
+        group = '00 - Initiative'  # 'Basic'
+        width = '120'  # '25'
         name = 'Initiative'
 
         if roll:
@@ -1382,7 +1395,7 @@ class Pathfinder:
         tmp += "    </tr>\n"
         tmp += "    <tr>\n"
 
-        if (roll):
+        if roll:
             tmp += "    <td>[e: InitRoll = d20 + " + bonus + "]</td>\n"
         else:
             tmp += "    <td>[r: InitRoll = TotalRoll]</td>\n"
@@ -1409,7 +1422,7 @@ class Pathfinder:
         xml += '        <fontSize>1.00em</fontSize>\n'
         xml += '        <minWidth>' + width + '</minWidth>\n'
         xml += '        <maxWidth>' + width + '</maxWidth>\n'
-        xml += '        <allowPlayerEdits>true</allowPlayerEdits>\n'
+        xml += '        <allowPlayerEdits>false</allowPlayerEdits>\n'
         xml += '        <toolTip>' + bonus + '</toolTip>\n'
         xml += '        <commonMacro>false</commonMacro>\n'
         xml += '        <compareGroup>true</compareGroup>\n'
