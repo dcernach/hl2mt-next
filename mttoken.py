@@ -1,4 +1,5 @@
 import re
+import struct
 # from PyQt4.QtCore import *
 
 import hashlib
@@ -78,6 +79,7 @@ class Pathfinder:
         self.parse_specials()
         self.parse_itempowers()
         self.parse_spells()
+        self.create_base_props()
 
     def parse_base(self):
         self.role = self.xml.get('role')
@@ -85,8 +87,10 @@ class Pathfinder:
         self.race = self.xml.find('race').get('racetext')
         self.alignment = self.xml.find('alignment').get('name')
         self.size = self.xml.find('size').get('name').lower()
+
         if not self.size:
             self.size = 'medium'
+
         self.space = self.xml.find('size').find('space').get('value')
         self.reach = self.xml.find('size').find('reach').get('value')
         self.ac = self.xml.find('armorclass').get('ac')
@@ -106,6 +110,7 @@ class Pathfinder:
         self.sp = self.xml.find('money').get('sp')
         self.cp = self.xml.find('money').get('cp')
         self.xpvalue = '0'
+
         if self.xml.find('xpaward') is not None:
             self.xpvalue = self.xml.find('xpaward').get('value')
 
@@ -259,6 +264,9 @@ class Pathfinder:
                 temp['resist'] = 'NA'
             self.spells_known.append(temp)
 
+    def create_base_props(self):
+        self.custom_property_map_xml["hl2mt_initiative"] = self.initiative
+
     def make_content_xml(self):
         #######################################################################
         # TODO: This method should be refactored!!!!
@@ -335,6 +343,8 @@ class Pathfinder:
         if self.vision_dark and self.settings.value("vision") == 'True' and self.vision_lowlight:
             text += ' and Lowlight'
 
+        # util.write_vision_types(self.name, text) # Debug only
+
         xml += '    <sightType>' + text + '</sightType>\n'
         xml += '    <hasSight>true</hasSight>\n'
         xml += '    <state/>\n'
@@ -391,6 +401,7 @@ class Pathfinder:
                 tmp += self.cp + 'cp '
             tmp += '\n'
             tmp = html.escape(tmp)
+
             xml += self.property_xml(self.settings.value("properties/items"), tmp)
         # ----------------------------------------------------------------------
         # <-- Create token Properties
@@ -433,12 +444,21 @@ class Pathfinder:
         xml += self.roll_macro_xml('CMB', self.cmb, 'Basic CMB', 'Basic', '53',
                                    colorb, colorf, '2')
 
+        ###############################################################
+        # Basic Initiative Macros
+        ###############################################################
         xml += self.init_macro_xml()
         xml += self.init_macro_xml(False)
 
         self.num_macros += 1
         xml += self.initMacros.gen_remove_init(self.num_macros)
 
+        self.num_macros += 1
+        xml += self.initMacros.gen_next_init(self.num_macros)
+
+        ###############################################################
+        # Basic DICE Macros
+        ###############################################################
         if self.settings.value("basicdice") == 'True':
             xml += self.basic_die_macro_xml('d4')
             xml += self.basic_die_macro_xml('d6')
@@ -1379,6 +1399,9 @@ class Pathfinder:
         self.num_macros += 1
         bonus = str.replace(self.initiative, '+', '')
 
+        if self.custom_property_map_xml["hl2mt_initiative"]:
+            bonus = "hl2mt_initiative"
+
         xml = '<entry>\n'
         xml += '    <int>' + str(self.num_macros) + '</int>\n'
         xml += '    <net.rptools.maptool.model.MacroButtonProperties>\n'
@@ -1676,13 +1699,22 @@ class Pathfinder:
 
     def make_pog(self, image_name):
 
+        # im = Image.open(str(image_name))
+        # size = (128, 128)
+        # im.thumbnail(size, Image.ANTIALIAS)
+
         im = Image.open(str(image_name))
-        size = (128, 128)  # TODO: Fix-it to use existing image resolution.
-        im.thumbnail(size, Image.ANTIALIAS)
+
+        if (im.size[0] > 300 or im.size[1] > 300):
+            size = (256, 256)  # resize POG to 256x256max
+            im.thumbnail(size, Image.ANTIALIAS)
+        else:
+            size = im.size
+            im.thumbnail(size, Image.NONE)
 
         output = io.BytesIO()
-
         im.save(output, 'png')
+
         self.pog_md5 = hashlib.md5(output.getvalue()).hexdigest()
         output.close()
         self.pog_asset = self.pog_md5 + '.png'
@@ -1692,10 +1724,18 @@ class Pathfinder:
         self.pog = im
 
     def make_portrait(self, image_name):
+        # im = Image.open(str(image_name))
+        # size = (200, 200)
+        # im.thumbnail(size, Image.ANTIALIAS)
 
         im = Image.open(str(image_name))
-        size = (200, 200)  # TODO: Fix-it to use existing image resolution.
-        im.thumbnail(size, Image.ANTIALIAS)
+
+        if (im.size[0] > 400 or im.size[1] > 400):
+            size = (400, 400)  # resize portrait to 400x400
+            im.thumbnail(size, Image.ANTIALIAS)
+        else:
+            size = im.size
+            im.thumbnail(size, Image.NONE)
 
         output = io.BytesIO()
         im.save(output, 'png')
@@ -1708,10 +1748,15 @@ class Pathfinder:
         self.portrait = im
 
     def make_thumbnail(self):
-        size = 50, 50  # TODO: Fix-it to use existing image resolution.
-        im = self.pog.copy()
-        im.thumbnail(size, Image.ANTIALIAS)
-        self.thumbnail = im
+        pass
+        #####
+        # dead code... unecessaary processing.
+        #####
+        # size = 50, 50  # TODO: Fix-it to use existing image resolution.
+        # im = self.pog.copy()
+        # im.thumbnail(size, Image.ANTIALIAS)
+        # self.thumbnail = im
+        self.thumbnail = self.portrait
 
     def index_append(self, value):
 

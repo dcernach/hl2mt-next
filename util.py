@@ -2,6 +2,12 @@ __author__ = 'dandrade'
 import re
 
 
+def write_vision_types(char_name, vision_name):
+    file = open('_vision-types.txt', '+a')
+    file.write('CharName   : %s\n'
+               'VisionName : %s\n\n' % (char_name, vision_name))
+    file.close()
+
 def clean_name(name):
     name = str.replace(str(name), " (combat trained) ", "")
     name = str.replace(name, " (combat trained)", "")

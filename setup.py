@@ -1,15 +1,21 @@
+__version__ = '0.85rc1'
+__zipfile__ = 'hl2mt-next-%s.zip' % __version__
 # http://cx-freeze.readthedocs.org/en/latest/overview.html
 # http://stackoverflow.com/questions/15486292/cx-freeze-doesnt-find-all-dependencies
-
 # build with: C:\> python setup.py  build
+
 import sys
 import shutil
+import zipfile
+import os
 
 from cx_Freeze import setup, Executable
 
 # Remove the existing folders folder
-shutil.rmtree("build", ignore_errors=True)
+
 shutil.rmtree("dist", ignore_errors=True)
+shutil.rmtree("dist.temp", ignore_errors=True)
+shutil.rmtree("build", ignore_errors=True)
 
 # Define Plataform infromation
 base = None
@@ -161,8 +167,8 @@ path = []
 # package, leaving just the relative path to the module.
 replace_paths = []
 
-# 24) Suppress all output except warnings
-silent = False
+# 24) Suppress all output except warnings (True/False)
+silent = True
 
 # 25) list containing files to be included in the zip file directory; it is expected that this list will contain
 # strings or 2-tuples for the source and destination
@@ -175,30 +181,30 @@ options = {"build_exe": {
     # "bin_includes":           bin_includes,
     # "bin_path_excludes":      bin_path_excludes,
     # "bin_path_includes":      bin_path_includes,
-    "build_exe":                build_exe,
-    "compressed":               compressed,
+    "build_exe": build_exe,
+    "compressed": compressed,
     # "constants":              constants,
-    "copy_dependent_files":     copy_dependent_files,
+    "copy_dependent_files": copy_dependent_files,
     # "create_shared_zip":      create_shared_zip,
-    "excludes":                 excludes,
+    "excludes": excludes,
     # "icon":                   icon,
-    "includes":                 includes,
+    "includes": includes,
     # "include_files":          include_files,
     # "include_in_shared_zip":  include_in_shared_zip,
     # "include_msvcr":          include_msvcr,
     # "init_script":            init_script,
     # "namespace_packages":     namespace_packages,
     # "optimize":               optimize,
-    "packages":                 packages,
-    "path":                     path,
+    "packages": packages,
+    "path": path,
     # "replace_paths":          replace_paths,
-    # "silent":                 silent,
+    # "silent"                  : silent,
     # "zip_includes":           zip_includes,
 }}
 
 setup(
     name='hl2mt',
-    version='0.84b-01',
+    version='0.85rc',
     url='https://bitbucket.org/dcernach/hl2mt',
     license='GPLv3',
     description='hl2mt: Hero Lab to Maptool fork',
@@ -210,4 +216,36 @@ setup(
     executables=executables
 )
 
+
+def zipdir(path, file):
+    os.chdir(path)
+    path = '.'
+    zf = zipfile.ZipFile(os.path.join(path, file), "w", zipfile.ZIP_DEFLATED)
+
+    for dirname, subdirs, files in os.walk(path):
+        print('Compressing Dir  -> ' + dirname)
+
+        for filename in files:
+            print('Compressing File -> ' + os.path.join(dirname, filename))
+            if (filename != file):
+                zf.write(os.path.join(dirname, filename))
+
+        if (dirname != '.'):
+            zf.write(dirname)
+
+    zf.close()
+    os.chdir('..')
+
+
+print('Cleaning up...')
 shutil.rmtree("build", ignore_errors=True)
+
+print('Compressing files...')
+zipdir('dist', __zipfile__)
+
+print('Done...')
+shutil.move(os.path.join('dist', __zipfile__), __zipfile__)
+os.rename('dist', 'dist.temp')
+os.makedirs('dist', exist_ok=True)
+shutil.rmtree('dist.temp', ignore_errors=True)
+shutil.move(__zipfile__, os.path.join('dist', __zipfile__))
