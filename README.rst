@@ -21,13 +21,50 @@ Downloading
 
 There are binaries for Windows, Linux and Mac:
 
-`Windows Binary <http://tarsis.org/builds/hl2mt.exe>`_
+------------------------------------------------------------------------------------
 
-`Linux 32bit Binary <http://tarsis.org/builds/hl2mt.i386>`_
+Next Version (0.85-rc1)
+============
 
-`Linux 64bit Binary <http://tarsis.org/builds/hl2mt.amd64>`_
+`Windows Binary (hl2mt-next-0.85-rc1) <https://onedrive.live.com/redir?resid=66874F731F0A5236!63669&authkey=!ABGaoIgk9u9cTm4&ithint=file%2czip>`_
 
-`OS X Mountain Lion 64bit Binary <http://tarsis.org/builds/hl2mt.dmg>`_
+Unzip anywhere you like and run ``hl2mt.exe``. In future RC I will create a Windows Installer package.
+
+**Note about HP Macros:** To correct use HP macros you should create the following **States** in you MapTool Campaign File. I will put configuration options to change this options in the next RC.
+
+1. Wounded x1
+2. Wounded x2
+3. Wounded x3
+4. Disabled
+5. Dying
+6. Dead
+
+**Note about Campaign Properties:** The following Sight types are required to correct use Herolab Portifolios (it was fixed from previous Tarsis version).
+
+1. Darkvision60: circle r62 
+2. Blind: circle distance=2.5 r2 
+3. Darkvision120 and Lowlight: circle x2 r61 
+4. Darkvision30: circle r32 
+5. Darkvision120: circle r122 
+6. Darkvision90 and Lowlight: circle x2 r46 
+7. Normal: circle r2 
+8. Darkvision60 and Lowlight: circle x2 r31 
+9. Darkvision90: circle r92 
+10. Darkvision30 and Lowlight: circle x2 r16 
+11. LowLight: circle x2 r1.2 
+
+------------------------------------------------------------------------------------
+
+Tarsis Versions
+===============
+
+`Windows Binary (Tarsis Version) <http://tarsis.org/builds/hl2mt.exe>`_
+
+`Linux 32bit Binary (Tarsis Version) <http://tarsis.org/builds/hl2mt.i386>`_
+
+`Linux 64bit Binary (Tarsis Version) <http://tarsis.org/builds/hl2mt.amd64>`_
+
+`OS X Mountain Lion (Tarsis Version) 64bit Binary <http://tarsis.org/builds/hl2mt.dmg>`_
 
 Simply download the version for your platform and double click to run.
 
@@ -51,7 +88,6 @@ There are video tutorials covering the basic features ``hl2mt``
 `Tutorial 7 - The Community Bestiary <http://www.youtube.com/watch?v=_Eeq6XTIMaE>`_
 
 `Tutorial 8 - Custom Macros <http://www.youtube.com/watch?v=nIbH-ynGkTc>`_
-
 
 
 Usage
@@ -101,6 +137,7 @@ To keep the token sizes down ``hl2mt`` will process any image you have in these 
 image is downsized to be within 200x200 pixels and converted to PNG. For POGs the image is downsized to be within
 128x128 pixels and converted to PNG.
 
+..
 
 Token Properties
 ----------------
