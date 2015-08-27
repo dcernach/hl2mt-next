@@ -61,7 +61,7 @@ class Pathfinder:
                          'colossal': 'fwABAeFlFSoJAAAAKgABAQ=='}
 
         self.specialMacros = SpecialMacros()
-        self.initMacros = InitMacros()
+        self.initMacros = InitMacros(self.custom_property_map_xml)
 
     def parse(self):
         self.parse_base()
@@ -447,8 +447,15 @@ class Pathfinder:
         ###############################################################
         # Basic Initiative Macros
         ###############################################################
-        xml += self.init_macro_xml()
-        xml += self.init_macro_xml(False)
+
+        # xml += self.init_macro_xml()
+        # xml += self.init_macro_xml(False)
+
+        self.num_macros += 1
+        xml += self.initMacros.gen_roll_init(self.num_macros)
+
+        self.num_macros += 1
+        xml += self.initMacros.gen_add_init(self.num_macros)
 
         self.num_macros += 1
         xml += self.initMacros.gen_remove_init(self.num_macros)

@@ -9,7 +9,6 @@ def get_index():
     _macro_index["macro_index"] += 1
     return _macro_index["macro_index"]
 
-
 def create_entry(macro_label, macro_command,
                  macro_number=None,
                  macro_group=None,
@@ -68,3 +67,12 @@ def create_entry(macro_label, macro_command,
     entry += '\n</entry>'
 
     return entry
+
+
+def explode_roll(dice, roll_var, bonus_var):
+    macro_code = '<b>[r: %(r)s + %(b)s]</b> = '
+    macro_code += '%(d)s <b>([r: %(r)s])</b> + Bonus <b>([r: %(b)s])</b>'
+
+    macro_code = macro_code % ({'d': dice, 'r': roll_var, 'b': bonus_var})
+
+    return macro_code

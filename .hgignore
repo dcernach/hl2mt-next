@@ -1,5 +1,4 @@
 syntax: glob
 *.rptok
 *.ini
-./dist*
 dist
