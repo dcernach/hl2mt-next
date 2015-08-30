@@ -297,7 +297,7 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
                 if name not in ['geometry', 'windowstate', 'tablewidth3', 'tablewidth4', 'tablewidth5', 'tablewidth6']:
                     config.set('DEFAULT', str(name), self.settings.value(name))
 
-            with open(filename, 'wb') as cf:
+            with open(filename, 'wt') as cf:
                 config.write(cf)
                 cf.close()
 
