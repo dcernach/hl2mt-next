@@ -8,12 +8,14 @@ import configparser
 import zipfile
 import hashlib
 import re
+import os.path
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from ui import mainWindow, foldersDialog, colorsDialog, indexingDialog, outputDialog, propertiesDialog, htmlDialog
 from ui import aboutDialog, helpDialog, macrosDialog
 from herolab import HeroLabIndex, HeroLab
+from PyQt4 import QtCore, QtGui
 
 
 class Main(QMainWindow, mainWindow.Ui_mainWindow):
@@ -762,19 +764,70 @@ class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
         self.buttonPOG.clicked.connect(self.button_pog_clicked)
         self.buttonOutput.clicked.connect(self.button_output_clicked)
 
+        # store current selected folders. It's used to save local prop file
+        # containing all selected folder fo this current input folder.
+        self.local_config_file = '.hl2mt-local.ini'
+        self.input_folder = ''
+        self.pog_folder = ''
+        self.portrait_folder = ''
+        self.output_folder = ''
+        self.buttonBox.connect(self, QtCore.SIGNAL("accepted()"), self.accepted_folders)
+
         self.load_settings()
 
+    def accepted_folders(self):
+        local_config = configparser.ConfigParser()
+        local_config['LOCAL FOLDERS'] = {'folderinput': self.input_folder,
+                                         'folderportrait': self.portrait_folder,
+                                         'folderpog': self.pog_folder,
+                                         'folderoutput': self.output_folder}
+
+        config_file = self.input_folder + os.path.sep + self.local_config_file
+
+        with open(config_file, 'w') as configfile:
+            local_config.write(configfile)
+
+        # Save configuration only when accepted.
+        self.settings.setValue("folderinput", self.input_folder)
+        self.settings.setValue("folderportrait", self.portrait_folder)
+        self.settings.setValue("folderpog", self.pog_folder)
+        self.settings.setValue("folderoutput", self.output_folder)
+
     def load_settings(self):
-        self.editInput.setText(str(self.settings.value("folderinput")))
-        self.editPortrait.setText(str(self.settings.value("folderportrait")))
-        self.editPOG.setText(str(self.settings.value("folderpog")))
-        self.editOutput.setText(str(self.settings.value("folderoutput")))
+        folderinput = self.settings.value("folderinput")
+        local_config_file = folderinput + os.path.sep + self.local_config_file
+
+        if os.path.exists(local_config_file):
+            local_config = configparser.ConfigParser()
+            local_config.read(local_config_file)
+            local_folders_section = local_config['LOCAL FOLDERS']
+
+            self.input_folder = local_folders_section['folderinput']
+            self.portrait_folder = local_folders_section['folderportrait']
+            self.pog_folder = local_folders_section['folderpog']
+            self.output_folder = local_folders_section['folderoutput']
+        else:
+            self.input_folder = str(self.settings.value("folderinput"))
+            self.portrait_folder = str(self.settings.value("folderportrait"))
+            self.pog_folder = str(self.settings.value("folderpog"))
+            self.output_folder = str(self.settings.value("folderoutput"))
+
+        self.update_ui_data()
+
+    def update_ui_data(self):
+        self.editInput.setText(self.input_folder)
+        self.editPortrait.setText(self.portrait_folder)
+        self.editPOG.setText(self.pog_folder)
+        self.editOutput.setText(self.output_folder)
 
     def button_input_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Input Folder", str(self.settings.value("folderinput")),
+        folder = QFileDialog.getExistingDirectory(self, "Input Folder",
+                                                  str(self.settings.value("folderinput")),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
-            self.settings.setValue("folderinput", folder)
+            self.input_folder = folder
+            # When changing input folder, it tries to read local folders configuration
+            # and set up all other fields automatically.
             self.load_settings()
 
     def button_portrait_clicked(self):
@@ -782,22 +835,24 @@ class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
                                                   str(self.settings.value("folderportrait")),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
-            self.settings.setValue("folderportrait", folder)
-            self.load_settings()
+            self.portrait_folder = folder
+            self.update_ui_data()
 
     def button_pog_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "POG Folder", str(self.settings.value("folderpog")),
+        folder = QFileDialog.getExistingDirectory(self, "POG Folder",
+                                                  str(self.settings.value("folderpog")),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
-            self.settings.setValue("folderpog", folder)
-            self.load_settings()
+            self.pog_folder = folder
+            self.update_ui_data()
 
     def button_output_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Output Folder", str(self.settings.value("folderoutput")),
+        folder = QFileDialog.getExistingDirectory(self, "Output Folder",
+                                                  str(self.settings.value("folderoutput")),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
-            self.settings.setValue("folderoutput", folder)
-            self.load_settings()
+            self.output_folder = folder
+            self.update_ui_data()
 
 
 class PropertiesDialog(QDialog, propertiesDialog.Ui_propertiesDialog):
@@ -934,7 +989,6 @@ class OutputDialog(QDialog, outputDialog.Ui_outputDialog):
         indexing = not bool(checked)
         self.parent.actionIndexing.setEnabled(indexing)
         self.settings.setValue("indexing", str(indexing))
-
 
     def load_settings(self):
         self.checkAttack.setChecked(self.settings.value("weapons") == 'True')
@@ -1083,6 +1137,7 @@ def main():
     QCoreApplication.setOrganizationDomain("tarsis.org")
 
     app = QApplication(sys.argv)
+
     program = Main()
     program.show()
     app.exec_()

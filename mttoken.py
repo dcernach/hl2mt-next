@@ -1667,7 +1667,7 @@ class Pathfinder:
             tmp += '            }]\n'
 
         elif self.settings.value("description") == 'True':
-            hl2mt_statblock = re.sub(r"<meta http-equiv.*?>", '', self.html_statblock.decode())
+            hl2mt_statblock = re.sub(r"<meta http-equiv.*?>", '', self.html_statblock)
             hl2mt_statblock = hl2mt_statblock.replace('[', '(')
             hl2mt_statblock = hl2mt_statblock.replace(']', ')')
             hl2mt_statblock = hl2mt_statblock.replace('<body>', '<body style="padding:10px">')

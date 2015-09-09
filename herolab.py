@@ -63,7 +63,7 @@ class HeroLab:
 
                 if re.search(html_search, statblock.get("filename")):
                     html_file = statblock.get("folder") + "/" + statblock.get("filename")
-                    self.html = lab_zip.read(html_file)
+                    self.html = lab_zip.read(html_file).decode()
 
                 if re.search(xml_search, statblock.get("filename")):
                     xml_name = statblock.get("folder") + "/" + statblock.get("filename")
@@ -94,9 +94,10 @@ class HeroLab:
         token.values = self.values
         token.settings = self.settings
 
-        full_dir = os.path.join(str(self.settings.value("folderoutput")), self.subdir[1:])
+        # dca: full_dir = os.path.join(str(self.settings.value("folderoutput")), self.subdir[1:])
+        full_dir = os.path.join(str(self.settings.value("folderoutput")), '')
 
-        self.html_filename = hashlib.sha224(self.html).hexdigest() + '.html'
+        self.html_filename = hashlib.sha224(str.encode(self.html)).hexdigest() + '.html'
         token.html_statblock = self.html
         token.html_filename = self.html_filename
         token.parse()
@@ -145,11 +146,12 @@ class HeroLabIndex:
     def get_creatures(self):
 
         self.bad_files = []
-        # Parse Por files
+        # Parse (.por) files
         for dirpath, dirnames, filenames in os.walk(self.input_folder):
             for filename in [f for f in filenames if f.endswith(".por")]:
                 lab_file = os.path.join(dirpath, filename)
                 subdir = str.replace(dirpath, self.input_folder, '')
+                # subdir = ''
                 try:
                     lab_zip = zipfile.ZipFile(lab_file, 'r')
                     index_xml = lab_zip.open('index.xml')
@@ -181,7 +183,8 @@ class HeroLabIndex:
 
                             pog_file = self._search_file(self.pog_folder, subdir, name)
                             portrait_file = self._search_file(self.portrait_folder, subdir, name)
-                            token = self._token_name(subdir, name)
+                            # token = self._token_name(subdir, name)
+                            token = self._token_name('', name)
 
                             yield {"name": name, "summary": summary, "cr": cr, "source": filename,
                                    "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
@@ -210,7 +213,8 @@ class HeroLabIndex:
                                 # of 'Char Name + Minion Name' for Portrait and Pog directory.
                                 pog_file = self._search_file(self.pog_folder, subdir, minion_hl_name)
                                 portrait_file = self._search_file(self.portrait_folder, subdir, minion_hl_name)
-                                token = self._token_name(subdir, minion_name)
+                                # token = self._token_name(subdir, minion_name)
+                                token = self._token_name('', minion_name)
 
                                 yield {"name": minion_hl_name, "summary": summary, "cr": cr, "source": filename,
                                        "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
@@ -235,7 +239,8 @@ class HeroLabIndex:
 
                             pog_file = self._search_file(self.pog_folder, subdir, name)
                             portrait_file = self._search_file(self.portrait_folder, subdir, name)
-                            token = self._token_name(subdir, name)
+                            # token = self._token_name(subdir, name)
+                            token = self._token_name('', name)
 
                             yield {"name": name, "summary": summary, "cr": cr, "source": filename,
                                    "filename": char_filename, "mr": mr, "subdir": subdir, "pog": pog_file,
