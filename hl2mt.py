@@ -794,8 +794,9 @@ class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
         self.settings.setValue("folderoutput", self.output_folder)
 
     def load_settings(self):
-        folderinput = self.settings.value("folderinput")
-        local_config_file = folderinput + os.path.sep + self.local_config_file
+        # folderinput = self.settings.value("folderinput")
+        # local_config_file = folderinput + os.path.sep + self.local_config_file
+        local_config_file = self.input_folder + os.path.sep + self.local_config_file
 
         if os.path.exists(local_config_file):
             local_config = configparser.ConfigParser()
@@ -825,10 +826,12 @@ class FoldersDialog(QDialog, foldersDialog.Ui_foldersDialog):
                                                   str(self.settings.value("folderinput")),
                                                   QFileDialog.ShowDirsOnly)
         if folder != '':
+            self.load_settings()
             self.input_folder = folder
+            self.update_ui_data()
             # When changing input folder, it tries to read local folders configuration
             # and set up all other fields automatically.
-            self.load_settings()
+
 
     def button_portrait_clicked(self):
         folder = QFileDialog.getExistingDirectory(self, "Portrait Folder",
