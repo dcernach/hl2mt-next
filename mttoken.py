@@ -803,11 +803,11 @@ class Pathfinder:
         xml += '           <colorKey>' + background + '</colorKey>\n'
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
-        tmp = "<table border='0' cellpadding='0' cellspacing='0' style='width:200px'>\n"
+        tmp  = "<table border='0' cellpadding='5' cellspacing='0' style='width:200px'>\n"
         tmp += "<tr bgcolor='" + background + "'>\n"
         tmp += "<td><span style='color:" + font + "'><b>" + name + "</b></span></td>\n"
         tmp += "</tr>\n"
-        tmp += "<tr>\n"
+        tmp += " <tr style='border:1px solid %s'>\n" %background
         tmp += "<td>[e:" + roll + "]</td>\n"
         tmp += "</tr>\n"
         tmp += "</table>\n"
@@ -857,13 +857,14 @@ class Pathfinder:
         xml += '           <colorKey>' + background + '</colorKey>\n'
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
-        tmp = "<table border='0' cellpadding='0' cellspacing='0' style='width:200px'>\n"
-        tmp += "<tr bgcolor='" + background + "'>\n"
-        tmp += "<td><span style='color:" + font + "'><b>" + name + "</b></span></td>\n"
-        tmp += "</tr>\n"
-        tmp += "<tr>\n"
-        tmp += "<td>[e:" + die + "]</td>\n"
-        tmp += "</tr>\n"
+
+        tmp  = "<table border='0' cellpadding='5' cellspacing='0' style='width:200px'>\n"
+        tmp += "    <tr bgcolor='" + background + "'>\n"
+        tmp += "        <td><span style='color:" + font + "'><b>" + name + "</b></span></td>\n"
+        tmp += "    </tr>\n"
+        tmp += "    <tr style='border:1px solid %s'>\n" % background
+        tmp += "        <td>[e:" + die + "]</td>\n"
+        tmp += "    </tr>\n"
         tmp += "</table>\n"
 
         xml += html.escape(tmp)
@@ -1111,8 +1112,9 @@ class Pathfinder:
             k = str.replace(k, "'", "&#x00b4;")  # dca: Safe Name
 
             if v is None:
+                xml += html.escape('\n<div>\n')
                 xml += k
-                xml += '<br>'
+                xml += html.escape('\n</div>\n')
                 continue
 
             # With Indexing
@@ -1128,20 +1130,20 @@ class Pathfinder:
                 any_key = "hl2mt_%s_%03i" % (name, list_macro_count)
 
                 # Detail Template
-                detail_tmpl = '\n<div style="padding: 0 10px 0 10px;">'
-                detail_tmpl += '\n  <h2>'
-                detail_tmpl += '\n      <span>%s</span><br>' % k
-                detail_tmpl += '\n      <small><b>%s</b></small>' % self.name
-                detail_tmpl += '\n  </h2>'
-                detail_tmpl += '\n  <span>\n%s\n</span>' % util.pretty_html(v)
-                detail_tmpl += '\n</div>'
+                detail_tmpl  = '\n<div style="padding: 0 10px 0 10px;">'
+                detail_tmpl += '\n    <h2>'
+                detail_tmpl += '\n        <span>%s</span><br/>' % k
+                detail_tmpl += '\n        <small><b>%s</b></small>' % self.name
+                detail_tmpl += '\n    </h2>'
+                detail_tmpl += '\n    <span>\n%s\n</span>' % util.pretty_html(v)
+                detail_tmpl += '\n</div>\n'
 
                 self.custom_property_map_xml[any_key] = html.escape(detail_tmpl)  # spellTmpl.gen_spell_detail(spell)
 
-                macro_link = '<div>'
-                macro_link += '    [r: macroLink("%(name)s", "fn_detail@token", "none", '
+                macro_link  = '\n<div>\n'
+                macro_link += '    [r: macroLink("%(name)s", "fn_detail@token", "none", \n'
                 macro_link += '       "title=%(title)s&keys=%(keys)s", currentToken())]'
-                macro_link += '</div>\n'
+                macro_link += '\n</div>\n'
                 macro_link = macro_link % {"name": k, "title": k, "keys": any_key}
 
                 xml += html.escape(macro_link)
@@ -1150,7 +1152,9 @@ class Pathfinder:
 
             # No indexing
             else:
+                xml += html.escape('\n<div>\n')
                 xml += k
+                xml += html.escape('\n</div>\n')
 
         xml += html.escape('\n      </body>')
         xml += html.escape('\n  </html>')
@@ -1202,7 +1206,7 @@ class Pathfinder:
         xml += '           <hotKey>None</hotKey>\n'
         xml += '           <command>'
 
-        tmp = '\n[frame("Inventory"): {'
+        tmp =  '\n[frame("Inventory"): {'
         tmp += '\n  <html>'
         tmp += '\n  <head>'
         tmp += '\n      <title>Inventory</title>'
@@ -1243,6 +1247,8 @@ class Pathfinder:
             tmp += self.sp + 'sp &nbsp;'
         if int(self.cp) > 0:
             tmp += self.cp + 'cp'
+        else:
+            tmp += '0 gp'
 
         tmp += '\n      </div>'
         tmp += '\n      </body>\n'
@@ -1516,19 +1522,19 @@ class Pathfinder:
         tmp = "[h: roll = d20]\n"
         tmp += "[h,if(roll >= " + crit_low + " && roll <= " + crit_high + "): color=\"red\";color=\"blue\"]\n"
 
-        tmp += "\n<table border='1' cellpadding='0' cellspacing='0' style='width:200px'>"
+        tmp += "\n<table border='0' cellpadding='5' cellspacing='0' style='width:auto'>"
         tmp += "\n  <tr bgcolor='" + background + "'>"
         tmp += "\n      <td><span style='color:" + font + "'><b>" + name + "(" + crit + ")</b></span></td>"
         tmp += "\n      <td><span style='color:" + font + "'><b>Damage</b></span></td>"
         tmp += "\n  </tr>"
         tmp += "\n  <tr>"
-        tmp += "\n      <td>"
+        tmp += "\n      <td style='border: 1px solid %s; border-top: 0'>" %background
         tmp += "\n          <font color=[r: color]>"
         tmp += "\n              [e: roll" + roll + "]"
         tmp += "\n              [r, if(roll >= " + crit_low + " && roll <= " + crit_high + "): \"<b>Critical!</b>\"]"
         tmp += "\n          </font>"
         tmp += "\n      </td>"
-        tmp += "\n      <td>"
+        tmp += "\n      <td style='border: 1px solid %s; border-top: 0; border-left: 0'>" % background
         tmp += "\n          <font color=[r: color]>"
         # #############################################################
         if re.search('\d*d\d+', damage):
