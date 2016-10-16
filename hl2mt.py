@@ -642,12 +642,16 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         if col == 4:
             filename = QFileDialog.getOpenFileName(self, __appname__ + ": Choose Image", portrait_folder,
                                                    filter="Image files (*.png *.jpg *.jpeg *.gif *.bmp)")
+
+            filename = os.path.normpath(filename)
             if filename != '' and os.path.isfile(filename):
                 self.tableWidget.setItem(row, col, QTableWidgetItem(filename))
 
         if col == 5:
             filename = QFileDialog.getOpenFileName(self, __appname__ + ": Choose Image", pog_folder,
                                                    filter="Image files (*.png *.jpg *.jpeg *.gif *.bmp)")
+
+            filename = os.path.normpath(filename)
             if filename != '' and os.path.isfile(filename):
                 self.tableWidget.setItem(row, col, QTableWidgetItem(filename))
 
@@ -655,6 +659,8 @@ class Main(QMainWindow, mainWindow.Ui_mainWindow):
         if col == 6:
             filename = QFileDialog.getSaveFileName(self, __appname__ + ": Save Token As...", token_folder,
                                                    filter="Token files (*.rptok)")
+
+            filename = os.path.normpath(filename)
             if filename != '':
                 self.tableWidget.setItem(row, col, QTableWidgetItem(filename))
 

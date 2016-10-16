@@ -237,8 +237,8 @@ class HeroLabIndex:
                                 char_filename = statblock.get('filename')
                                 char_filename = re.sub(r"\.\w\w\w$", "", char_filename)
 
-                            pog_file = self._search_file(self.pog_folder, subdir, name)
-                            portrait_file = self._search_file(self.portrait_folder, subdir, name)
+                            pog_file = self._search_file(self.pog_folder, subdir, name, 'pog')
+                            portrait_file = self._search_file(self.portrait_folder, subdir, name, 'portrait')
                             # token = self._token_name(subdir, name)
                             token = self._token_name('', name)
 
@@ -252,7 +252,7 @@ class HeroLabIndex:
 
                     # TODO Look into the scan only grabbing image files for portraits and pogs
 
-    def _search_file(self, search_dir, subdir, char_name):
+    def _search_file(self, search_dir, subdir, char_name, kind = None):
 
         full_subdir = os.path.join(search_dir, subdir[1:])
         char_name = self.clean_name(char_name)
@@ -267,44 +267,76 @@ class HeroLabIndex:
         paths = [full_subdir, search_dir]
 
         for path in paths:
-            # Full name search: Orc Chief
-            filename = self._find_image_file(glob.glob(path + str.replace(char_name, ' ', '?') + '.*'))
+            #########################################################
+            ## Full name search: Orc Chief
+            #########################################################
+            if kind == 'pog':
+                filename = self._find_image_file(glob.glob(path + str.replace(char_name, ' ', '?') + '*pog.png'))
+            else:
+                filename = self._find_image_file(glob.glob(path + str.replace(char_name, ' ', '?') + '.*'))
 
             if filename:
                 return filename
 
-            filename = self._find_image_file(glob.glob(path + str.replace(char_name.lower(), ' ', '?') + '.*'))
+            # UNIX ??
+            # filename = self._find_image_file(glob.glob(path + str.replace(char_name.lower(), ' ', '?') + '.*'))
+            # if filename:
+            #     return filename
 
-            if filename:
-                return filename
-
-            # Search for partials: Orc, Chief
+            #########################################################
+            ## Search for partials: Orc, Chief
+            #########################################################
             for name in str.split(char_name, ' '):
-                filename = self._find_image_file(glob.glob(path + name + '.*'))
-                if filename:
-                    return filename
-                filename = self._find_image_file(glob.glob(path + name.lower() + '.*'))
+                if kind == 'pog':
+                    filename = self._find_image_file(glob.glob(path + name + '*pog.png'))
+                else:
+                    filename = self._find_image_file(glob.glob(path + name + '.*'))
+
                 if filename:
                     return filename
 
+                # UNIX ??
+                # filename = self._find_image_file(glob.glob(path + name.lower() + '.*'))
+                # if filename:
+                #     return filename
+
+            #########################################################
             # Search for star partials: Orc*, Chief*
+            #########################################################
             for name in str.split(char_name, ' '):
-                filename = self._find_image_file(glob.glob(path + name + '*'))
-                if filename:
-                    return filename
-                filename = self._find_image_file(glob.glob(path + name.lower() + '*'))
+                if kind == 'pog':
+                    filename = self._find_image_file(glob.glob(path + name + '*pog.png'))
+                else:
+                    filename = self._find_image_file(glob.glob(path + name + '*'))
+
                 if filename:
                     return filename
 
-            # Look for Default.* or default.*
-            filename = self._find_image_file(glob.glob(path + 'Default.*'))
-            if filename:
-                return filename
-            filename = self._find_image_file(glob.glob(path + 'default.*'))
+                # UNIX??
+                # filename = self._find_image_file(glob.glob(path + name.lower() + '*'))
+                # if filename:
+                #     return filename
+
+            #########################################################
+            ## Look for Default.* or default.*
+            #########################################################
+
+            if kind == 'pog':
+                filename = self._find_image_file(glob.glob(path + 'Default*pog.png'))
+            else:
+                filename = self._find_image_file(glob.glob(path + 'Default.*'))
+
             if filename:
                 return filename
 
-        # Fall through, grab *
+            # UNIX ??
+            # filename = self._find_image_file(glob.glob(path + 'default.*'))
+            # if filename:
+            #     return filename
+
+        #########################################################
+        ## Fall through, grab *
+        #########################################################
         filename = self._find_image_file(glob.glob(search_dir + '*'))
         if filename:
             return filename

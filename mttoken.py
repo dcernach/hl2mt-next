@@ -1719,7 +1719,7 @@ class Pathfinder:
         im = Image.open(str(image_name))
 
         if (im.size[0] > 300 or im.size[1] > 300):
-            size = (256, 256)  # resize POG to 256x256max
+            size = (300, 300)  # resize POG to 256x256max
             im.thumbnail(size, Image.ANTIALIAS)
         else:
             size = im.size
@@ -1743,8 +1743,8 @@ class Pathfinder:
 
         im = Image.open(str(image_name))
 
-        if (im.size[0] > 400 or im.size[1] > 400):
-            size = (400, 400)  # resize portrait to 400x400
+        if (im.size[0] > 600 or im.size[1] > 600):
+            size = (600, 600)  # resize portrait to 400x400
             im.thumbnail(size, Image.ANTIALIAS)
         else:
             size = im.size
