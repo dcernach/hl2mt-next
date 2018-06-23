@@ -2,4 +2,4 @@ syntax: glob
 *.rptok
 *.ini
 dist
-.idea\workspace.xml
+__pycache__
